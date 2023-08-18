@@ -19,6 +19,6 @@ module.exports = {
     },
     plugins: ['react-refresh', 'prettier'],
     rules: {
-        'prettier/prettier': ['error', { trailingComma: 'none' }]
+        'prettier/prettier': ['error', { trailingComma: 'none', endOfLine: 'auto' }]
     }
 };
