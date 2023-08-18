@@ -1,0 +1,112 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Config local fonts */
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 300;
+    src: url('assets/fonts/MyriadPro-Light.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 300;
+    font-style: italic;
+    src: url('assets/fonts/MyriadPro-LightItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 400;
+    src: url('assets/fonts/MyriadPro-Normal.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 400;
+    font-style: italic;
+    src: url('assets/fonts/MyriadPro-NormalItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 600;
+    src: url('assets/fonts/MyriadPro-SemiBold.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 600;
+    font-style: italic;
+    src: url('assets/fonts/MyriadPro-SemiBoldItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 700;
+    src: url('assets/fonts/MyriadPro-Bold.otf') format('opentype');
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    font-weight: 700;
+    font-style: italic;
+    src: url('assets/fonts/MyriadPro-BoldItalic.otf') format('opentype');
+}
+
+@layer base {
+    :root {
+        /* Config colors */
+        --color-primary: #ffffff;
+        --color-secondary: #282828;
+        --color-accent: #ffe501;
+        --color-red: #b01a0b;
+        --color-green: #065f46;
+        --color-gray: #e3e1db;
+        --color-black: #1a1a1a;
+    }
+    html {
+        font-family: 'Myriad Pro', sans-serif;
+        color: var(--color-black);
+    }
+}
+@layer utilities {
+    /* Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+}
+
+:root {
+    line-height: 1.5;
+    font-weight: 400;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(127, 127, 127);
+    background-clip: padding-box;
+    &:hover {
+        background: #7f7f7f99;
+        background-clip: padding-box;
+    }
+    &:active {
+        background: #7f7f7fcc;
+        background-clip: padding-box;
+    }
+    border: 2px solid transparent;
+    border-radius: 9999px;
+}
