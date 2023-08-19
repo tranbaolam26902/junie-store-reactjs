@@ -4,13 +4,13 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: 'var(--color-primary)',
-                secondary: 'var(--color-secondary)',
-                accent: 'var(--color-accent)',
-                red: 'var(--color-red)',
-                green: 'var(--color-green)',
-                gray: 'var(--color-gray)',
-                black: 'var(--color-black)'
+                primary: '#ffffff',
+                secondary: '#282828',
+                accent: '#ffe501',
+                red: '#b01a0b',
+                green: '#065f46',
+                gray: '#e3e1db',
+                black: '#1a1a1a'
             }
         }
     },
