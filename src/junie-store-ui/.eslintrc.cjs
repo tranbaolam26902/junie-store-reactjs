@@ -19,6 +19,7 @@ module.exports = {
     },
     plugins: ['react-refresh', 'prettier'],
     rules: {
+        'react/prop-types': 0,
         'prettier/prettier': ['error', { trailingComma: 'none', endOfLine: 'auto' }]
     }
 };
