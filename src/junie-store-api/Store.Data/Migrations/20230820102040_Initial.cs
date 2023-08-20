@@ -128,7 +128,7 @@ namespace Store.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Sku = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Sku = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false, defaultValue: ""),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ShortIntro = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime", nullable: false),
@@ -138,7 +138,7 @@ namespace Store.Data.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     MinQuantity = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Discount = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    Note = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    Note = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true, defaultValue: ""),
                     Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

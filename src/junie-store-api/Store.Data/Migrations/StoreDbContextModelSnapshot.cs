@@ -282,8 +282,10 @@ namespace Store.Data.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Note")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .HasColumnType("nvarchar(2048)")
+                        .HasDefaultValue("");
 
                     b.Property<double>("Price")
                         .ValueGeneratedOnAdd()
@@ -302,8 +304,10 @@ namespace Store.Data.Migrations
 
                     b.Property<string>("Sku")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasDefaultValue("");
 
                     b.Property<Guid>("SupplierId")
                         .HasColumnType("uniqueidentifier");
