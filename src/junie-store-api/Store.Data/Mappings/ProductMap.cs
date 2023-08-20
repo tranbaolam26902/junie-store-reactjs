@@ -23,7 +23,8 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 
 		builder.Property(s => s.Sku)
 			.IsRequired()
-			.HasMaxLength(256);
+			.HasMaxLength(256)
+			.HasDefaultValue("");
 
 		builder.Property(s => s.ShortIntro)
 			.IsRequired()
@@ -52,7 +53,8 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 			.HasDefaultValue(false);
 
 		builder.Property(s => s.Note)
-			.HasMaxLength(2048);
+			.HasMaxLength(2048)
+			.HasDefaultValue("");
 
 		// Configure the timestamps
 		builder.Property(o => o.CreateDate)

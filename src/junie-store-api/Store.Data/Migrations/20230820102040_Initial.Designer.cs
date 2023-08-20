@@ -12,7 +12,7 @@ using Store.Data.Contexts;
 namespace Store.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20230819172909_Initial")]
+    [Migration("20230820102040_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -285,8 +285,10 @@ namespace Store.Data.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Note")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .HasColumnType("nvarchar(2048)")
+                        .HasDefaultValue("");
 
                     b.Property<double>("Price")
                         .ValueGeneratedOnAdd()
@@ -305,8 +307,10 @@ namespace Store.Data.Migrations
 
                     b.Property<string>("Sku")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasDefaultValue("");
 
                     b.Property<Guid>("SupplierId")
                         .HasColumnType("uniqueidentifier");

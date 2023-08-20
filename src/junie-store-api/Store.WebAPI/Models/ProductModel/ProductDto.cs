@@ -1,5 +1,4 @@
-﻿using Store.Core.Entities;
-using Store.WebAPI.Models.CategoryModel;
+﻿using Store.WebAPI.Models.CategoryModel;
 using Store.WebAPI.Models.PictureModel;
 
 namespace Store.WebAPI.Models.ProductModel;
@@ -9,6 +8,8 @@ public class ProductDto
 	public Guid Id { get; set; }
 
 	public string Name { get; set; }
+
+	public string Sku { get; set; }
 
 	public string ShortIntro { get; set; }
 
