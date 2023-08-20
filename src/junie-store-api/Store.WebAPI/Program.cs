@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 		.ConfigureNLog()
 		.ConfigureServices()
 		.ConfigureSwaggerOpenApi()
+		.ConfigureAuthentication()
 		.ConfigureMapster()
 		.ConfigureFluentValidation();
 }
