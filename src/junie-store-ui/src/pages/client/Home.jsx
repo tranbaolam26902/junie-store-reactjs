@@ -1,3 +1,6 @@
+// Components
+import { HomeHeroSection } from '@components/client/home';
+
 export default function Home() {
-    return <div>Home</div>;
+    return <HomeHeroSection />;
 }
