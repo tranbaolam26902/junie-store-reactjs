@@ -3,15 +3,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // Assets
-import hamburgerIcon from '@assets/icons/hamburger.svg';
-import searchIcon from '@assets/icons/search.svg';
-import cartIcon from '@assets/icons/cart.svg';
-import closeIcon from '@assets/icons/close.svg';
-import userIcon from '@assets/icons/user.svg';
-import logo from '@assets/images/logo.png';
+import { icons } from '@assets/icons';
+import { images } from '@assets/images';
 
 // Components
 import { SidebarModal } from '@components/shared';
+import { Underline } from '@components/shared/animations';
 
 // Temp categories
 const categories = [
@@ -74,47 +71,58 @@ export default function Header() {
     };
 
     return (
-        <header className='sticky left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
+        <header className='sticky z-50 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
             <section className='mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4'>
-                <button type='button' className='xl:hidden flex-1' onClick={handleShowMobileNavbar}>
-                    <img src={hamburgerIcon} alt='menu-icon' className='w-[1.125rem]' />
-                </button>
+                {/* Start: Header's left section */}
+                <div className='xl:hidden flex-1 flex items-center'>
+                    <button type='button' className='-m-2 p-2' onClick={handleShowMobileNavbar}>
+                        <img src={icons.hamburger} alt='menu-icon' className='w-[1.125rem]' />
+                    </button>
+                </div>
                 <nav className='flex-1 hidden xl:flex items-center gap-8'>
                     {categories.map((category) => (
-                        <Link
-                            to={`${category.slug}`}
-                            key={category.id}
-                            className='relative after:absolute after:bottom-0.5 after:left-0 after:w-full after:h-px after:bg-current after:scale-x-0 after:origin-right after:transition-transform after:ease-in-out after:duration-300 hover:after:scale-x-100 hover:after:origin-left'
-                        >
-                            {category.name}
+                        <Link to={`${category.slug}`} key={category.id} className='relative group'>
+                            <span>{category.name}</span>
+                            <Underline />
                         </Link>
                     ))}
                 </nav>
+                {/* End: Header's left section */}
+
                 <Link to='/'>
-                    <img src={logo} alt='logo' className='w-[5.3125rem]' />
+                    <img src={images.logo} alt='logo' className='w-[5.3125rem]' />
                 </Link>
+
+                {/* Start: Header's right section */}
                 <div className='flex flex-1 items-center justify-end xl:gap-8 gap-5'>
-                    <button type='button' className='xl:hidden' onClick={handleShowSearch}>
-                        <img src={searchIcon} alt='search-icon' className='w-[1.125rem]' />
+                    <button type='button' className='xl:hidden -m-2 p-2' onClick={handleShowSearch}>
+                        <img src={icons.search} alt='search-icon' className='w-[1.125rem]' />
                     </button>
                     <div className='hidden items-center gap-8 xl:flex'>
-                        <button type='button' onClick={handleShowSearch}>
-                            Tìm kiếm
+                        <button type='button' className='relative group' onClick={handleShowSearch}>
+                            <span>Tìm kiếm</span>
+                            <Underline />
                         </button>
-                        <button type='button'>Tài khoản</button>
+                        <button type='button' className='relative group'>
+                            <span>Tài khoản</span>
+                            <Underline />
+                        </button>
                     </div>
-                    <button type='button' className='relative' onClick={handleShowCart}>
-                        <img src={cartIcon} alt='cart-icon' className='w-[1.125rem]' />
-                        <span className='absolute -right-3 -top-2 aspect-square w-5 rounded-full bg-black text-[0.5625rem] leading-[1.25rem] text-primary'>
+                    <button type='button' className='relative -m-2 p-2' onClick={handleShowCart}>
+                        <img src={icons.cart} alt='cart-icon' className='w-[1.125rem]' />
+                        <span className='absolute top-0 -right-1 aspect-square w-5 rounded-full bg-black text-[0.5625rem] leading-[1.25rem] text-primary'>
                             4
                         </span>
                     </button>
                 </div>
+                {/* End: Header's right section */}
             </section>
+
+            {/* Start: Mobile navbar */}
             <SidebarModal show={showMobileNavbar} onHide={handleHideMobileNavbar} className='xl:hidden'>
                 <div className='flex flex-col px-6 py-4 h-full'>
                     <button type='button' className='-mt-0.5 -ml-2 p-2 w-fit' onClick={handleHideMobileNavbar}>
-                        <img src={closeIcon} alt='close-icon' className='w-4' />
+                        <img src={icons.close} alt='close-icon' className='w-4' />
                     </button>
                     <div className='overflow-y-auto flex-1 flex flex-col divide-y divide-gray'>
                         {categories.map((category) => (
@@ -132,13 +140,20 @@ export default function Header() {
                         className='flex items-center gap-4 -mb-4 -mx-6 px-6 py-4 border border-t border-gray'
                         onClick={handleHideMobileNavbar}
                     >
-                        <img src={userIcon} alt='user-icon' className='w-4' />
+                        <img src={icons.user} alt='user-icon' className='w-4' />
                         <span>Tài khoản</span>
                     </Link>
                 </div>
             </SidebarModal>
+            {/* End: Mobile navbar */}
+
+            {/* Start: Search section */}
             <SidebarModal right show={showSearch} onHide={handleHideSearch}></SidebarModal>
+            {/* End: Search section */}
+
+            {/* Start: Cart section */}
             <SidebarModal right show={showCart} onHide={handleHideCart}></SidebarModal>
+            {/* End: Cart section */}
         </header>
     );
 }
