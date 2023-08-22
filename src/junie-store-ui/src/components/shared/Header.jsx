@@ -7,7 +7,7 @@ import { icons } from '@assets/icons';
 import { images } from '@assets/images';
 
 // Components
-import { SidebarModal } from '@components/shared';
+import { Container, SidebarModal } from '@components/shared';
 import { Underline } from '@components/shared/animations';
 
 // Temp categories
@@ -72,7 +72,7 @@ export default function Header() {
 
     return (
         <header className='sticky z-50 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
-            <section className='mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-4'>
+            <Container className='flex items-center justify-center py-4'>
                 {/* Start: Header's left section */}
                 <div className='xl:hidden flex-1 flex items-center'>
                     <button type='button' className='-m-2 p-2' onClick={handleShowMobileNavbar}>
@@ -116,7 +116,7 @@ export default function Header() {
                     </button>
                 </div>
                 {/* End: Header's right section */}
-            </section>
+            </Container>
 
             {/* Start: Mobile navbar */}
             <SidebarModal show={showMobileNavbar} onHide={handleHideMobileNavbar} className='xl:hidden'>

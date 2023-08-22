@@ -1,9 +1,12 @@
 // Assets
 import { images } from '@assets/images';
 
+// Components
+import { Container } from '@components/shared';
+
 export default function HeroSection() {
     return (
-        <div className='relative'>
+        <section className='relative'>
             <img
                 src={images.homeHeroBannerMobile}
                 alt='hero-banner'
@@ -15,12 +18,12 @@ export default function HeroSection() {
                 className='hidden lg:inline-block w-screen object-cover'
             />
             <div className='absolute inset-0 bg-black/30'></div>
-            <div className='absolute inset-0 flex flex-col items-center justify-center gap-8'>
+            <Container className='absolute inset-0 flex flex-col items-center justify-center gap-8'>
                 <span className='text-xs text-primary font-semibold uppercase tracking-widest'>Táo bạo. Tỏa sáng</span>
                 <span className='text-4xl md:text-6xl text-primary font-semibold capitalize'>
                     Junie&apos;s Specials
                 </span>
-                <div className='flex items-center gap-6'>
+                <div className='inline-grid grid-cols-2 gap-6'>
                     <button
                         type='button'
                         className='px-5 py-4 text-xs font-semibold uppercase tracking-widest bg-accent rounded-sm'
@@ -34,7 +37,7 @@ export default function HeroSection() {
                         Sale Off
                     </button>
                 </div>
-            </div>
-        </div>
+            </Container>
+        </section>
     );
 }
