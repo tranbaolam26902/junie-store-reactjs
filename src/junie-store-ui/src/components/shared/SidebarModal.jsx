@@ -1,10 +1,16 @@
 // Libraries
+import { useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 // Components
 import { Fade, Slide } from '@components/shared/animations';
 
 export default function SidebarModal({ right, show, onHide, children, className }) {
+    // Side effects
+    useEffect(() => {
+        document.body.style.overflow = show ? 'hidden' : ''; // Hide scrollbar when show modal
+    }, [show]);
+
     return (
         <AnimatePresence>
             {show && (
