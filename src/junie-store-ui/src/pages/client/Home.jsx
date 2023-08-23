@@ -4,7 +4,8 @@ import {
     CategorySection,
     HomeHeroSection,
     NewsLetterSection,
-    ProductSection
+    ProductSection,
+    ServiceSection
 } from '@components/client/home';
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
             <ProductSection />
             <BlogSection />
             <NewsLetterSection />
+            <ServiceSection />
         </>
     );
 }
