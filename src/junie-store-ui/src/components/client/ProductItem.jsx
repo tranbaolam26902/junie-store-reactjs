@@ -20,7 +20,7 @@ export default function ProductItem({ product }) {
                 <span className='font-thin'>{product.name}</span>
                 <span className='font-thin'>
                     {new Intl.NumberFormat('vi-VN').format(product.price)}
-                    <sup className='underline'>đ</sup>
+                    <sup className='pl-0.5 underline'>đ</sup>
                 </span>
             </div>
         </Link>
