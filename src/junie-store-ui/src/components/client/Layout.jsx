@@ -2,8 +2,7 @@
 import { Outlet } from 'react-router-dom';
 
 // Components
-import { Header } from '@components/shared';
-import { Footer } from '@components/client';
+import { Header, Footer } from '@components/client';
 
 export default function Layout() {
     return (
