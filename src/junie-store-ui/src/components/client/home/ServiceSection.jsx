@@ -31,7 +31,7 @@ const services = [
 export default function ServiceSection() {
     return (
         <section className='overflow-x-auto no-scrollbar lg:mx-auto my-10 px-6 lg:max-w-screen-2xl'>
-            <div className='flex gap-12 w-[240vw] md:w-[160vw] lg:w-[120vw] xl:w-full'>
+            <div className='flex gap-12 w-[280vw] md:w-[160vw] lg:w-[120vw] xl:w-full'>
                 {services.map((service) => (
                     <div key={service.id} className='flex flex-col items-center justify-center gap-4 w-full'>
                         <img src={service.icon} alt={service.title} className='w-6' />
