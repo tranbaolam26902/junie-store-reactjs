@@ -1,2 +1,2 @@
+export { default as CategorySection } from './CategorySection';
 export { default as HomeHeroSection } from './HeroSection';
-export { default as Title } from './Title';
