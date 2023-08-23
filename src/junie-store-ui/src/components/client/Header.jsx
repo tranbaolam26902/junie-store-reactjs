@@ -7,8 +7,9 @@ import { icons } from '@assets/icons';
 import { images } from '@assets/images';
 
 // Components
-import { Container, SidebarModal } from '@components/shared';
-import { Underline } from '@components/shared/animations';
+import { Button, Container, SidebarModal } from '@components/shared';
+import { SearchResultItem } from '@components/client';
+import { Loading, Underline } from '@components/shared/animations';
 
 // Temp categories
 const categories = [
@@ -43,12 +44,30 @@ const categories = [
         slug: '/categories/sale'
     }
 ];
+// Temp search result items
+const searchResultItems = [
+    {
+        id: 1,
+        name: 'Bông tai Gracie',
+        slug: 'gracie',
+        price: 220000,
+        image: images.product
+    },
+    {
+        id: 2,
+        name: 'Bông tai Gabi',
+        slug: 'gabi',
+        price: 275000,
+        image: images.productHover
+    }
+];
 
 export default function Header() {
     // States
     const [showMobileNavbar, setShowMobileNavbar] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [showCart, setShowCart] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
 
     // Event handlers
     const handleShowMobileNavbar = () => {
@@ -148,7 +167,46 @@ export default function Header() {
             {/* End: Mobile navbar */}
 
             {/* Start: Search section */}
-            <SidebarModal right show={showSearch} onHide={handleHideSearch}></SidebarModal>
+            <SidebarModal right show={showSearch} onHide={handleHideSearch}>
+                <div className='flex flex-col h-full'>
+                    <div className='flex items-center gap-4 px-6 py-4 border-b border-gray'>
+                        <img src={icons.search} alt='search-icon' className='w-4' />
+                        <input
+                            type='text'
+                            autoFocus
+                            placeholder='Bạn đang muốn tìm kiếm gì?'
+                            className='flex-1 outline-none border-none'
+                        />
+                        <button type='button' className='-m-2 p-2' onClick={handleHideSearch}>
+                            <img src={icons.close} alt='close-icon' className='w-4' />
+                        </button>
+                    </div>
+                    <section className='flex-1 overflow-y-auto'>
+                        {isFetching ? (
+                            <div className='flex items-center justify-center h-full'>
+                                <Loading />
+                            </div>
+                        ) : (
+                            <div className='flex flex-col gap-4 p-6'>
+                                {searchResultItems.map((product) => (
+                                    <>
+                                        <SearchResultItem key={product.id} product={product} />
+                                        <SearchResultItem key={product.id} product={product} />
+                                        <SearchResultItem key={product.id} product={product} />
+                                        <SearchResultItem key={product.id} product={product} />
+                                        <SearchResultItem key={product.id} product={product} />
+                                        <SearchResultItem key={product.id} product={product} />
+                                    </>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                    <div className='relative px-6 py-4'>
+                        <Button text='Xem tất cả kết quả' secondary full />
+                        <div className='absolute -top-4 left-0 right-4 h-4 bg-gradient-to-t from-primary to-transparent'></div>
+                    </div>
+                </div>
+            </SidebarModal>
             {/* End: Search section */}
 
             {/* Start: Cart section */}
