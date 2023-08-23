@@ -2,7 +2,7 @@
 import { images } from '@assets/images';
 
 // Components
-import { Container } from '@components/shared';
+import { Button, Container } from '@components/shared';
 
 export default function HeroSection() {
     return (
@@ -24,18 +24,8 @@ export default function HeroSection() {
                     Junie&apos;s Specials
                 </span>
                 <div className='inline-grid grid-cols-2 gap-6'>
-                    <button
-                        type='button'
-                        className='px-5 py-4 text-xs font-semibold uppercase tracking-widest bg-accent rounded-sm'
-                    >
-                        Bán chạy
-                    </button>
-                    <button
-                        type='button'
-                        className='px-5 py-4 text-xs font-semibold uppercase tracking-widest bg-accent rounded-sm'
-                    >
-                        Sale Off
-                    </button>
+                    <Button accent text='Bán chạy' />
+                    <Button secondary text='Bán chạy' />
                 </div>
             </Container>
         </section>

@@ -1,11 +1,12 @@
 // Components
-import { CategorySection, HomeHeroSection } from '@components/client/home';
+import { CategorySection, HomeHeroSection, ProductSection } from '@components/client/home';
 
 export default function Home() {
     return (
         <>
             <HomeHeroSection />
             <CategorySection />
+            <ProductSection />
         </>
     );
 }
