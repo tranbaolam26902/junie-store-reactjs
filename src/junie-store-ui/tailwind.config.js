@@ -12,6 +12,9 @@ export default {
                 gray: '#e3e1db',
                 black: '#1a1a1a'
             }
+        },
+        fontFamily: {
+            garamond: ['EB Garamond']
         }
     },
     plugins: []

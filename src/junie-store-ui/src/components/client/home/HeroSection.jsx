@@ -20,7 +20,7 @@ export default function HeroSection() {
             <div className='absolute inset-0 bg-black/30'></div>
             <Container className='absolute inset-0 flex flex-col items-center justify-center gap-8'>
                 <span className='text-xs text-primary font-semibold uppercase tracking-widest'>Táo bạo. Tỏa sáng</span>
-                <span className='text-4xl md:text-6xl text-primary font-semibold capitalize'>
+                <span className='font-garamond text-4xl md:text-6xl text-primary capitalize'>
                     Junie&apos;s Specials
                 </span>
                 <div className='inline-grid grid-cols-2 gap-6'>

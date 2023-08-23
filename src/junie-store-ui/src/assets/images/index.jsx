@@ -7,6 +7,9 @@ import necklaceImage from './necklace.jpg';
 import ringImage from './ring.jpg';
 import productImage from './product.jpg';
 import productHoverImage from './product-hover.jpg';
+import blog1Image from './blog-1.jpg';
+import blog2Image from './blog-2.jpg';
+import blog3Image from './blog-3.jpg';
 
 export const images = {
     logo: logoImage,
@@ -17,5 +20,8 @@ export const images = {
     necklace: necklaceImage,
     ring: ringImage,
     product: productImage,
-    productHover: productHoverImage
+    productHover: productHoverImage,
+    blog1: blog1Image,
+    blog2: blog2Image,
+    blog3: blog3Image
 };
