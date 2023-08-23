@@ -75,7 +75,7 @@ export default function Footer() {
             <Container className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-none lg:grid-flow-col gap-10 xl:gap-x-24'>
                 <div className='flex flex-col gap-5'>
                     <span className='text-sm font-bold uppercase tracking-widest'>Khám phá</span>
-                    <div className='flex flex-col gap-1.5'>
+                    <nav className='flex flex-col gap-1.5'>
                         {categories.map((category) => (
                             <Link
                                 key={category.id}
@@ -85,11 +85,11 @@ export default function Footer() {
                                 {category.name}
                             </Link>
                         ))}
-                    </div>
+                    </nav>
                 </div>
                 <div className='flex flex-col gap-5'>
                     <span className='text-sm font-bold uppercase tracking-widest'>@Junie</span>
-                    <div className='flex flex-col gap-1.5'>
+                    <nav className='flex flex-col gap-1.5'>
                         {blogs.map((blog) => (
                             <Link
                                 key={blog.id}
@@ -99,11 +99,11 @@ export default function Footer() {
                                 {blog.name}
                             </Link>
                         ))}
-                    </div>
+                    </nav>
                 </div>
                 <div className='flex flex-col gap-5'>
                     <span className='text-sm font-bold uppercase tracking-widest'>Chính sách</span>
-                    <div className='flex flex-col gap-1.5'>
+                    <nav className='flex flex-col gap-1.5'>
                         {policies.map((policy) => (
                             <Link
                                 key={policy.id}
@@ -113,7 +113,7 @@ export default function Footer() {
                                 {policy.name}
                             </Link>
                         ))}
-                    </div>
+                    </nav>
                 </div>
                 <div className='flex flex-col gap-5'>
                     <span className='text-sm font-bold uppercase tracking-widest'>Junie</span>

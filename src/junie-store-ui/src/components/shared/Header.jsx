@@ -124,7 +124,7 @@ export default function Header() {
                     <button type='button' className='-mt-0.5 -ml-2 p-2 w-fit' onClick={handleHideMobileNavbar}>
                         <img src={icons.close} alt='close-icon' className='w-4' />
                     </button>
-                    <div className='overflow-y-auto flex-1 flex flex-col divide-y divide-gray'>
+                    <nav className='overflow-y-auto flex-1 flex flex-col divide-y divide-gray'>
                         {categories.map((category) => (
                             <Link
                                 to={`${category.slug}`}
@@ -135,7 +135,7 @@ export default function Header() {
                                 {category.name}
                             </Link>
                         ))}
-                    </div>
+                    </nav>
                     <Link
                         className='flex items-center gap-4 -mb-4 -mx-6 px-6 py-4 border border-t border-gray'
                         onClick={handleHideMobileNavbar}

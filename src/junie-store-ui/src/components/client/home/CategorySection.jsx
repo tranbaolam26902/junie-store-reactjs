@@ -39,9 +39,7 @@ const categories = [
 export default function CategorySection() {
     return (
         <>
-            <Container>
-                <Title subtitle='Mua sắm theo danh mục' />
-            </Container>
+            <Title subtitle='Mua sắm theo danh mục' />
             <section className='overflow-x-auto no-scrollbar lg:mx-auto px-6 lg:max-w-screen-2xl'>
                 <div className='flex gap-8 w-[240vw] md:w-[160vw] lg:w-[120vw] xl:w-full'>
                     {categories.map((category) => (
