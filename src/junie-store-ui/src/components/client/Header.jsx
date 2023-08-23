@@ -189,14 +189,7 @@ export default function Header() {
                         ) : (
                             <div className='flex flex-col gap-4 p-6'>
                                 {searchResultItems.map((product) => (
-                                    <>
-                                        <SearchResultItem key={product.id} product={product} />
-                                        <SearchResultItem key={product.id} product={product} />
-                                        <SearchResultItem key={product.id} product={product} />
-                                        <SearchResultItem key={product.id} product={product} />
-                                        <SearchResultItem key={product.id} product={product} />
-                                        <SearchResultItem key={product.id} product={product} />
-                                    </>
+                                    <SearchResultItem key={product.id} product={product} onClick={handleHideSearch} />
                                 ))}
                             </div>
                         )}

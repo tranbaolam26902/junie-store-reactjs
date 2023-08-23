@@ -4,9 +4,13 @@ import { Link } from 'react-router-dom';
 // Assets
 import { icons } from '@assets/icons';
 
-export default function SearchResultItem({ product }) {
+export default function SearchResultItem({ product, onClick }) {
     return (
-        <Link to={`/products/${product.slug}`} className='relative flex items-center gap-6 pr-8 group'>
+        <Link
+            to={`/products/${product.slug}`}
+            className='relative flex items-center gap-6 pr-8 group'
+            onClick={onClick}
+        >
             <img src={product.image} alt={product.slug} className='w-24 rounded' />
             <div className='flex-1 flex flex-col gap-1'>
                 <span className='line-clamp-1 break-words'>{product.name}</span>
