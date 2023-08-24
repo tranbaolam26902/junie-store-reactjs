@@ -48,7 +48,9 @@ export default function BlogSection() {
                                     className='transition duration-500 group-hover:scale-105'
                                 />
                             </div>
-                            <span className='font-garamond text-2xl lg:text-3xl line-clamp-2'>{blog.title}</span>
+                            <span className='font-garamond text-2xl lg:text-3xl line-clamp-2' title={blog.title}>
+                                {blog.title}
+                            </span>
                         </Link>
                     ))}
                 </div>
