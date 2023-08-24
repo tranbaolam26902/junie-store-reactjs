@@ -196,10 +196,12 @@ export default function Header() {
                             </div>
                         )}
                     </section>
-                    <section className='relative px-6 py-4'>
-                        <Button text='Xem tất cả kết quả' secondary full />
-                        <div className='absolute -top-4 left-0 right-4 h-4 bg-gradient-to-t from-primary to-transparent'></div>
-                    </section>
+                    {products.length > 0 && (
+                        <section className='relative px-6 py-4'>
+                            <Button text='Xem tất cả kết quả' secondary full />
+                            <div className='absolute -top-4 left-0 right-4 h-4 bg-gradient-to-t from-primary to-transparent'></div>
+                        </section>
+                    )}
                 </div>
             </SidebarModal>
             {/* End: Search section */}
@@ -230,26 +232,28 @@ export default function Header() {
                             </div>
                         )}
                     </section>
-                    <section className='relative px-6 py-4 border-t border-gray'>
-                        <Button
-                            text={
-                                <div className='flex items-center justify-center gap-3'>
-                                    <span className='text-sm font-semibold uppercase'>Thanh toán</span>
-                                    <span className='mb-1 w-1 h-1 bg-primary'></span>
-                                    <span className='flex gap-1'>
-                                        <span className='text-sm font-semibold uppercase'>
-                                            {new Intl.NumberFormat('vi-VN').format(
-                                                products.reduce((acc, curr) => acc + curr.price * curr.quantity, 0)
-                                            )}
+                    {products.length > 0 && (
+                        <section className='relative px-6 py-4 border-t border-gray'>
+                            <Button
+                                text={
+                                    <div className='flex items-center justify-center gap-3'>
+                                        <span className='text-sm font-semibold uppercase'>Thanh toán</span>
+                                        <span className='mb-1 w-1 h-1 bg-primary'></span>
+                                        <span className='flex gap-1'>
+                                            <span className='text-sm font-semibold uppercase'>
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    products.reduce((acc, curr) => acc + curr.price * curr.quantity, 0)
+                                                )}
+                                            </span>
+                                            <span className='text-sm font-semibol uppercase'>VND</span>
                                         </span>
-                                        <span className='text-sm font-semibol uppercase'>VND</span>
-                                    </span>
-                                </div>
-                            }
-                            secondary
-                            full
-                        />
-                    </section>
+                                    </div>
+                                }
+                                secondary
+                                full
+                            />
+                        </section>
+                    )}
                 </div>
             </SidebarModal>
             {/* End: Cart section */}
