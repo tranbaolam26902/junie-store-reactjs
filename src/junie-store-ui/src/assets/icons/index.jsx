@@ -7,6 +7,8 @@ import facebookIcon from './facebook.svg';
 import giftIcon from './gift.svg';
 import hamburgerIcon from './hamburger.svg';
 import instagramIcon from './instagram.svg';
+import minusIcon from './minus.svg';
+import plusIcon from './plus.svg';
 import rightArrowIcon from './right-arrow.svg';
 import searchIcon from './search.svg';
 import tiktokIcon from './tiktok.svg';
@@ -22,6 +24,8 @@ export const icons = {
     gift: giftIcon,
     hamburger: hamburgerIcon,
     instagram: instagramIcon,
+    minus: minusIcon,
+    plus: plusIcon,
     rightArrow: rightArrowIcon,
     search: searchIcon,
     tiktok: tiktokIcon,

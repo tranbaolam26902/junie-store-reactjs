@@ -8,7 +8,7 @@ import { images } from '@assets/images';
 
 // Components
 import { Button, Container, SidebarModal } from '@components/shared';
-import { SearchResultItem } from '@components/client';
+import { CartItem, SearchResultItem } from '@components/client';
 import { Loading, Underline } from '@components/shared/animations';
 
 // Temp categories
@@ -45,12 +45,13 @@ const categories = [
     }
 ];
 // Temp search result items
-const searchResultItems = [
+const products = [
     {
         id: 1,
         name: 'Bông tai Gracie',
         slug: 'gracie',
         price: 220000,
+        quantity: 1,
         image: images.product
     },
     {
@@ -58,6 +59,7 @@ const searchResultItems = [
         name: 'Bông tai Gabi',
         slug: 'gabi',
         price: 275000,
+        quantity: 2,
         image: images.productHover
     }
 ];
@@ -113,7 +115,7 @@ export default function Header() {
                 </Link>
 
                 {/* Start: Header's right section */}
-                <div className='flex flex-1 items-center justify-end xl:gap-8 gap-5'>
+                <section className='flex flex-1 items-center justify-end xl:gap-8 gap-5'>
                     <button type='button' className='xl:hidden -m-2 p-2' onClick={handleShowSearch}>
                         <img src={icons.search} alt='search-icon' className='w-[1.125rem]' />
                     </button>
@@ -133,7 +135,7 @@ export default function Header() {
                             4
                         </span>
                     </button>
-                </div>
+                </section>
                 {/* End: Header's right section */}
             </Container>
 
@@ -169,7 +171,7 @@ export default function Header() {
             {/* Start: Search section */}
             <SidebarModal right show={showSearch} onHide={handleHideSearch}>
                 <div className='flex flex-col h-full'>
-                    <div className='flex items-center gap-4 px-6 py-4 border-b border-gray'>
+                    <section className='flex items-center gap-4 px-6 py-4 border-b border-gray'>
                         <img src={icons.search} alt='search-icon' className='w-4' />
                         <input
                             type='text'
@@ -180,7 +182,7 @@ export default function Header() {
                         <button type='button' className='-m-2 p-2' onClick={handleHideSearch}>
                             <img src={icons.close} alt='close-icon' className='w-4' />
                         </button>
-                    </div>
+                    </section>
                     <section className='flex-1 overflow-y-auto'>
                         {isFetching ? (
                             <div className='flex items-center justify-center h-full'>
@@ -188,22 +190,68 @@ export default function Header() {
                             </div>
                         ) : (
                             <div className='flex flex-col gap-4 p-6'>
-                                {searchResultItems.map((product) => (
+                                {products.map((product) => (
                                     <SearchResultItem key={product.id} product={product} onClick={handleHideSearch} />
                                 ))}
                             </div>
                         )}
                     </section>
-                    <div className='relative px-6 py-4'>
+                    <section className='relative px-6 py-4'>
                         <Button text='Xem tất cả kết quả' secondary full />
                         <div className='absolute -top-4 left-0 right-4 h-4 bg-gradient-to-t from-primary to-transparent'></div>
-                    </div>
+                    </section>
                 </div>
             </SidebarModal>
             {/* End: Search section */}
 
             {/* Start: Cart section */}
-            <SidebarModal right show={showCart} onHide={handleHideCart}></SidebarModal>
+            <SidebarModal right show={showCart} onHide={handleHideCart}>
+                <div className='flex flex-col h-full'>
+                    <section className='flex items-center gap-4 px-6 py-4 border-b border-gray'>
+                        <img src={icons.cart} alt='cart-icon' className='w-5' />
+                        <span className='flex-1'>
+                            {products.length !== 0 ? products.length + ' sản phẩm' : 'Giỏ hàng'}
+                        </span>
+                        <button type='button' className='-m-2 p-2'>
+                            <img src={icons.close} alt='close-icon' className='w-4' onClick={handleHideCart} />
+                        </button>
+                    </section>
+                    <section className='flex-1 overflow-y-auto'>
+                        {products.length === 0 ? (
+                            <div className='flex flex-col items-center justify-center gap-8 h-full font-thin'>
+                                <span>Giỏ hàng của bạn đang trống</span>
+                                <Button secondary text='Bắt đầu mua sắm' className='px-12' />
+                            </div>
+                        ) : (
+                            <div className='flex flex-col gap-4 p-6'>
+                                {products.map((product) => (
+                                    <CartItem key={product.id} product={product} />
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                    <section className='relative px-6 py-4 border-t border-gray'>
+                        <Button
+                            text={
+                                <div className='flex items-center justify-center gap-3'>
+                                    <span className='text-sm font-semibold uppercase'>Thanh toán</span>
+                                    <span className='mb-1 w-1 h-1 bg-primary'></span>
+                                    <span className='flex gap-1'>
+                                        <span className='text-sm font-semibold uppercase'>
+                                            {new Intl.NumberFormat('vi-VN').format(
+                                                products.reduce((acc, curr) => acc + curr.price * curr.quantity, 0)
+                                            )}
+                                        </span>
+                                        <span className='text-sm font-semibol uppercase'>VND</span>
+                                    </span>
+                                </div>
+                            }
+                            secondary
+                            full
+                        />
+                    </section>
+                </div>
+            </SidebarModal>
             {/* End: Cart section */}
         </header>
     );

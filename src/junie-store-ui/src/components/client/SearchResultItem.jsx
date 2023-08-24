@@ -17,7 +17,7 @@ export default function SearchResultItem({ product, onClick }) {
                     {product.name}
                 </span>
                 <span className='font-thin'>
-                    {new Intl.NumberFormat('vi-VN').format(product.price)}
+                    <span>{new Intl.NumberFormat('vi-VN').format(product.price)}</span>
                     <sup className='pl-0.5 underline'>đ</sup>
                 </span>
             </div>
