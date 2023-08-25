@@ -92,7 +92,7 @@ export default function Header() {
     };
 
     return (
-        <header className='sticky z-50 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
+        <header className='sticky z-10 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
             <Container className='flex items-center justify-center py-4'>
                 {/* Start: Header's left section */}
                 <div className='xl:hidden flex-1 flex items-center'>
