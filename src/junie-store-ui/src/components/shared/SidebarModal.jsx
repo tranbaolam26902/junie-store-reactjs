@@ -14,7 +14,7 @@ export default function SidebarModal({ right, show, onHide, children, className 
     return (
         <AnimatePresence>
             {show && (
-                <section className={`fixed inset-0${className ? ' ' + className : ''}`}>
+                <section className={`fixed inset-0${className ? ' ' + className : ''} z-20`}>
                     <Fade className={`absolute inset-0 bg-black/30 cursor-pointer`} onClick={onHide} />
                     <Slide
                         right={right}

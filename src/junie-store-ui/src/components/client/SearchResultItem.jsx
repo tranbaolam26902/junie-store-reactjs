@@ -13,9 +13,11 @@ export default function SearchResultItem({ product, onClick }) {
         >
             <img src={product.image} alt={product.slug} className='w-24 rounded' />
             <div className='flex-1 flex flex-col gap-1'>
-                <span className='line-clamp-1 break-words'>{product.name}</span>
+                <span className='line-clamp-1 break-words' title={product.name}>
+                    {product.name}
+                </span>
                 <span className='font-thin'>
-                    {new Intl.NumberFormat('vi-VN').format(product.price)}
+                    <span>{new Intl.NumberFormat('vi-VN').format(product.price)}</span>
                     <sup className='pl-0.5 underline'>đ</sup>
                 </span>
             </div>
