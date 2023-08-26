@@ -13,7 +13,7 @@ using Store.Core.Queries;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class OrdersEndpoints
+public static class OrderEndpoints
 {
 	public static WebApplication MapOrdersEndpoint(
 		this WebApplication app)

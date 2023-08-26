@@ -9,12 +9,11 @@ using Store.WebAPI.Models;
 using Store.WebAPI.Models.ProductModel;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using Store.Core.Queries;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class ProductsEndpoints
+public static class ProductEndpoints
 {
 	public static WebApplication MapProductEndpoints(
 		this WebApplication app)

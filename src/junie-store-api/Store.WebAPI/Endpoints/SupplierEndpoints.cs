@@ -4,16 +4,13 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Store.Core.Collections;
 using Store.Core.Entities;
-using Store.Core.Queries;
 using Store.Services.Shops;
-using Store.WebAPI.Identities;
 using Store.WebAPI.Models;
-using Store.WebAPI.Models.ProductModel;
 using Store.WebAPI.Models.SupplierModel;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class SuppliersEndpoints
+public static class SupplierEndpoints
 {
 	public static WebApplication MapSupplierEndpoints(
 		this WebApplication app)
