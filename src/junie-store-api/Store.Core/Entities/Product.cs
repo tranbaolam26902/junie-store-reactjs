@@ -2,11 +2,18 @@
 
 namespace Store.Core.Entities;
 
+public enum ProductStatus
+{
+	None
+}
+
 public class Product : IEntity
 {
 	public Guid Id { get; set; }
 
 	public string Sku { get; set; }
+
+	public string UrlSlug { get; set; }
 
 	public string Name { get; set; }
 
@@ -15,8 +22,6 @@ public class Product : IEntity
 	public DateTime CreateDate { get; set; }
 
 	public string Description { get; set; }
-
-	public string UrlSlug { get; set; }
 
 	public double Price { get; set; }
 
@@ -29,6 +34,8 @@ public class Product : IEntity
 	public string Note { get; set; }
 
 	public bool Active { get; set; }
+
+	public ProductStatus Status { get; set; }
 
 	public Guid CategoryId { get; set; }
 
@@ -51,25 +58,4 @@ public class Product : IEntity
 	public IList<Feedback> Feedback { get; set; }
 
 	public IList<Picture> Pictures { get; set; }
-}
-
-public class Feedback
-{
-	public Guid Id { get; set; }
-
-	public Guid ProductId { get; set; }
-	
-	public string UserName { get; set; }
-
-	public DateTime PostDate { get; set; }
-
-	public string Content { get; set; }
-
-	public int Rate { get; set; }
-
-	// ======================================================
-	// Navigation properties
-	// ======================================================
-	
-	public virtual Product Product { get; set; }
 }
