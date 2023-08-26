@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Mapster;
 using Store.Core.Contracts;
-using Store.WebAPI.Models.ProductModel;
 using Store.WebAPI.Models;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +11,7 @@ using Store.WebAPI.Models.CategoryModel;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class CategoriesEndpoint
+public static class CategoryEndpoint
 {
 	public static WebApplication MapCategoriesEndpoint(
 		this WebApplication app)

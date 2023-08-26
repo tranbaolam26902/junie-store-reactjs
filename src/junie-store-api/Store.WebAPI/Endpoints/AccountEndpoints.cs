@@ -14,7 +14,7 @@ using Store.WebAPI.Models.UserModel;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class AccountsEndpoints
+public static class AccountEndpoints
 {
 	public static WebApplication MapAccountEndpoints(
 		this WebApplication app)
