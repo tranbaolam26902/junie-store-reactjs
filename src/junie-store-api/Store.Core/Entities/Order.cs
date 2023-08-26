@@ -36,7 +36,6 @@ public class Order : IEntity
 	public string Phone { get; set; } 
 
 	public string Note { get; set; }
-	
 
 	[NotMapped]
 	public double Total { get; set; }

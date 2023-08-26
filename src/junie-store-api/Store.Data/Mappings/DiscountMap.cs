@@ -39,5 +39,9 @@ public class DiscountMap : IEntityTypeConfiguration<Discount>
 		builder.Property(s => s.Active)
 			.IsRequired()
 			.HasDefaultValue(false);
+
+		builder.Property(s => s.ShowOnMenu)
+			.IsRequired()
+			.HasDefaultValue(false);
 	}
 }

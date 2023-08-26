@@ -10,6 +10,8 @@ public class Category
 
 	public string Description { get; set; }
 
+	public bool ShowOnMenu { get; set; }
+
 	// ======================================================
 	// Navigation properties
 	// ======================================================
