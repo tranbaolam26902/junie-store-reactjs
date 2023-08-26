@@ -17,4 +17,6 @@ public class SupplierDto
 	public string Phone { get; set; }
 
 	public bool IsDeleted { get; set; }
+
+	public int ProductCount { get; set; }
 }

@@ -4,6 +4,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Store.Core.Collections;
 using Store.Core.Entities;
+using Store.Core.Queries;
 using Store.Services.Shops;
 using Store.WebAPI.Models;
 using Store.WebAPI.Models.SupplierModel;
@@ -37,10 +38,19 @@ public static class SupplierEndpoints
 
 		#region PUT Method
 
+		builder.MapDelete("/toggleDelete/{supplierId:guid}", ToggleDeleteSupplierAsync)
+			.WithName("ToggleDeleteSupplierAsync")
+			.RequireAuthorization("RequireManagerRole")
+			.Produces<ApiResponse<SupplierDto>>();
+
+		#endregion
+
+		#region PUT Method
+
 		builder.MapPut("/{supplierId:guid}", UpdateSupplierAsync)
 			.WithName("UpdateSupplierAsync")
 			.RequireAuthorization("RequireManagerRole")
-			.Produces<ApiResponse<SupplierDto>>();
+			.Produces<ApiResponse>();
 
 		#endregion
 		return app;
@@ -54,9 +64,11 @@ public static class SupplierEndpoints
 	{
 		try
 		{
+			var condition = mapper.Map<SupplierQuery>(model);
+
 			var suppliers =
 				await repository.GetPagedSuppliersAsync(
-					model.Keyword,
+					condition,
 					model,
 					p => p.ProjectToType<SupplierDto>());
 
@@ -113,6 +125,30 @@ public static class SupplierEndpoints
 			await repository.AddOrUpdateSupplierAsync(supplier);
 
 			return Results.Ok(ApiResponse.Success(mapper.Map<SupplierDto>(supplier), HttpStatusCode.Created));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> ToggleDeleteSupplierAsync(
+		[FromRoute] Guid supplierId,
+		[FromServices] ISupplierRepository repository)
+	{
+		try
+		{
+			var oldPost = await repository.GetSupplierByIdAsync(supplierId);
+
+			if (oldPost == null)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound,
+					$"Supplier is not found with id: `{supplierId}`"));
+			}
+
+			await repository.ToggleDeleteSupplierAsync(supplierId);
+			return Results.Ok(ApiResponse.Success("Toggle supplier success"));
 		}
 		catch (Exception e)
 		{
