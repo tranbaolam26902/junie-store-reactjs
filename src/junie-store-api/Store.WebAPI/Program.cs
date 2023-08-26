@@ -30,7 +30,8 @@ var app = builder.Build();
 		.MapAccountEndpoints()
 		.MapCategoriesEndpoint()
 		.MapOrdersEndpoint()
-		.MapDashboardEndpoint();
+		.MapDashboardEndpoint()
+		.MapSupplierEndpoints();
 
 	app.Run();
 }
