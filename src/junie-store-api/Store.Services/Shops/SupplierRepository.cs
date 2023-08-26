@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Store.Core.Contracts;
 using Store.Core.Entities;
+using Store.Core.Queries;
 using Store.Data.Contexts;
 using Store.Services.Extensions;
 
@@ -13,15 +14,21 @@ public class SupplierRepository : ISupplierRepository
 	{
 		_dbContext = dbContext;
 	}
-	public async Task<IPagedList<T>> GetPagedSuppliersAsync<T>(string keyword, IPagingParams pagingParams, Func<IQueryable<Supplier>, IQueryable<T>> mapper)
+	public async Task<IPagedList<T>> GetPagedSuppliersAsync<T>(
+		ISupplierQuery condition
+		, IPagingParams pagingParams
+		, Func<IQueryable<Supplier>, IQueryable<T>> mapper)
 	{
 		var suppliers = _dbContext.Set<Supplier>()
-			.WhereIf(!string.IsNullOrWhiteSpace(keyword), s =>
-				s.Email.Contains(keyword) ||
-				s.Description.Contains(keyword) ||
-				s.Name.Contains(keyword) ||
-				s.Phone.Contains(keyword) ||
-				s.ContactName.Contains(keyword));
+			.Include(s => s.Products)
+			.WhereIf(!condition.IsDeleted, s => !s.IsDeleted)
+			.WhereIf(condition.IsDeleted, s => s.IsDeleted)
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s =>
+				s.Email.Contains(condition.Keyword) ||
+				s.Description.Contains(condition.Keyword) ||
+				s.Name.Contains(condition.Keyword) ||
+				s.Phone.Contains(condition.Keyword) ||
+				s.ContactName.Contains(condition.Keyword));
 
 		var projectedSuppliers = mapper(suppliers);
 
@@ -46,5 +53,12 @@ public class SupplierRepository : ISupplierRepository
 		}
 
 		await _dbContext.SaveChangesAsync(cancellation);
+	}
+
+	public async Task ToggleDeleteSupplierAsync(Guid supplierId, CancellationToken cancellationToken = default)
+	{ 
+		await _dbContext.Set<Supplier>()
+			.Where(s => s.Id == supplierId)
+			.ExecuteUpdateAsync(s => s.SetProperty(d => d.IsDeleted, d => !d.IsDeleted), cancellationToken);
 	}
 }
