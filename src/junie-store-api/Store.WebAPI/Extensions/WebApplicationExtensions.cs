@@ -57,6 +57,7 @@ public static class WebApplicationExtensions
 		builder.Services.AddScoped<IUserRepository, UserRepository>();
 		builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 		builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+		builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 		builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 
 
