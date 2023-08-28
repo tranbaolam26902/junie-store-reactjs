@@ -10,6 +10,8 @@ public interface ICollectionRepository
 	Task<Product> GetProductBySlug(string slug, CancellationToken cancellationToken = default);
 	Task<bool> IsProductSlugExistedAsync(Guid productId, string slug, CancellationToken cancellationToken = default);
 
+	Task<bool> IsProductExistedAsync(Guid productId, string name, CancellationToken cancellationToken = default);
+
 	Task<Product> AddOrUpdateProductAsync(Product product, CancellationToken cancellationToken = default);
 
 	Task<IPagedList<Product>> GetPagedProductsAsync(IProductQuery productQuery, IPagingParams pagingParams,

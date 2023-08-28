@@ -1,6 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+﻿using Microsoft.EntityFrameworkCore;
 using Store.Core.Contracts;
 using Store.Core.Entities;
 using Store.Core.Queries;
@@ -41,14 +39,23 @@ public class CollectionRepository : ICollectionRepository
 			.AnyAsync(s => s.Id != productId && s.UrlSlug == slug, cancellationToken);
 	}
 
+	public async Task<bool> IsProductExistedAsync(Guid productId, string name, CancellationToken cancellationToken = default)
+	{
+		var slug = FriendlyUrls.GenerateSlug(name);
+		return await _dbContext.Set<Product>()
+			.AnyAsync(s => s.Id != productId && s.UrlSlug == slug, cancellationToken);
+	}
+
 	public async Task<Product> AddOrUpdateProductAsync(Product product, CancellationToken cancellationToken = default)
 	{
+		product.UrlSlug = FriendlyUrls.GenerateSlug(product.Name);
 		if (_dbContext.Set<Product>().Any(s => s.Id == product.Id))
 		{
 			_dbContext.Entry(product).State = EntityState.Modified;
 		}
 		else
 		{
+			product.Sku = "SP-" + Guid.NewGuid().ToString().Split('-')[0].ToUpper();
 			_dbContext.Products.Add(product);
 		}
 
