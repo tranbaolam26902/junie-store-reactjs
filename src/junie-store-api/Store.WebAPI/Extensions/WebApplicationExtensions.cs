@@ -54,6 +54,7 @@ public static class WebApplicationExtensions
 		builder.Services.AddScoped<IMediaManager, LocalFileSystemMediaManager>();
 		builder.Services.AddScoped<IDataSeeder, DataSeeder>();
 		builder.Services.AddScoped<ICollectionRepository, CollectionRepository>();
+		builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 		builder.Services.AddScoped<IUserRepository, UserRepository>();
 		builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 		builder.Services.AddScoped<IOrderRepository, OrderRepository>();
