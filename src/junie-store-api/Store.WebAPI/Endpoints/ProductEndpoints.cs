@@ -10,6 +10,7 @@ using Store.WebAPI.Models.ProductModel;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Store.Core.Queries;
+using Store.WebAPI.Identities;
 
 namespace Store.WebAPI.Endpoints;
 
@@ -42,6 +43,7 @@ public static class ProductEndpoints
 
 		routeGroupBuilder.MapPost("/", AddProduct)
 			.WithName("AddProduct")
+			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<ProductDto>>()
 			.Produces(201)
 			.Produces(400)
@@ -49,6 +51,7 @@ public static class ProductEndpoints
 
 		routeGroupBuilder.MapPut("/{id:guid}", UpdateProduct)
 			.WithName("UpdateProduct")
+			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<ProductDto>>()
 			.Produces(201)
 			.Produces(400)
@@ -150,27 +153,37 @@ public static class ProductEndpoints
 	}
 
 	private static async Task<IResult> AddProduct(
+		HttpContext context,
 		ProductEditModel model,
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		if (await repository.IsProductSlugExistedAsync(Guid.Empty, model.UrlSlug))
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.Conflict,
-				$"Slug {model.UrlSlug} đã được sử dụng"));
-		}
+			var user = IdentityManager.GetCurrentUser(context);
+			if (await repository.IsProductExistedAsync(Guid.Empty, model.Name))
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.Conflict,
+					$"Item already exists with name: `{model.Name}`"));
+			}
 
-		var product = mapper.Map<Product>(model);
+			var product = mapper.Map<Product>(model);
+			
+			product.CreateDate = DateTime.Now;
+			product.UserId = user.Id;
 
-		product.Id = Guid.NewGuid();
-		product.CreateDate = DateTime.Now;
-
-		await repository.AddOrUpdateProductAsync(product);
-		return Results.Ok(ApiResponse.Success(
+			await repository.AddOrUpdateProductAsync(product);
+			
+			return Results.Ok(ApiResponse.Success(
 			mapper.Map<ProductDto>(product), HttpStatusCode.Created));
+			
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
-
 
 	private static async Task<IResult> UpdateProduct(
 		[FromRoute] Guid id,
@@ -178,11 +191,11 @@ public static class ProductEndpoints
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		if (await repository.IsProductSlugExistedAsync(id, model.UrlSlug))
+		if (await repository.IsProductExistedAsync(Guid.Empty, model.Name))
 		{
 			return Results.Ok(ApiResponse.Fail(
 				HttpStatusCode.Conflict,
-				$"Slug {model.UrlSlug} đã được sử dụng"));
+				$"Item already exists with name: `{model.Name}`"));
 		}
 
 		var product = await repository.GetProductByIdAsync(id);
