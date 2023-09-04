@@ -185,7 +185,6 @@ public static class ProductEndpoints
 		}
 	}
 
-
 	private static async Task<IResult> UpdateProduct(
 		[FromRoute] Guid id,
 		ProductEditModel model,
