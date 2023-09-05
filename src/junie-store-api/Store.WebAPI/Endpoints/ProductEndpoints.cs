@@ -29,7 +29,7 @@ public static class ProductEndpoints
 			.WithName("GetProductsTopSale")
 			.Produces<ApiResponse<IList<ProductDto>>>();
 
-		routeGroupBuilder.MapGet("/Related/{slug:regex(^[a-z0-9_-]+$)}", GetRelatedProducts)
+		routeGroupBuilder.MapGet("/Related/{slug:regex(^[a-z0-9_-]+$)}/{num:int}", GetRelatedProducts)
 			.WithName("GetRelatedProducts")
 			.Produces<ApiResponse<IList<ProductDto>>>();
 
@@ -139,17 +139,23 @@ public static class ProductEndpoints
 
 	private static async Task<IResult> GetRelatedProducts(
 		[FromRoute] string slug,
+		[FromRoute] int num,
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
+		try
+		{
+			var products =
+				await repository.GetRelatedProductsAsync(slug, num);
 
-		var products =
-			await repository.GetRelatedProductsAsync(slug);
+			var productsDto = mapper.Map<IList<ProductDto>>(products);
 
-		var productsDto = mapper.Map<IList<ProductDto>>(products);
-
-
-		return Results.Ok(ApiResponse.Success(productsDto));
+			return Results.Ok(ApiResponse.Success(productsDto));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> AddProduct(
@@ -219,7 +225,7 @@ public static class ProductEndpoints
 		{
 			return Results.Ok(ApiResponse.Fail(
 				HttpStatusCode.NotFound,
-				$"Không tìm thấy sản phẩm với id: `{id}`"));
+				$"Product with ID: `{id}` not found."));
 		}
 
 		var pictures = await repository.GetImageUrlsAsync(id);
@@ -240,14 +246,14 @@ public static class ProductEndpoints
 			if (string.IsNullOrWhiteSpace(imageUrl))
 			{
 				return Results.Ok(ApiResponse.Fail(
-					HttpStatusCode.BadRequest,
-					"Không lưu được tệp"));
+					HttpStatusCode.InternalServerError,
+					"Unable to save the file."));
 			}
 			await repository.SetImageUrlAsync(id, imageUrl);
 
 		}
 
-		return Results.Ok(ApiResponse.Success("Lưu thành công"));
+		return Results.Ok(ApiResponse.Success("Saved successfully"));
 	}
 	private static async Task<IResult> DeleteProduct(
 		Guid id,
@@ -259,7 +265,7 @@ public static class ProductEndpoints
 		{
 			return Results.Ok(ApiResponse.Fail(
 				HttpStatusCode.NotFound,
-				$"Không tìm thấy sản phẩm với id: `{id}`"));
+				$"Product with ID: `{id}` not found."));
 		}
 
 		var pictures = await repository.GetImageUrlsAsync(id);
@@ -272,7 +278,7 @@ public static class ProductEndpoints
 		await repository.DeleteImageUrlsAsync(id);
 
 		return await repository.DeleteProductAsync(id)
-			? Results.Ok(ApiResponse.Success("Xóa sản phẩm thành công", HttpStatusCode.NoContent))
-			: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Không tìm thấy sản phẩm với id: `{id}`"));
+			? Results.Ok(ApiResponse.Success("Product deleted successfully.", HttpStatusCode.NoContent))
+			: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Product with ID: `{id}` not found."));
 	}
 }

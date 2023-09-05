@@ -16,7 +16,6 @@ public class CollectionRepository : ICollectionRepository
 		_dbContext = context;
 	}
 
-
 	public async Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
@@ -82,21 +81,18 @@ public class CollectionRepository : ICollectionRepository
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task<IList<Product>> GetRelatedProductsAsync(string slug, CancellationToken cancellationToken = default)
+	public async Task<IList<Product>> GetRelatedProductsAsync(string slug, int num = 10, CancellationToken cancellationToken = default)
 	{
 		var product = await GetProductBySlug(slug, cancellationToken);
 
 		return await _dbContext.Set<Product>()
-			.Include(s => s.Details)
 			.Include(s => s.Category)
 			.Include(s => s.Pictures)
 			.Where(s => s.Id != product.Id && product.CategoryId == s.CategoryId)
 			.OrderBy(s => Guid.NewGuid())
-			.Take(8)
+			.Take(num)
 			.ToListAsync(cancellationToken);
 	}
-
-	
 
 	public async Task<IPagedList<T>> GetPagedProductsAsync<T>(IProductQuery condition, IPagingParams pagingParams, Func<IQueryable<Product>, IQueryable<T>> mapper)
 	{

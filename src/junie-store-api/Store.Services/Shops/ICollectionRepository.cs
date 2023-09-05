@@ -21,7 +21,7 @@ public interface ICollectionRepository
 
 	Task<IList<Product>> GetTopSaleAsync(CancellationToken cancellationToken = default);
 	
-	Task<IList<Product>> GetRelatedProductsAsync(string slug, CancellationToken cancellationToken = default);
+	Task<IList<Product>> GetRelatedProductsAsync(string slug, int num = 10, CancellationToken cancellationToken = default);
 
 	Task<IPagedList<T>> GetPagedProductsAsync<T>(
 		IProductQuery condition,
