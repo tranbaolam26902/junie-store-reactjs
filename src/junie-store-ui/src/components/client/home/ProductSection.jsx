@@ -3,8 +3,7 @@ import { images } from '@assets/images';
 
 // Components
 import { Button, Container } from '@components/shared';
-import { ProductItem } from '@components/client';
-import Title from './Title';
+import { ProductItem, Title } from '@components/client';
 
 // Temp products
 const products = [

@@ -25,7 +25,7 @@ export default function HeroSection() {
                 </span>
                 <div className='inline-grid grid-cols-2 gap-6'>
                     <Button accent text='Bán chạy' />
-                    <Button secondary text='Bán chạy' />
+                    <Button secondary text='Sale off' />
                 </div>
             </Container>
         </section>

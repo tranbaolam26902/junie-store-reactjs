@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom';
 import { images } from '@assets/images';
 
 // Components
-import { Container } from '@components/shared';
-import Title from './Title';
+import { Title } from '@components/client';
 
 // Temp categories
 const categories = [
