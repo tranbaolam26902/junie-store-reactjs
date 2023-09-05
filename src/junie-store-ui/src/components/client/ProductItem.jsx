@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function ProductItem({ product }) {
     return (
-        <Link key={product.id} to={`/products/${product.slug}`} className='flex flex-col gap-4 group'>
+        <Link key={product.id} to={`/products/${product.slug}`} className='flex flex-col gap-4 group h-full'>
             <div className='flex-1 relative overflow-hidden'>
                 <img
                     src={product.image}
