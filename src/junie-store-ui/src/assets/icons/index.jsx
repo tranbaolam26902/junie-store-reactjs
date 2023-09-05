@@ -3,6 +3,7 @@ import caretDownIcon from './caret-down.svg';
 import cartIcon from './cart.svg';
 import chatIcon from './chat.svg';
 import closeIcon from './close.svg';
+import deliveryAltIcon from './delivery-alt.svg';
 import deliveryIcon from './delivery.svg';
 import facebookIcon from './facebook.svg';
 import filterIcon from './filter.svg';
@@ -13,8 +14,12 @@ import leftArrowIcon from './left-arrow.svg';
 import minusIcon from './minus.svg';
 import plusIcon from './plus.svg';
 import rightArrowIcon from './right-arrow.svg';
+import safetyIcon from './safety.svg';
 import searchIcon from './search.svg';
+import starIcon from './star.svg';
+import thumbUpIcon from './thumb-up.svg';
 import tiktokIcon from './tiktok.svg';
+import tripleStarIcon from './triple-star.svg';
 import userIcon from './user.svg';
 
 export const icons = {
@@ -23,6 +28,7 @@ export const icons = {
     cart: cartIcon,
     chat: chatIcon,
     close: closeIcon,
+    deliveryAlt: deliveryAltIcon,
     delivery: deliveryIcon,
     facebook: facebookIcon,
     filter: filterIcon,
@@ -33,7 +39,11 @@ export const icons = {
     minus: minusIcon,
     plus: plusIcon,
     rightArrow: rightArrowIcon,
+    safety: safetyIcon,
     search: searchIcon,
+    star: starIcon,
+    thumbUp: thumbUpIcon,
     tiktok: tiktokIcon,
+    tripleStar: tripleStarIcon,
     user: userIcon
 };

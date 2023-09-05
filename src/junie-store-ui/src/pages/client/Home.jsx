@@ -1,11 +1,11 @@
 // Components
+import { ServiceSection } from '@components/client';
 import {
     BlogSection,
     CategorySection,
     HomeHeroSection,
     NewsLetterSection,
-    ProductSection,
-    ServiceSection
+    ProductSection
 } from '@components/client/home';
 
 export default function Home() {

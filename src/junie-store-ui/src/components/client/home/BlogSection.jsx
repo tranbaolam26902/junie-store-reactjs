@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { images } from '@assets/images';
 
 // Components
-import Title from './Title';
+import { Title } from '@components/client';
 
 // Temp blogs
 const blogs = [
