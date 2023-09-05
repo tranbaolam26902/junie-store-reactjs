@@ -1,7 +1,6 @@
 ﻿using Store.Core.Entities;
 using Store.Core.Identity;
 using Store.Data.Contexts;
-using System.Collections.Generic;
 
 namespace Store.Data.Seeder;
 
@@ -54,7 +53,6 @@ public class DataSeeder : IDataSeeder
 		{
 			new ()
 			{
-				Id = Guid.NewGuid(),
 				Name = "Admin",
 				Email = "Admin@gmail.com",
 				Address = "DLU",
@@ -81,10 +79,10 @@ public class DataSeeder : IDataSeeder
 	{
 		var categories = new List<Category>()
 		{
-			new() {Id = Guid.NewGuid(), Name = "Light novel", Description = "Light novel", UrlSlug = "light-novel"},
-			new() {Id = Guid.NewGuid(), Name = "Manga", Description = "Manga", UrlSlug = "manga"},
-			new() {Id = Guid.NewGuid(), Name = "Novel", Description = "Novel", UrlSlug = "novel"},
-			new() {Id = Guid.NewGuid(), Name = "Comic", Description = "Comic", UrlSlug = "comic"},
+			new() { Name = "Bông tai", Description = "Bông tai", UrlSlug = "bong-tai"},
+			new() { Name = "Dây truyền", Description = "Dây truyền", UrlSlug = "day-truyen"},
+			new() { Name = "Vòng tay", Description = "Vòng tay", UrlSlug = "vong-tay"},
+			new() { Name = "Nhẫn", Description = "Nhẫn", UrlSlug = "nhan"},
 		};
 
 		_dbContext.Categories.AddRange(categories);
@@ -113,12 +111,11 @@ public class DataSeeder : IDataSeeder
 		{
 			new()
 			{
-				Id = Guid.NewGuid(),
 				Address = "DLU",
 				ContactName = "DLU",
 				Description = "",
 				Email = "demo@gmail.com",
-				Name = "asd",
+				Name = "DLU",
 				Phone = "",
 				IsDeleted = false,
 			}
@@ -134,35 +131,31 @@ public class DataSeeder : IDataSeeder
 	{
 		var product = new List<Product>()
 		{
-			new ()
+			new()
 			{
-				Id = Guid.NewGuid(),
 				Quantity = 10,
-				Name = "Subaru Và Vì Tinh Tú Thứ Bảy – Tập 1",
+				Name = "Nhẫn Charlotte",
 				CreateDate = DateTime.Now,
-				CategoryId = categories[0].Id,
-				ShortIntro = "Một Kaze hòa đồng, tươi sáng và một Moto giản đơn, nghiêm túc lại là bạn thân từ nhỏ.",
-				Description = "Tại thế giới game nổi tiếng “Union”, có một nhóm người chơi đã trở thành huyền thoại. " +
-				              "Tên của họ là Subaru. Họ là nhóm học sinh tiểu học đã thân thiết với nhau từ bé, cùng với Sense của mỗi người, " +
-				              "họ đã chạm đến đỉnh cao nhất của game. Thế nhưng, sự kiện chết người đó đã khiến “Union” chấm dứt hoạt động." +
-				              " Nhóm bạn thân thiết cũng chia xa. 6 năm sau, Haruto giờ đã là học sinh trung học phổ thông. " +
-				              "Cậu lần nữa đăng nhập vào thế giới game mới là “ReUnion”, rồi có cuộc hội ngộ với thiếu nữ nọ. " +
-				              "Cô ấy là Asahi – đồng đội của cậu khi còn ở Subaru, là bạn thanh mai trúc mã, và cũng là người đã chết sáu năm trước." +
-				              " Liệu Asahi là hồn ma điện tử, hay thứ gì khác…? Giao giữa hiện thực và thế giới trong game, " +
-				              "tiểu thuyết thanh xuân đầy đột phá!",
+				CategoryId = categories[3].Id,
+				ShortIntro =
+					"Tinh tế, duyên dáng những vẫn sang trọng là những điều mà chúng ta sẽ cảm nhận được khi đeo trên mình các trang sức làm từ ngọc trai." +
+					" Ẩn chứa trong mỗi viên ngọc trai đều là một vẻ đẹp đầy sự thu hút, mà càng nhìn lại càng thấy yêu hơn.",
+				Description = "Lần đầu tiên cho ra mắt sản phẩm về nhẫn, " +
+				              "Junie ưu ái mang tới sự kết hợp từ ngọc trai nước ngọt nhỏ nhắn nhưng không kém phần nổi bật và những viên đá Cubic Zirconia lấp lánh kiêu sa." +
+				              "\r\n\r\nMột chiếc nhẫn nhỏ xinh mà bạn có thể diện vào bất cứ lúc nào, bất cứ ở nơi đâu và bất cứ khi bạn muốn lựa chọn vẻ xinh đẹp riêng phù hợp với chính mình.",
 				Active = true,
 				Discount = 10,
 				Price = 100000,
-				UrlSlug = "subaru-va-vi-tinh-tu-thu-bay-tap-1",
+				UrlSlug = "nhan-charlotte",
 				Pictures = new List<Picture>()
 				{
-					new ()
+					new()
 					{
 						Path = "images/default.png",
 						Active = true
 					}
 				},
-				Sku = "",
+				Sku = "R-CHARLOTTE",
 				Note = "",
 				User = users[0],
 				Supplier = suppliers[0]
@@ -173,6 +166,4 @@ public class DataSeeder : IDataSeeder
 		_dbContext.SaveChanges();
 		return product;
 	}
-
-
 }

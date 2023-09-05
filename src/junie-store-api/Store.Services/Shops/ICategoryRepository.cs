@@ -15,7 +15,7 @@ public interface ICategoryRepository
 
 	Task<Category> AddOrUpdateCategoryAsync(Category category, CancellationToken cancellationToken = default);
 
-	Task<bool> DeleteCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default);
+	Task<bool> ToggleDeleteCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default);
 
 	Task<bool> IsCategorySlugExistedAsync(Guid id, string slug, CancellationToken cancellationToken = default);
 
