@@ -72,10 +72,11 @@ public class CategoryRepository : ICategoryRepository
 		return category;
 	}
 
-	public async Task<bool> DeleteCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default)
+	public async Task<bool> ToggleDeleteCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Category>()
 			.Where(x => x.Id == categoryId)
-			.ExecuteDeleteAsync(cancellationToken) > 0;
+			.ExecuteUpdateAsync(s =>
+				s.SetProperty(c => c.IsDeleted, c => !c.IsDeleted), cancellationToken) > 0;
 	}
 }
