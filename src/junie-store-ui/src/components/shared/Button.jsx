@@ -6,6 +6,7 @@ export default function Button({
     submit,
     accent,
     secondary,
+    outline,
     disabled,
     full,
     text,
@@ -22,6 +23,7 @@ export default function Button({
     const styles = {
         accent: ' text-black bg-accent',
         secondary: ' text-primary bg-black',
+        outline: ' text-black border border-1 border-black',
         disabled: ' text-black bg-gray cursor-default hover:opacity-100',
         full: ' w-full'
     };
@@ -47,9 +49,9 @@ export default function Button({
         <Component
             className={`px-5 py-4 text-xs font-semibold text-center uppercase tracking-widest rounded-sm select-none transition duration-200 hover:opacity-80${
                 accent ? styles.accent : ''
-            }${secondary ? styles.secondary : ''}${disabled ? styles.disabled : ''}${full ? styles.full : ''}${
-                className ? ' ' + className : ''
-            }`}
+            }${secondary ? styles.secondary : ''}${outline ? styles.outline : ''}${disabled ? styles.disabled : ''}${
+                full ? styles.full : ''
+            }${className ? ' ' + className : ''}`}
             {...props}
         >
             {text}
