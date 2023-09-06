@@ -6,6 +6,8 @@ import closeIcon from './close.svg';
 import deliveryAltIcon from './delivery-alt.svg';
 import deliveryIcon from './delivery.svg';
 import editIcon from './edit.svg';
+import eyeSlashIcon from './eye-slash.svg';
+import eyeIcon from './eye.svg';
 import facebookIcon from './facebook.svg';
 import filterIcon from './filter.svg';
 import giftIcon from './gift.svg';
@@ -32,6 +34,8 @@ export const icons = {
     deliveryAlt: deliveryAltIcon,
     delivery: deliveryIcon,
     edit: editIcon,
+    eyeSlash: eyeSlashIcon,
+    eye: eyeIcon,
     facebook: facebookIcon,
     filter: filterIcon,
     gift: giftIcon,
