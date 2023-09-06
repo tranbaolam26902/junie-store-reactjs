@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 
 // Components
-import { Button, Container } from '@components/shared';
+import { Button, Container, Input } from '@components/shared';
 import { Underline } from '@components/shared/animations';
 
 export default function SignUp() {
@@ -17,56 +17,21 @@ export default function SignUp() {
             <form className='flex flex-col gap-4' onSubmit={handleLogin}>
                 <span className='text-2xl font-semibold uppercase'>Đăng ký</span>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor='username' className='flex gap-1 w-fit cursor-pointer'>
-                        <span>Tên đăng nhập</span>
-                        <span className='italic text-secondary/50'>(bắt buộc)</span>
-                    </label>
-                    <input
-                        id='username'
-                        type='text'
-                        className='flex-1 px-4 py-3 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                        placeholder='Nhập tên đăng nhập'
-                        required
-                    />
+                    <Input label='Tên đăng nhập' id='username' type='text' placeholder='Nhập tên đăng nhập' />
                 </div>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor='password' className='flex gap-1 w-fit cursor-pointer'>
-                        <span>Mật khẩu</span>
-                        <span className='italic text-secondary/50'>(bắt buộc)</span>
-                    </label>
-                    <input
-                        id='password'
-                        type='password'
-                        className='flex-1 px-4 py-3 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                        placeholder='Nhập mật khẩu'
-                        required
-                    />
+                    <Input label='Mật khẩu' id='password' type='password' placeholder='Nhập mật khẩu' />
                 </div>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor='confirm-password' className='flex gap-1 w-fit cursor-pointer'>
-                        <span>Xác nhận mật khẩu</span>
-                        <span className='italic text-secondary/50'>(bắt buộc)</span>
-                    </label>
-                    <input
+                    <Input
+                        label='Xác nhận mật khẩu'
                         id='confirm-password'
                         type='password'
-                        className='flex-1 px-4 py-3 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
                         placeholder='Xác nhận mật khẩu'
-                        required
                     />
                 </div>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor='email' className='flex gap-1 w-fit cursor-pointer'>
-                        <span>Email</span>
-                        <span className='italic text-secondary/50'>(bắt buộc)</span>
-                    </label>
-                    <input
-                        id='email'
-                        type='email'
-                        className='flex-1 px-4 py-3 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                        placeholder='Nhập email'
-                        required
-                    />
+                    <Input label='Email' id='email' type='email' placeholder='Nhập email' />
                 </div>
                 <Button submit secondary full text='Đăng ký' />
                 <div className='flex items-center justify-end gap-1'>

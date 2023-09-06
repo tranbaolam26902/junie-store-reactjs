@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 
 // Components
-import { Button, Container } from '@components/shared';
+import { Button, Container, Input } from '@components/shared';
 import { Underline } from '@components/shared/animations';
 
 export default function Login() {
@@ -17,28 +17,10 @@ export default function Login() {
             <form className='flex flex-col gap-4' onSubmit={handleLogin}>
                 <span className='text-2xl font-semibold uppercase'>Đăng nhập</span>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor='username' className='w-fit cursor-pointer'>
-                        Tên đăng nhập
-                    </label>
-                    <input
-                        id='username'
-                        type='text'
-                        className='flex-1 px-4 py-3 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                        placeholder='Nhập tên đăng nhập'
-                        required
-                    />
+                    <Input label='Tên đăng nhập' id='username' placeholder='Nhập tên đăng nhập' />
                 </div>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor='password' className='w-fit cursor-pointer'>
-                        Mật khẩu
-                    </label>
-                    <input
-                        id='password'
-                        type='password'
-                        className='flex-1 px-4 py-3 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                        placeholder='Nhập mật khẩu'
-                        required
-                    />
+                    <Input id='password' label='Mật khẩu' type='password' placeholder='Nhập mật khẩu' />
                 </div>
                 <Button submit secondary full text='Đăng nhập' />
                 <div className='flex items-center justify-between'>
