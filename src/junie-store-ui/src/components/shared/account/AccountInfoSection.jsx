@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { icons } from '@assets/icons';
 
 // Components
-import Button from '@components/shared/Button';
+import { Button, Input } from '@components/shared';
 
 export default function AccountInfoSection() {
     // States
@@ -41,7 +41,7 @@ export default function AccountInfoSection() {
     };
 
     return (
-        <section className='flex flex-col gap-4'>
+        <section className='flex flex-col gap-2'>
             {/* Start: Header section */}
             <div className='flex items-center gap-2'>
                 <img src={icons.user} alt='user-icon' className='w-4' />
@@ -51,31 +51,30 @@ export default function AccountInfoSection() {
 
             <div className='flex flex-col gap-2 p-8 bg-primary rounded-lg shadow-md'>
                 {/* Start: Name section */}
-                <div className='flex flex-col'>
-                    <span className='font-thin text-secondary/80'>Tên</span>
-                    <div className='flex items-center gap-4'>
-                        <div className='relative flex-1'>
-                            <input
-                                ref={nameRef}
-                                type='text'
-                                defaultValue={'Campbells'}
-                                tabIndex={-1}
-                                title={'Campbells'}
-                                className={`w-full truncate transition duration-200${
-                                    isEditName
-                                        ? ' px-4 py-2 bg-primary rounded-sm outline outline-2 -outline-offset-2 outline-gray focus:outline-black'
-                                        : ''
-                                }`}
-                            />
-                            {!isEditName && <span className='absolute inset-0'></span>}
+                {isEditName ? (
+                    <Input
+                        ref={nameRef}
+                        label='Tên'
+                        defaultValue={'Campbells'}
+                        tabIndex={-1}
+                        title={'Campbells'}
+                        autoFocus
+                    />
+                ) : (
+                    <div className='flex flex-col'>
+                        <span className='font-thin text-secondary/80'>Tên</span>
+                        <div className='flex items-center gap-4'>
+                            <div className='flex-1'>
+                                <span>Campbells</span>
+                            </div>
+                            {!isEditName && !isEditPassword && (
+                                <button type='button' title='Đổi tên' onClick={handleEditName}>
+                                    <img src={icons.edit} alt='edit-icon' className='w-4' />
+                                </button>
+                            )}
                         </div>
-                        {!isEditName && !isEditPassword && (
-                            <button type='button' title='Đổi tên' onClick={handleEditName}>
-                                <img src={icons.edit} alt='edit-icon' className='w-4' />
-                            </button>
-                        )}
                     </div>
-                </div>
+                )}
                 {/* End: Name section */}
 
                 {/* Start: Password section */}
@@ -94,37 +93,29 @@ export default function AccountInfoSection() {
                 ) : (
                     <div className='flex flex-col gap-4'>
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor='current-password' className='font-thin text-secondary/80 cursor-pointer'>
-                                Mật khẩu hiện tại
-                            </label>
-                            <input
+                            <Input
                                 ref={currentPasswordRef}
+                                label='Mật khẩu hiện tại'
                                 id='current-password'
                                 type='password'
-                                className='px-4 py-2 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
                                 autoFocus
                             />
                         </div>
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor='new-password' className='font-thin text-secondary/80 cursor-pointer'>
-                                Mật khẩu mới
-                            </label>
-                            <input
+                            <Input
                                 ref={newPasswordRef}
+                                label='Mật khẩu mới'
                                 id='new-password'
                                 type='password'
                                 className='px-4 py-2 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
                             />
                         </div>
                         <div className='flex flex-col gap-1'>
-                            <label htmlFor='confirm-password' className='font-thin text-secondary/80 cursor-pointer'>
-                                Xác nhận mật khẩu mới
-                            </label>
-                            <input
+                            <Input
                                 ref={confirmPasswordRef}
+                                label='Xác nhận mật khẩu mới'
                                 id='confirm-password'
                                 type='password'
-                                className='px-4 py-2 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
                             />
                         </div>
                     </div>

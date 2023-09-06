@@ -1,9 +1,9 @@
 // Components
-import Button from '@components/shared/Button';
+import { Button } from '@components/shared';
 
 export default function OrderSection() {
     return (
-        <section className='flex flex-col gap-4'>
+        <section className='flex flex-col gap-2'>
             <div className='flex items-center justify-between'>
                 <span className='font-semibold'>Đơn hàng</span>
             </div>

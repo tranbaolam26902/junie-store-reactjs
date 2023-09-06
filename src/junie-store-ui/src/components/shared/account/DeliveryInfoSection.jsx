@@ -3,7 +3,7 @@ import { icons } from '@assets/icons';
 
 export default function DeliveryInfoSection() {
     return (
-        <section className='flex flex-col gap-4'>
+        <section className='flex flex-col gap-2'>
             <div className='flex items-center justify-between'>
                 <span className='font-semibold'>Địa chỉ giao hàng</span>
                 <button type='button' className='flex items-center gap-1'>

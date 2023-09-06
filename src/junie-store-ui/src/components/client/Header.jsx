@@ -236,6 +236,7 @@ export default function Header() {
                     {products.length > 0 && (
                         <section className='relative px-6 py-4 border-t border-gray'>
                             <Button
+                                to='/checkout'
                                 text={
                                     <div className='flex items-center justify-center gap-3'>
                                         <span className='text-sm font-semibold uppercase'>Thanh toán</span>
@@ -252,6 +253,7 @@ export default function Header() {
                                 }
                                 secondary
                                 full
+                                onClick={handleHideCart}
                             />
                         </section>
                     )}
