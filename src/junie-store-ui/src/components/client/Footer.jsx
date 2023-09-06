@@ -157,7 +157,7 @@ export default function Footer() {
                                 type='button'
                                 className='flex items-center justify-center p-2 w-14 aspect-square transition duration-200 hover:bg-gray'
                             >
-                                <img src={icons.tiktok} alt='titkok-icon' className='w-[0.875rem]' />
+                                <img src={icons.tiktok} alt='titkok-icon' className='w-3.5' />
                             </a>
                         </div>
                     </div>
