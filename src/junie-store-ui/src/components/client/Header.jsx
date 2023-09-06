@@ -124,10 +124,10 @@ export default function Header() {
                             <span>Tìm kiếm</span>
                             <Underline />
                         </button>
-                        <button type='button' className='relative group'>
+                        <Link to='/account' type='button' className='relative group'>
                             <span>Tài khoản</span>
                             <Underline />
-                        </button>
+                        </Link>
                     </div>
                     <button type='button' className='relative -m-2 p-2' onClick={handleShowCart}>
                         <img src={icons.cart} alt='cart-icon' className='w-[1.125rem]' />
@@ -158,6 +158,7 @@ export default function Header() {
                         ))}
                     </nav>
                     <Link
+                        to='/account'
                         className='flex items-center gap-4 -mb-4 -mx-6 px-6 py-4 border border-t border-gray'
                         onClick={handleHideMobileNavbar}
                     >
