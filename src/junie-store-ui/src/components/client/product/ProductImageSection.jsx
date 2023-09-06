@@ -98,7 +98,7 @@ export default function ProductImageSection() {
                     type='button'
                     disabled={prevBtnDisabled}
                     onClick={onPrevButtonClick}
-                    className={`absolute inset-y-0 left-0 hidden lg:flex items-center justify-center w-16${
+                    className={`absolute inset-y-0 left-0 hidden lg:flex items-center justify-center w-16 transition duration-200${
                         prevBtnDisabled ? ' opacity-30' : ''
                     }`}
                 >
@@ -108,7 +108,7 @@ export default function ProductImageSection() {
                     type='button'
                     disabled={nextBtnDisabled}
                     onClick={onNextButtonClick}
-                    className={`absolute inset-y-0 right-0 hidden lg:flex items-center justify-center w-16${
+                    className={`absolute inset-y-0 right-0 hidden lg:flex items-center justify-center w-16 transition duration-200${
                         nextBtnDisabled ? ' opacity-30' : ''
                     }`}
                 >
