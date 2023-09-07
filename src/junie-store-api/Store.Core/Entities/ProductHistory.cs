@@ -8,9 +8,7 @@ public enum ProductHistoryAction
 	None,
 	Create,
 	Delete,
-	UpdateFull,
-	UpdatePrice,
-	UpdateQuantity
+	Update
 }
 
 public class ProductHistory : IEntity
