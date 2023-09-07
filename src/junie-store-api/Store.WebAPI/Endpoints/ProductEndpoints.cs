@@ -72,9 +72,9 @@ public static class ProductEndpoints
 	}
 
 	private static async Task<IResult> GetProductById(
-		Guid id,
-		ICollectionRepository repository,
-		IMapper mapper)
+		[FromRoute] Guid id,
+		[FromServices] ICollectionRepository repository,
+		[FromServices] IMapper mapper)
 	{
 		var product = await repository.GetProductByIdAsync(id);
 
@@ -177,10 +177,10 @@ public static class ProductEndpoints
 			var product = mapper.Map<Product>(model);
 			
 			product.CreateDate = DateTime.Now;
-			product.UserId = user.Id;
+			product.Category = new();
 
-			await repository.AddOrUpdateProductAsync(product);
-			
+			await repository.AddOrUpdateProductAsync(product, user.Id);
+
 			return Results.Ok(ApiResponse.Success(
 			mapper.Map<ProductDto>(product), HttpStatusCode.Created));
 			
@@ -193,10 +193,12 @@ public static class ProductEndpoints
 
 	private static async Task<IResult> UpdateProduct(
 		[FromRoute] Guid id,
+		HttpContext context,
 		ProductEditModel model,
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
+		var user = IdentityManager.GetCurrentUser(context);
 		if (await repository.IsProductExistedAsync(Guid.Empty, model.Name))
 		{
 			return Results.Ok(ApiResponse.Fail(
@@ -207,7 +209,7 @@ public static class ProductEndpoints
 		var product = await repository.GetProductByIdAsync(id);
 		mapper.Map(model, product);
 
-		await repository.AddOrUpdateProductAsync(product);
+		await repository.AddOrUpdateProductAsync(product, user.Id);
 		return Results.Ok(ApiResponse.Success(
 			mapper.Map<ProductDto>(product), HttpStatusCode.Created));
 	}
