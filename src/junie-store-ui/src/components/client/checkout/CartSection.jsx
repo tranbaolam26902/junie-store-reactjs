@@ -3,7 +3,7 @@ import { images } from '@assets/images';
 
 // Components
 import { Button, Input } from '@components/shared';
-import { CartItem } from '@components/client/CartItem';
+import { CartItem } from '@components/client';
 
 // Temp products items
 const products = [
