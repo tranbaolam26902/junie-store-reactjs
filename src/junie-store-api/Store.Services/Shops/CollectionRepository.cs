@@ -45,17 +45,31 @@ public class CollectionRepository : ICollectionRepository
 			.AnyAsync(s => s.Id != productId && s.UrlSlug == slug, cancellationToken);
 	}
 
-	public async Task<Product> AddOrUpdateProductAsync(Product product, CancellationToken cancellationToken = default)
+	public async Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string note = "", CancellationToken cancellationToken = default)
 	{
+		var history = new ProductHistory()
+		{
+			ActionTime = DateTime.Now,
+			Note = note,
+			UserId = userId,
+			ProductId = product.Id
+		};
+
 		product.UrlSlug = FriendlyUrls.GenerateSlug(product.Name);
 		if (_dbContext.Set<Product>().Any(s => s.Id == product.Id))
 		{
+			history.HistoryAction = ProductHistoryAction.Update;
 			_dbContext.Entry(product).State = EntityState.Modified;
+			_dbContext.Entry(history).State = EntityState.Added;
 		}
 		else
 		{
 			product.Sku = "SP-" + Guid.NewGuid().ToString().Split('-')[0].ToUpper();
 			_dbContext.Products.Add(product);
+
+			history.HistoryAction = ProductHistoryAction.Create;
+			history.ProductId = product.Id;
+			_dbContext.ProductHistories.Add(history);
 		}
 
 		await _dbContext.SaveChangesAsync(cancellationToken);

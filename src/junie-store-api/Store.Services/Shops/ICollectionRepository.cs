@@ -9,12 +9,14 @@ public interface ICollectionRepository
 	Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default);
 	
 	Task<Product> GetProductBySlug(string slug, CancellationToken cancellationToken = default);
-	
+
+	//Task<IList<ProductHistory>> GetProductHistoryAsync(Guid productId, Guid userId, CancellationToken cancellationToken);
+
 	Task<bool> IsProductSlugExistedAsync(Guid productId, string slug, CancellationToken cancellationToken = default);
 
 	Task<bool> IsProductExistedAsync(Guid productId, string name, CancellationToken cancellationToken = default);
 
-	Task<Product> AddOrUpdateProductAsync(Product product, CancellationToken cancellationToken = default);
+	Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string note = "", CancellationToken cancellationToken = default);
 
 	Task<IPagedList<Product>> GetPagedProductsAsync(IProductQuery productQuery, IPagingParams pagingParams,
 		CancellationToken cancellationToken = default);
