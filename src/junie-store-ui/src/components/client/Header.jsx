@@ -199,7 +199,7 @@ export default function Header() {
                     </section>
                     {products.length > 0 && (
                         <section className='relative px-6 py-4'>
-                            <Button text='Xem tất cả kết quả' secondary full />
+                            <Button to='/search' text='Xem tất cả kết quả' secondary full onClick={handleHideSearch} />
                             <div className='absolute -top-4 left-0 right-4 h-4 bg-gradient-to-t from-primary to-transparent'></div>
                         </section>
                     )}
