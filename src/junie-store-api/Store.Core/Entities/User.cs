@@ -28,10 +28,9 @@ public class User : IEntity
 
 	public UserLogin UserLogin { get; set; }
 
-	public IList<Product> Products { get; set; }
-
 	public IList<Order> Orders { get; set; }
 
+	public IList<ProductHistory> ProductHistories { get; set; }
 }
 
 public class Role : IEntity

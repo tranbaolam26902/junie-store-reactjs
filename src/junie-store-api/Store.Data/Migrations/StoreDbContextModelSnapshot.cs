@@ -360,18 +360,47 @@ namespace Store.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("SupplierId");
 
+                    b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("Store.Core.Entities.ProductHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ActionTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("HistoryAction")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("ProductHistories", (string)null);
                 });
 
             modelBuilder.Entity("Store.Core.Entities.Role", b =>
@@ -600,16 +629,28 @@ namespace Store.Data.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Product_Supplier");
 
-                    b.HasOne("Store.Core.Entities.User", "User")
-                        .WithMany("Products")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Products_Users");
-
                     b.Navigation("Category");
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("Store.Core.Entities.ProductHistory", b =>
+                {
+                    b.HasOne("Store.Core.Entities.Product", "Product")
+                        .WithMany("ProductHistories")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Products_Histories");
+
+                    b.HasOne("Store.Core.Entities.User", "User")
+                        .WithMany("ProductHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Users_Histories");
+
+                    b.Navigation("Product");
 
                     b.Navigation("User");
                 });
@@ -647,6 +688,8 @@ namespace Store.Data.Migrations
                     b.Navigation("Feedback");
 
                     b.Navigation("Pictures");
+
+                    b.Navigation("ProductHistories");
                 });
 
             modelBuilder.Entity("Store.Core.Entities.Supplier", b =>
@@ -658,7 +701,7 @@ namespace Store.Data.Migrations
                 {
                     b.Navigation("Orders");
 
-                    b.Navigation("Products");
+                    b.Navigation("ProductHistories");
 
                     b.Navigation("UserLogin");
                 });
