@@ -157,7 +157,6 @@ public class DataSeeder : IDataSeeder
 				},
 				Sku = "R-CHARLOTTE",
 				Note = "",
-				User = users[0],
 				Supplier = suppliers[0]
 			}
 		};

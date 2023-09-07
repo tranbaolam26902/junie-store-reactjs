@@ -10,6 +10,8 @@ namespace Store.Data.Contexts
 
 		public DbSet<Picture> Pictures { get; set; }
 
+		public DbSet<ProductHistory> ProductHistories { get; set; }
+
 		public DbSet<Feedback> Feedback { get; set; }
 
 		public DbSet<Order> Orders { get; set; }

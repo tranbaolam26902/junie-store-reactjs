@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Store.Core.Entities;
 
 namespace Store.Data.Mappings;
@@ -80,12 +79,6 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 			.WithOne(d => d.Product)
 			.HasForeignKey(d => d.ProductId)
 			.HasConstraintName("FK_Products_Details")
-			.OnDelete(DeleteBehavior.Cascade);
-
-		builder.HasOne(p => p.User)
-			.WithMany(u=> u.Products)
-			.HasForeignKey(u => u.UserId)
-			.HasConstraintName("FK_Products_Users")
 			.OnDelete(DeleteBehavior.Cascade);
 
 		builder.HasOne(p => p.Supplier)
