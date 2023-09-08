@@ -71,7 +71,8 @@ public static class WebApplicationExtensions
 		builder.Services.AddCors(option =>
 			option.AddPolicy("StoreApp", policyBuilder =>
 				policyBuilder
-					.AllowAnyOrigin()
+					.WithOrigins(builder.Configuration["AllowLocalHost"] ?? "")
+					.AllowCredentials()
 					.AllowAnyHeader()
 					.AllowAnyMethod()));
 		return builder;
@@ -187,6 +188,7 @@ public static class WebApplicationExtensions
 			app.UseSwagger();
 			app.UseSwaggerUI();
 		}
+		app.UseCors("StoreApp");
 
 		app.UseStaticFiles();
 
@@ -196,7 +198,6 @@ public static class WebApplicationExtensions
 		app.UseAuthentication();
 		app.UseAuthorization();
 
-		app.UseCors("StoreApp");
 
 		return app;
 	}
