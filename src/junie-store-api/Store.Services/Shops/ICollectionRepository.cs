@@ -10,8 +10,6 @@ public interface ICollectionRepository
 	
 	Task<Product> GetProductBySlug(string slug, CancellationToken cancellationToken = default);
 
-	//Task<IList<ProductHistory>> GetProductHistoryAsync(Guid productId, Guid userId, CancellationToken cancellationToken);
-
 	Task<bool> IsProductSlugExistedAsync(Guid productId, string slug, CancellationToken cancellationToken = default);
 
 	Task<bool> IsProductExistedAsync(Guid productId, string name, CancellationToken cancellationToken = default);
@@ -29,6 +27,11 @@ public interface ICollectionRepository
 		IProductQuery condition,
 		IPagingParams pagingParams,
 		Func<IQueryable<Product>, IQueryable<T>> mapper);
+
+	Task<IPagedList<T>> GetPagedProductHistoriesAsync<T>(
+		IProductHistoryQuery condition,
+		IPagingParams pagingParams,
+		Func<IQueryable<ProductHistory>, IQueryable<T>> mapper);
 
 	Task<bool> SetImageUrlAsync(Guid productId, string imageUrl, CancellationToken cancellationToken = default);
 	
