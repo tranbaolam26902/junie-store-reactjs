@@ -60,7 +60,6 @@ public class CollectionRepository : ICollectionRepository
 		{
 			history.HistoryAction = ProductHistoryAction.Update;
 			_dbContext.Entry(product).State = EntityState.Modified;
-			_dbContext.Entry(history).State = EntityState.Added;
 		}
 		else
 		{
@@ -69,9 +68,9 @@ public class CollectionRepository : ICollectionRepository
 
 			history.HistoryAction = ProductHistoryAction.Create;
 			history.ProductId = product.Id;
-			_dbContext.ProductHistories.Add(history);
 		}
 
+		_dbContext.ProductHistories.Add(history);
 		await _dbContext.SaveChangesAsync(cancellationToken);
 		return product;
 	}
@@ -161,7 +160,6 @@ public class CollectionRepository : ICollectionRepository
 		return true;
 	}
 
-
 	public async Task<bool> DeleteProductAsync(Guid productId, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
@@ -169,6 +167,37 @@ public class CollectionRepository : ICollectionRepository
 			.ExecuteDeleteAsync(cancellationToken) > 0;
 	}
 
+	public async Task<bool> DeleteProductHistoryAsync(Guid historyId, CancellationToken cancellationToken = default)
+	{
+		return await _dbContext.Set<ProductHistory>()
+			.Where(x => x.Id == historyId)
+			.ExecuteDeleteAsync(cancellationToken) > 0;
+	}
+
+	public async Task<bool> ToggleDeleteProductAsync(Guid productId, Guid userId, string reason, CancellationToken cancellationToken = default)
+	{
+		var product = await GetProductByIdAsync(productId, cancellationToken);
+
+		if (product == null)
+		{
+			return false;
+		}
+
+		var history = new ProductHistory()
+		{
+			ActionTime = DateTime.Now,
+			HistoryAction = ProductHistoryAction.Delete,
+			Note = reason,
+			UserId = userId,
+			ProductId = productId
+		};
+		_dbContext.ProductHistories.Add(history);
+		await _dbContext.SaveChangesAsync(cancellationToken);
+
+		return await _dbContext.Set<Product>()
+			.Where(s => s.Id == productId)
+			.ExecuteUpdateAsync(s => s.SetProperty(c => c.IsDeleted, c => !c.IsDeleted), cancellationToken) > 0;
+	}
 
 	private IQueryable<Product> FilterProduct(IProductQuery condition)
 	{

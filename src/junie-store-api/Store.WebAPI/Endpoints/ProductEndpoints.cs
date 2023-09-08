@@ -84,8 +84,19 @@ public static class ProductEndpoints
 
 		#region DELETE Method
 
+		routeGroupBuilder.MapDelete("/toggleDelete/{id:guid}", ToggleDeleteProduct)
+			.WithName("ToggleDeleteProduct")
+			.Produces(204)
+			.Produces(404);
+
 		routeGroupBuilder.MapDelete("/{id:guid}", DeleteProduct)
 			.WithName("DeleteProduct")
+			.Produces(204)
+			.Produces(404);
+
+		routeGroupBuilder.MapDelete("/histories", DeleteHistory)
+			.WithName("DeleteProductHistory")
+			.RequireAuthorization("RequireAdminRole")
 			.Produces(204)
 			.Produces(404);
 
@@ -99,16 +110,23 @@ public static class ProductEndpoints
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		var product = await repository.GetProductByIdAsync(id);
-
-		if (product == null)
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Product is not found"));
+			var product = await repository.GetProductByIdAsync(id);
+
+			if (product == null)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Sản phẩm không tồn tại với id: `{id}`"));
+			}
+
+			var productDetail = mapper.Map<ProductDto>(product);
+
+			return Results.Ok(ApiResponse.Success(productDetail));
 		}
-
-		var productDetail = mapper.Map<ProductDto>(product);
-
-		return Results.Ok(ApiResponse.Success(productDetail));
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> GetProductBySlug(
@@ -116,16 +134,23 @@ public static class ProductEndpoints
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		var product = await repository.GetProductBySlug(slug);
-
-		if (product == null)
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Product is not found with {slug}"));
+			var product = await repository.GetProductBySlug(slug);
+
+			if (product == null)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Sản phẩm không tồn tại với slug: `{slug}`"));
+			}
+
+			var productDetail = mapper.Map<ProductDto>(product);
+
+			return Results.Ok(ApiResponse.Success(productDetail));
 		}
-
-		var productDetail = mapper.Map<ProductDto>(product);
-
-		return Results.Ok(ApiResponse.Success(productDetail));
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> GetProducts(
@@ -133,17 +158,24 @@ public static class ProductEndpoints
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		var condition = mapper.Map<ProductQuery>(model);
+		try
+		{
+			var condition = mapper.Map<ProductQuery>(model);
 
-		var products =
-			await repository.GetPagedProductsAsync(
-				condition,
-				model,
-				p => p.ProjectToType<ProductDto>());
+			var products =
+				await repository.GetPagedProductsAsync(
+					condition,
+					model,
+					p => p.ProjectToType<ProductDto>());
 
-		var paginationResult = new PaginationResult<ProductDto>(products);
+			var paginationResult = new PaginationResult<ProductDto>(products);
 
-		return Results.Ok(ApiResponse.Success(paginationResult));
+			return Results.Ok(ApiResponse.Success(paginationResult));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> GetProductHistories(
@@ -175,14 +207,19 @@ public static class ProductEndpoints
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
+		try
+		{
+			var products =
+				await repository.GetTopSaleAsync();
 
-		var products =
-			await repository.GetTopSaleAsync();
+			var productsDto = mapper.Map<IList<ProductDto>>(products);
 
-		var productsDto = mapper.Map<IList<ProductDto>>(products);
-
-
-		return Results.Ok(ApiResponse.Success(productsDto));
+			return Results.Ok(ApiResponse.Success(productsDto));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> GetRelatedProducts(
@@ -221,7 +258,7 @@ public static class ProductEndpoints
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.Conflict,
-					$"Item already exists with name: `{model.Name}`"));
+					$"Sản phẩm đã tồn tại với tên: `{model.Name}`"));
 			}
 
 			var isExitsCategory = await categoryRepo.GetCategoryByIdAsync(model.CategoryId);
@@ -231,7 +268,7 @@ public static class ProductEndpoints
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.NotFound,
-					$"Supplier or category code does not exist!"));
+					$"Mã nhà cung cấp hoặc danh mục không tồn tại!"));
 			}
 
 			var product = mapper.Map<Product>(model);
@@ -267,7 +304,7 @@ public static class ProductEndpoints
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.Conflict,
-					$"Item already exists with name: `{model.Name}`"));
+					$"Sản phẩm đã tồn tại với tên: `{model.Name}`"));
 			}
 
 			var isExitsCategory = await categoryRepo.GetCategoryByIdAsync(model.CategoryId);
@@ -277,7 +314,7 @@ public static class ProductEndpoints
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.NotFound,
-					$"Supplier or category code does not exist!"));
+					$"Mã nhà cung cấp hoặc danh mục không tồn tại!"));
 			}
 
 			var product = await repository.GetProductByIdAsync(id);
@@ -311,7 +348,7 @@ public static class ProductEndpoints
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.NotFound,
-					$"Product with ID: `{id}` not found."));
+					$"Sản phẩm không tồn tại với id: `{id}`."));
 			}
 
 			var pictures = await repository.GetImageUrlsAsync(id);
@@ -333,19 +370,60 @@ public static class ProductEndpoints
 				{
 					return Results.Ok(ApiResponse.Fail(
 						HttpStatusCode.InternalServerError,
-						"Unable to save the file."));
+						"Không lưu được hình ảnh."));
 				}
 				await repository.SetImageUrlAsync(id, imageUrl);
 
 			}
 
-			return Results.Ok(ApiResponse.Success("Saved successfully"));
+			return Results.Ok(ApiResponse.Success("Lưu hình ảnh thành công."));
 		}
 		catch (Exception e)
 		{
 			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
 		}
 	}
+
+	private static async Task<IResult> ToggleDeleteProduct(
+		[FromRoute] Guid id,
+		HttpContext context,
+		[FromBody] string reason,
+		[FromServices] ICollectionRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var user = IdentityManager.GetCurrentUser(context);
+
+			return await repository.ToggleDeleteProductAsync(id, user.Id, reason)
+				? Results.Ok(ApiResponse.Success("Sản phẩm đã được chuyển trạng thái.", HttpStatusCode.NoContent))
+				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Sản phẩm không tồn tại với id: `{id}`"));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> DeleteHistory(
+		[FromBody] IList<Guid> listId,
+		[FromServices] ICollectionRepository repository)
+	{
+		try
+		{
+			foreach (var historyId in listId)
+			{
+				await repository.DeleteProductHistoryAsync(historyId);
+			}
+
+			return Results.Ok(ApiResponse.Success("Xóa thành công.", HttpStatusCode.NoContent));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
 	private static async Task<IResult> DeleteProduct(
 		Guid id,
 		[FromServices] ICollectionRepository repository,
@@ -358,7 +436,13 @@ public static class ProductEndpoints
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.NotFound,
-					$"Product with ID: `{id}` not found."));
+					$"Sản phẩm không tồn tại với id: `{id}`."));
+			} 
+			else if (oldProduct.IsDeleted == false)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotAcceptable,
+					$"Sản phẩm chưa đánh dấu xóa."));
 			}
 
 			var pictures = await repository.GetImageUrlsAsync(id);
@@ -370,9 +454,9 @@ public static class ProductEndpoints
 
 			await repository.DeleteImageUrlsAsync(id);
 
-			return await repository.DeleteProductAsync(id)
-				? Results.Ok(ApiResponse.Success("Product deleted successfully.", HttpStatusCode.NoContent))
-				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Product with ID: `{id}` not found."));
+			await repository.DeleteProductAsync(id);
+			
+			return Results.Ok(ApiResponse.Success("Xóa sản phẩm thành công.", HttpStatusCode.NoContent));
 		}
 		catch (Exception e)
 		{

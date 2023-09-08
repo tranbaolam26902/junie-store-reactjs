@@ -28,6 +28,8 @@ public class ProductDto
 
 	public bool Active { get; set; }
 
+	public bool IsDeleted { get; set; }
+
 	public CategoryDto Category { get; set; }
 
 	public IList<PictureDto> Pictures { get; set; }
