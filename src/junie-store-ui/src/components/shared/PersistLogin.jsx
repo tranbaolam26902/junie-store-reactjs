@@ -1,15 +1,15 @@
 // Libraries
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Outlet } from 'react-router-dom';
 
 // Hooks
 import { useRefreshToken } from '@hooks/shared';
 
 // Redux
 import { selectAuth } from '@redux/features/shared/auth';
-import { Outlet } from 'react-router-dom';
 
-export default function PersistSignIn() {
+export default function PersistLogin() {
     // Hooks
     const refresh = useRefreshToken();
 
@@ -31,5 +31,5 @@ export default function PersistSignIn() {
         // eslint-disable-next-line
     }, []);
 
-    return <>{isLoading ? <h1>Loading...</h1> : <Outlet />}</>;
+    return <>{isLoading ? null : <Outlet />}</>;
 }

@@ -7,10 +7,10 @@ import { icons } from '@assets/icons';
 import { images } from '@assets/images';
 
 // Components
-import { Container, Pager } from '@components/shared';
-import { Fade } from '@components/shared/animations';
 import { Breadcrumb, ProductItem } from '@components/client';
 import { ProductFilterSection } from '@components/client/category';
+import { Container, Pager } from '@components/shared';
+import { Fade } from '@components/shared/animations';
 
 // Temp products
 const products = [
@@ -136,13 +136,22 @@ export default function Category() {
                             <AnimatePresence>
                                 {showSortOptions && (
                                     <Fade className='absolute top-full right-0 z-10 flex flex-col items-start p-4 bg-primary rounded shadow'>
-                                        <button type='button' className='px-2 py-1 w-full text-left'>
+                                        <button
+                                            type='button'
+                                            className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
+                                        >
                                             Nổi bật
                                         </button>
-                                        <button type='button' className='px-2 py-1 w-full text-left'>
+                                        <button
+                                            type='button'
+                                            className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
+                                        >
                                             Bán chạy nhất
                                         </button>
-                                        <button type='button' className='px-2 py-1 w-full text-left'>
+                                        <button
+                                            type='button'
+                                            className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
+                                        >
                                             Bảng chữ cái
                                         </button>
                                     </Fade>
