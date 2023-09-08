@@ -9,26 +9,26 @@ public class ProductValidator : AbstractValidator<ProductEditModel>
 	{
 		RuleFor(s => s.EditReason)
 			.NotEmpty()
-			.WithMessage("Edit reason must be not empty.")
+			.WithMessage("Lý do không được để trống.")
 			.MaximumLength(2048)
-			.WithMessage("Edit reason must not exceed 2048 character.");
+			.WithMessage("Lý do không được vượt quá 2048 ký tự.");
 
 		RuleFor(s => s.Name)
 			.NotEmpty()
-			.WithMessage("Name must be not empty.")
+			.WithMessage("Tên sản phẩm không được để trống.")
 			.MaximumLength(128)
-			.WithMessage("Name must not exceed 128 character.");
+			.WithMessage("Tên sản phẩm không được nhiều hơn 128 ký tự.");
 
 		RuleFor(s => s.ShortIntro)
 			.MaximumLength(256)
-			.WithMessage("Name must not exceed 256 character.");
+			.WithMessage("Giới thiệu không được nhiều hơn 256 ký tự.");
 
 		RuleFor(s => s.Description)
 			.MaximumLength(2048)
-			.WithMessage("Name must not exceed 2048 character.");
+			.WithMessage("Mô tả không được nhiều hơn 2048 ký tự.");
 
 		RuleFor(s => s.Note)
 			.MaximumLength(2048)
-			.WithMessage("Note must not exceed 2048 character.");
+			.WithMessage("Ghi chú không được nhiều hơn 2048 ký tự.");
 	}
 }
