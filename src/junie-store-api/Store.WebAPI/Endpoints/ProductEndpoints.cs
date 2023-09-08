@@ -11,6 +11,8 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Store.Core.Queries;
 using Store.WebAPI.Identities;
+using Store.WebAPI.Models.ProductHistoryModel;
+using Store.WebAPI.Filters;
 
 namespace Store.WebAPI.Endpoints;
 
@@ -21,15 +23,21 @@ public static class ProductEndpoints
 	{
 		var routeGroupBuilder = app.MapGroup("/api/products");
 
+		#region GET method
 		routeGroupBuilder.MapGet("/", GetProducts)
 			.WithName("GetProducts")
 			.Produces<ApiResponse<IPagedList<ProductDto>>>();
+
+		routeGroupBuilder.MapGet("/histories", GetProductHistories)
+			.WithName("GetProductHistories")
+			.RequireAuthorization("RequireAdminRole")
+			.Produces<ApiResponse<IPagedList<ProductHistoryDto>>>();
 
 		routeGroupBuilder.MapGet("/TopSales", GetProductsTopSale)
 			.WithName("GetProductsTopSale")
 			.Produces<ApiResponse<IList<ProductDto>>>();
 
-		routeGroupBuilder.MapGet("/Related/{slug:regex(^[a-z0-9_-]+$)}", GetRelatedProducts)
+		routeGroupBuilder.MapGet("/Related/{slug:regex(^[a-z0-9_-]+$)}/{num:int}", GetRelatedProducts)
 			.WithName("GetRelatedProducts")
 			.Produces<ApiResponse<IList<ProductDto>>>();
 
@@ -41,16 +49,12 @@ public static class ProductEndpoints
 			.WithName("GetProductBySlug")
 			.Produces<ApiResponse<ProductDto>>();
 
+		#endregion
+
+		#region POST Method
 		routeGroupBuilder.MapPost("/", AddProduct)
 			.WithName("AddProduct")
-			.RequireAuthorization("RequireManagerRole")
-			.Produces<ApiResponse<ProductDto>>()
-			.Produces(201)
-			.Produces(400)
-			.Produces(409);
-
-		routeGroupBuilder.MapPut("/{id:guid}", UpdateProduct)
-			.WithName("UpdateProduct")
+			.AddEndpointFilter<ValidatorFilter<ProductEditModel>>()
 			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<ProductDto>>()
 			.Produces(201)
@@ -63,18 +67,37 @@ public static class ProductEndpoints
 			.Produces<ApiResponse<string>>()
 			.Produces(400);
 
+		#endregion
+
+		#region PUT Method
+
+		routeGroupBuilder.MapPut("/{id:guid}", UpdateProduct)
+			.WithName("UpdateProduct")
+			.AddEndpointFilter<ValidatorFilter<ProductEditModel>>()
+			.RequireAuthorization("RequireManagerRole")
+			.Produces<ApiResponse<ProductDto>>()
+			.Produces(201)
+			.Produces(400)
+			.Produces(409);
+
+		#endregion
+
+		#region DELETE Method
+
 		routeGroupBuilder.MapDelete("/{id:guid}", DeleteProduct)
 			.WithName("DeleteProduct")
 			.Produces(204)
 			.Produces(404);
 
+		#endregion
+
 		return app;
 	}
 
 	private static async Task<IResult> GetProductById(
-		Guid id,
-		ICollectionRepository repository,
-		IMapper mapper)
+		[FromRoute] Guid id,
+		[FromServices] ICollectionRepository repository,
+		[FromServices] IMapper mapper)
 	{
 		var product = await repository.GetProductByIdAsync(id);
 
@@ -107,8 +130,8 @@ public static class ProductEndpoints
 
 	private static async Task<IResult> GetProducts(
 		[AsParameters] ProductFilterModel model,
-		ICollectionRepository repository,
-		IMapper mapper)
+		[FromServices] ICollectionRepository repository,
+		[FromServices] IMapper mapper)
 	{
 		var condition = mapper.Map<ProductQuery>(model);
 
@@ -123,6 +146,31 @@ public static class ProductEndpoints
 		return Results.Ok(ApiResponse.Success(paginationResult));
 	}
 
+	private static async Task<IResult> GetProductHistories(
+		[AsParameters] ProductHistoryFilterModel model,
+		[FromServices] ICollectionRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var condition = mapper.Map<ProductHistoryQuery>(model);
+
+			var histories =
+				await repository.GetPagedProductHistoriesAsync(
+					condition,
+					model,
+					p => p.ProjectToType<ProductHistoryDto>());
+
+			var paginationResult = new PaginationResult<ProductHistoryDto>(histories);
+
+			return Results.Ok(ApiResponse.Success(paginationResult));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
 	private static async Task<IResult> GetProductsTopSale(
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
@@ -132,30 +180,38 @@ public static class ProductEndpoints
 			await repository.GetTopSaleAsync();
 
 		var productsDto = mapper.Map<IList<ProductDto>>(products);
-		
+
 
 		return Results.Ok(ApiResponse.Success(productsDto));
 	}
 
 	private static async Task<IResult> GetRelatedProducts(
 		[FromRoute] string slug,
+		[FromRoute] int num,
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
+		try
+		{
+			var products =
+				await repository.GetRelatedProductsAsync(slug, num);
 
-		var products =
-			await repository.GetRelatedProductsAsync(slug);
+			var productsDto = mapper.Map<IList<ProductDto>>(products);
 
-		var productsDto = mapper.Map<IList<ProductDto>>(products);
-
-
-		return Results.Ok(ApiResponse.Success(productsDto));
+			return Results.Ok(ApiResponse.Success(productsDto));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> AddProduct(
 		HttpContext context,
 		ProductEditModel model,
 		[FromServices] ICollectionRepository repository,
+		[FromServices] ICategoryRepository categoryRepo,
+		[FromServices] ISupplierRepository supplierRepo,
 		[FromServices] IMapper mapper)
 	{
 		try
@@ -168,16 +224,26 @@ public static class ProductEndpoints
 					$"Item already exists with name: `{model.Name}`"));
 			}
 
-			var product = mapper.Map<Product>(model);
-			
-			product.CreateDate = DateTime.Now;
-			product.UserId = user.Id;
+			var isExitsCategory = await categoryRepo.GetCategoryByIdAsync(model.CategoryId);
+			var isExitsSupplier = await supplierRepo.GetSupplierByIdAsync(model.SupplierId);
 
-			await repository.AddOrUpdateProductAsync(product);
-			
+			if (isExitsSupplier == null || isExitsCategory == null)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound,
+					$"Supplier or category code does not exist!"));
+			}
+
+			var product = mapper.Map<Product>(model);
+
+			product.CreateDate = DateTime.Now;
+			product.Category = null;
+			product.Supplier = null;
+
+			await repository.AddOrUpdateProductAsync(product, user.Id);
+
 			return Results.Ok(ApiResponse.Success(
 			mapper.Map<ProductDto>(product), HttpStatusCode.Created));
-			
 		}
 		catch (Exception e)
 		{
@@ -187,23 +253,47 @@ public static class ProductEndpoints
 
 	private static async Task<IResult> UpdateProduct(
 		[FromRoute] Guid id,
+		HttpContext context,
 		ProductEditModel model,
 		[FromServices] ICollectionRepository repository,
+		[FromServices] ICategoryRepository categoryRepo,
+		[FromServices] ISupplierRepository supplierRepo,
 		[FromServices] IMapper mapper)
 	{
-		if (await repository.IsProductExistedAsync(Guid.Empty, model.Name))
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.Conflict,
-				$"Item already exists with name: `{model.Name}`"));
+			var user = IdentityManager.GetCurrentUser(context);
+			if (await repository.IsProductExistedAsync(Guid.Empty, model.Name))
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.Conflict,
+					$"Item already exists with name: `{model.Name}`"));
+			}
+
+			var isExitsCategory = await categoryRepo.GetCategoryByIdAsync(model.CategoryId);
+			var isExitsSupplier = await supplierRepo.GetSupplierByIdAsync(model.SupplierId);
+
+			if (isExitsSupplier == null || isExitsCategory == null)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound,
+					$"Supplier or category code does not exist!"));
+			}
+
+			var product = await repository.GetProductByIdAsync(id);
+			mapper.Map(model, product);
+
+			product.Category = null;
+			product.Supplier = null;
+
+			await repository.AddOrUpdateProductAsync(product, user.Id, model.EditReason);
+			return Results.Ok(ApiResponse.Success(
+				mapper.Map<ProductDto>(product), HttpStatusCode.Created));
 		}
-
-		var product = await repository.GetProductByIdAsync(id);
-		mapper.Map(model, product);
-
-		await repository.AddOrUpdateProductAsync(product);
-		return Results.Ok(ApiResponse.Success(
-			mapper.Map<ProductDto>(product), HttpStatusCode.Created));
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> SetProductPicture(
@@ -212,67 +302,81 @@ public static class ProductEndpoints
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMediaManager mediaManager)
 	{
-		var form = context.Request.Form.Files;
-
-		var oldProduct = await repository.GetProductByIdAsync(id);
-		if (oldProduct == null)
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.NotFound,
-				$"Không tìm thấy sản phẩm với id: `{id}`"));
-		}
+			var form = context.Request.Form.Files;
 
-		var pictures = await repository.GetImageUrlsAsync(id);
-
-		foreach (var picture in pictures)
-		{
-			await mediaManager.DeleteFileAsync(picture.Path);
-		}
-
-		await repository.DeleteImageUrlsAsync(id);
-
-		foreach (var imageFile in form)
-		{
-			var imageUrl = await mediaManager.SaveFileAsync(
-				imageFile.OpenReadStream(),
-				imageFile.FileName, imageFile.ContentType);
-
-			if (string.IsNullOrWhiteSpace(imageUrl))
+			var oldProduct = await repository.GetProductByIdAsync(id);
+			if (oldProduct == null)
 			{
 				return Results.Ok(ApiResponse.Fail(
-					HttpStatusCode.BadRequest,
-					"Không lưu được tệp"));
+					HttpStatusCode.NotFound,
+					$"Product with ID: `{id}` not found."));
 			}
-			await repository.SetImageUrlAsync(id, imageUrl);
 
+			var pictures = await repository.GetImageUrlsAsync(id);
+
+			foreach (var picture in pictures)
+			{
+				await mediaManager.DeleteFileAsync(picture.Path);
+			}
+
+			await repository.DeleteImageUrlsAsync(id);
+
+			foreach (var imageFile in form)
+			{
+				var imageUrl = await mediaManager.SaveFileAsync(
+					imageFile.OpenReadStream(),
+					imageFile.FileName, imageFile.ContentType);
+
+				if (string.IsNullOrWhiteSpace(imageUrl))
+				{
+					return Results.Ok(ApiResponse.Fail(
+						HttpStatusCode.InternalServerError,
+						"Unable to save the file."));
+				}
+				await repository.SetImageUrlAsync(id, imageUrl);
+
+			}
+
+			return Results.Ok(ApiResponse.Success("Saved successfully"));
 		}
-
-		return Results.Ok(ApiResponse.Success("Lưu thành công"));
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 	private static async Task<IResult> DeleteProduct(
 		Guid id,
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMediaManager mediaManager)
 	{
-		var oldProduct = await repository.GetProductByIdAsync(id);
-		if (oldProduct == null)
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.NotFound,
-				$"Không tìm thấy sản phẩm với id: `{id}`"));
+			var oldProduct = await repository.GetProductByIdAsync(id);
+			if (oldProduct == null)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound,
+					$"Product with ID: `{id}` not found."));
+			}
+
+			var pictures = await repository.GetImageUrlsAsync(id);
+
+			foreach (var picture in pictures)
+			{
+				await mediaManager.DeleteFileAsync(picture.Path);
+			}
+
+			await repository.DeleteImageUrlsAsync(id);
+
+			return await repository.DeleteProductAsync(id)
+				? Results.Ok(ApiResponse.Success("Product deleted successfully.", HttpStatusCode.NoContent))
+				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Product with ID: `{id}` not found."));
 		}
-
-		var pictures = await repository.GetImageUrlsAsync(id);
-
-		foreach (var picture in pictures)
+		catch (Exception e)
 		{
-			await mediaManager.DeleteFileAsync(picture.Path);
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
 		}
-
-		await repository.DeleteImageUrlsAsync(id);
-
-		return await repository.DeleteProductAsync(id)
-			? Results.Ok(ApiResponse.Success("Xóa sản phẩm thành công", HttpStatusCode.NoContent))
-			: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Không tìm thấy sản phẩm với id: `{id}`"));
 	}
 }

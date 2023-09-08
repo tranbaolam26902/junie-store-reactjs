@@ -39,15 +39,11 @@ public class Product : IEntity
 
 	public Guid CategoryId { get; set; }
 
-	public Guid UserId { get; set; }
-
 	public Guid SupplierId { get; set; }
 
 	// ======================================================
 	// Navigation properties
 	// ======================================================
-
-	public User User { get; set; }
 
 	public Supplier Supplier { get; set; }
 
@@ -58,4 +54,6 @@ public class Product : IEntity
 	public IList<Feedback> Feedback { get; set; }
 
 	public IList<Picture> Pictures { get; set; }
+
+	public IList<ProductHistory> ProductHistories { get; set; }
 }

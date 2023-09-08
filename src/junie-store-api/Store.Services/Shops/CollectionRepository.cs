@@ -16,7 +16,6 @@ public class CollectionRepository : ICollectionRepository
 		_dbContext = context;
 	}
 
-
 	public async Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
@@ -46,17 +45,31 @@ public class CollectionRepository : ICollectionRepository
 			.AnyAsync(s => s.Id != productId && s.UrlSlug == slug, cancellationToken);
 	}
 
-	public async Task<Product> AddOrUpdateProductAsync(Product product, CancellationToken cancellationToken = default)
+	public async Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string note = "", CancellationToken cancellationToken = default)
 	{
+		var history = new ProductHistory()
+		{
+			ActionTime = DateTime.Now,
+			Note = note,
+			UserId = userId,
+			ProductId = product.Id
+		};
+
 		product.UrlSlug = FriendlyUrls.GenerateSlug(product.Name);
 		if (_dbContext.Set<Product>().Any(s => s.Id == product.Id))
 		{
+			history.HistoryAction = ProductHistoryAction.Update;
 			_dbContext.Entry(product).State = EntityState.Modified;
+			_dbContext.Entry(history).State = EntityState.Added;
 		}
 		else
 		{
 			product.Sku = "SP-" + Guid.NewGuid().ToString().Split('-')[0].ToUpper();
 			_dbContext.Products.Add(product);
+
+			history.HistoryAction = ProductHistoryAction.Create;
+			history.ProductId = product.Id;
+			_dbContext.ProductHistories.Add(history);
 		}
 
 		await _dbContext.SaveChangesAsync(cancellationToken);
@@ -69,8 +82,6 @@ public class CollectionRepository : ICollectionRepository
 		return FilterProduct(productQuery).ToPagedListAsync(pagingParams, cancellationToken);
 	}
 
-	
-
 	public async Task<IList<Product>> GetTopSaleAsync(CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
@@ -82,25 +93,30 @@ public class CollectionRepository : ICollectionRepository
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task<IList<Product>> GetRelatedProductsAsync(string slug, CancellationToken cancellationToken = default)
+	public async Task<IList<Product>> GetRelatedProductsAsync(string slug, int num = 10, CancellationToken cancellationToken = default)
 	{
 		var product = await GetProductBySlug(slug, cancellationToken);
 
 		return await _dbContext.Set<Product>()
-			.Include(s => s.Details)
 			.Include(s => s.Category)
 			.Include(s => s.Pictures)
 			.Where(s => s.Id != product.Id && product.CategoryId == s.CategoryId)
 			.OrderBy(s => Guid.NewGuid())
-			.Take(8)
+			.Take(num)
 			.ToListAsync(cancellationToken);
 	}
-
-	
 
 	public async Task<IPagedList<T>> GetPagedProductsAsync<T>(IProductQuery condition, IPagingParams pagingParams, Func<IQueryable<Product>, IQueryable<T>> mapper)
 	{
 		var products = FilterProduct(condition);
+		var projectedProducts = mapper(products);
+
+		return await projectedProducts.ToPagedListAsync(pagingParams);
+	}
+
+	public async Task<IPagedList<T>> GetPagedProductHistoriesAsync<T>(IProductHistoryQuery condition, IPagingParams pagingParams, Func<IQueryable<ProductHistory>, IQueryable<T>> mapper)
+	{
+		var products = FilterProductHistories(condition);
 		var projectedProducts = mapper(products);
 
 		return await projectedProducts.ToPagedListAsync(pagingParams);
@@ -156,7 +172,7 @@ public class CollectionRepository : ICollectionRepository
 
 	private IQueryable<Product> FilterProduct(IProductQuery condition)
 	{
-		var products = _dbContext.Set<Product>()
+		return _dbContext.Set<Product>()
 			.Include(s => s.Category)
 			.Include(s => s.Pictures)
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
@@ -168,7 +184,19 @@ public class CollectionRepository : ICollectionRepository
 				s.Name.Contains(condition.Keyword) ||
 				s.Description.Contains(condition.Keyword) ||
 				s.ShortIntro.Contains(condition.Keyword) ||
+				s.Sku.Contains(condition.Keyword) ||
 				s.UrlSlug.Contains(condition.Keyword));
-		return products;
+	}
+
+	private IQueryable<ProductHistory> FilterProductHistories(IProductHistoryQuery condition)
+	{
+		return _dbContext.Set<ProductHistory>()
+			.WhereIf(condition.UserId != Guid.Empty, s => s.UserId == condition.UserId)
+			.WhereIf(condition.ProductId != Guid.Empty, s => s.ProductId == condition.ProductId)
+			.WhereIf(condition.Action != ProductHistoryAction.None, s => s.HistoryAction == condition.Action)
+			.WhereIf(condition.Day > 0, s => s.ActionTime.Day == condition.Day)
+			.WhereIf(condition.Month > 0, s => s.ActionTime.Month == condition.Month)
+			.WhereIf(condition.Year > 0, s => s.ActionTime.Year == condition.Year)
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s => s.Note.Contains(condition.Keyword));
 	}
 }

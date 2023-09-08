@@ -12,6 +12,8 @@ public class Category
 
 	public bool ShowOnMenu { get; set; }
 
+	public bool IsDeleted { get; set; }
+
 	// ======================================================
 	// Navigation properties
 	// ======================================================

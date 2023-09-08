@@ -59,8 +59,8 @@ public static class CategoryEndpoint
 
 		#region DELETE Method
 
-		routeGroupBuilder.MapDelete("/{id:guid}", DeleteCategory)
-			.WithName("DeleteCategory")
+		routeGroupBuilder.MapDelete("/toggleDelete/{id:guid}", ToggleDeleteCategory)
+			.WithName("ToggleDeleteCategory")
 			.RequireAuthorization("RequireManagerRole")
 			.Produces(204)
 			.Produces(404);
@@ -109,7 +109,7 @@ public static class CategoryEndpoint
 		if (await repository.IsCategorySlugExistedAsync(Guid.Empty, model.UrlSlug))
 		{
 			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.NotFound, $"Slug {model.UrlSlug} đã được sử dụng"));
+				HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` has been used."));
 		}
 
 		var category = mapper.Map<Category>(model);
@@ -128,7 +128,7 @@ public static class CategoryEndpoint
 		if (await repository.IsCategorySlugExistedAsync(id, model.UrlSlug))
 		{
 			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.NotFound, $"Slug {model.UrlSlug} has been used."));
+				HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` has been used."));
 		}
 
 		var category = mapper.Map<Category>(model);
@@ -158,12 +158,12 @@ public static class CategoryEndpoint
 		}
 	}
 
-	private static async Task<IResult> DeleteCategory(
-		Guid id,
+	private static async Task<IResult> ToggleDeleteCategory(
+		[FromRoute] Guid id,
 		[FromServices] ICategoryRepository repository)
 	{
-		return await repository.DeleteCategoryAsync(id)
-			? Results.Ok(ApiResponse.Success("Category is deleted", HttpStatusCode.NoContent))
-			: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Không tìm thấy chủ đề với id: `{id}`"));
+		return await repository.ToggleDeleteCategoryAsync(id)
+			? Results.Ok(ApiResponse.Success("Category is toggled", HttpStatusCode.NoContent))
+			: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"The category does not exist with id: `{id}`"));
 	}
 }

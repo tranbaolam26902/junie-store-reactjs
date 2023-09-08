@@ -27,5 +27,8 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
 			.IsRequired()
 			.HasDefaultValue(false);
 
+		builder.Property(s => s.IsDeleted)
+			.IsRequired()
+			.HasDefaultValue(false);
 	}
 }
