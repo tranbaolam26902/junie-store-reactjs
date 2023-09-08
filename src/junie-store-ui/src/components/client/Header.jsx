@@ -10,6 +10,8 @@ import { images } from '@assets/images';
 import { Button, Container, SidebarModal } from '@components/shared';
 import { CartItem, SearchResultItem } from '@components/client';
 import { Loading, Underline } from '@components/shared/animations';
+import { useSelector } from 'react-redux';
+import { selectAuth } from '~/redux/features/shared/auth';
 
 // Temp categories
 const categories = [
@@ -66,6 +68,7 @@ const products = [
 
 export default function Header() {
     // States
+    const auth = useSelector(selectAuth);
     const [showMobileNavbar, setShowMobileNavbar] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [showCart, setShowCart] = useState(false);
@@ -124,10 +127,14 @@ export default function Header() {
                             <span>Tìm kiếm</span>
                             <Underline />
                         </button>
-                        <Link to='/account' type='button' className='relative group'>
-                            <span>Tài khoản</span>
-                            <Underline />
-                        </Link>
+                        {auth.accessToken ? (
+                            <div>bruh</div>
+                        ) : (
+                            <Link to='/account' type='button' className='relative group'>
+                                <span>Tài khoản</span>
+                                <Underline />
+                            </Link>
+                        )}
                     </div>
                     <button type='button' className='relative -m-2 p-2' onClick={handleShowCart}>
                         <img src={icons.cart} alt='cart-icon' className='w-[1.125rem]' />
