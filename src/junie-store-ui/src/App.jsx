@@ -2,7 +2,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // Pages
-import { Home, Category, Product, Checkout, SearchResult } from '@pages/client';
+import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail } from '@pages/client';
 import { Account, Login, SignUp } from '@pages/shared';
 
 // Components
@@ -19,6 +19,8 @@ const router = createBrowserRouter([
             { path: '/products/:productSlug', element: <Product /> },
             { path: '/search', element: <SearchResult /> },
             { path: '/checkout', element: <Checkout /> },
+            { path: '/blogs', element: <Blog /> },
+            { path: '/blogs/:blogSlug', element: <BlogDetail /> },
             { path: '/account', element: <Account /> },
             { path: '/account/login', element: <Login /> },
             { path: '/account/sign-up', element: <SignUp /> }
