@@ -2,7 +2,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // Pages
-import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail } from '@pages/client';
+import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
 import { Account, Login, SignUp } from '@pages/shared';
 
 // Components
@@ -23,7 +23,8 @@ const router = createBrowserRouter([
             { path: '/blogs/:blogSlug', element: <BlogDetail /> },
             { path: '/account', element: <Account /> },
             { path: '/account/login', element: <Login /> },
-            { path: '/account/sign-up', element: <SignUp /> }
+            { path: '/account/sign-up', element: <SignUp /> },
+            { path: '/pages/:pageSlug', element: <SinglePage /> }
         ]
     }
 ]);

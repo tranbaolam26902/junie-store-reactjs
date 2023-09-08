@@ -29,19 +29,7 @@ const categories = [
         slug: 'ring'
     }
 ];
-const blogs = [
-    {
-        id: 1,
-        name: 'Beautiful Blog',
-        slug: 'blogs'
-    },
-    {
-        id: 2,
-        name: 'Tuyển dụng',
-        slug: 'recruit'
-    }
-];
-const policies = [
+const pages = [
     {
         id: 1,
         name: 'Thanh Toán',
@@ -90,27 +78,24 @@ export default function Footer() {
                 <div className='flex flex-col gap-5'>
                     <span className='text-sm font-bold uppercase tracking-widest'>@Junie</span>
                     <nav className='flex flex-col gap-1.5'>
-                        {blogs.map((blog) => (
-                            <Link
-                                key={blog.id}
-                                to={`/${blog.slug}`}
-                                className='transition duration-200 hover:opacity-70'
-                            >
-                                {blog.name}
-                            </Link>
-                        ))}
+                        <Link to='/blogs' className='transition duration-200 hover:opacity-70'>
+                            Beautiful Blog
+                        </Link>
+                        <Link to='/pages/recruit' className='transition duration-200 hover:opacity-70'>
+                            Tuyển dụng
+                        </Link>
                     </nav>
                 </div>
                 <div className='flex flex-col gap-5'>
                     <span className='text-sm font-bold uppercase tracking-widest'>Chính sách</span>
                     <nav className='flex flex-col gap-1.5'>
-                        {policies.map((policy) => (
+                        {pages.map((page) => (
                             <Link
-                                key={policy.id}
-                                to={`/policies/${policy.slug}`}
+                                key={page.id}
+                                to={`/pages/${page.slug}`}
                                 className='transition duration-200 hover:opacity-70'
                             >
-                                {policy.name}
+                                {page.name}
                             </Link>
                         ))}
                     </nav>
