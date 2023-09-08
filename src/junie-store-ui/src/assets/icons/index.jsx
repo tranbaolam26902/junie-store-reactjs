@@ -16,6 +16,7 @@ import instagramIcon from './instagram.svg';
 import leftArrowIcon from './left-arrow.svg';
 import minusIcon from './minus.svg';
 import plusIcon from './plus.svg';
+import profileIcon from './profile.svg';
 import rightArrowIcon from './right-arrow.svg';
 import safetyIcon from './safety.svg';
 import searchIcon from './search.svg';
@@ -44,6 +45,7 @@ export const icons = {
     leftArrow: leftArrowIcon,
     minus: minusIcon,
     plus: plusIcon,
+    profile: profileIcon,
     rightArrow: rightArrowIcon,
     safety: safetyIcon,
     search: searchIcon,

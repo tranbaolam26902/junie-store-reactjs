@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 // Hooks
-import { useLogin, useRefreshToken } from '@hooks/shared';
+import { useLogin } from '@hooks/shared';
 
 // Components
 import { Button, Container, Input } from '@components/shared';
@@ -13,7 +13,6 @@ export default function Login() {
     // Hooks
     const login = useLogin();
     const navigate = useNavigate();
-    const refresh = useRefreshToken();
 
     // States
     const [username, setUsername] = useState('');
@@ -25,15 +24,11 @@ export default function Login() {
         e.preventDefault();
 
         const loginResult = await login(username.trim(), password.trim());
-        if (loginResult.isSuccess) {
-            console.log(loginResult);
-        } else setErrorMessages(loginResult.errors);
+
+        if (loginResult.isSuccess) navigate('/');
+        else setErrorMessages(loginResult.errors);
     };
 
-    const test = async () => {
-        const bruh = await refresh();
-        console.log(bruh);
-    };
     return (
         <Container className='flex flex-col gap-8 md:mx-auto my-32 md:max-w-2xl'>
             <span className='text-3xl font-thin text-center uppercase'>JUNIE VN</span>
@@ -73,9 +68,6 @@ export default function Login() {
                     disabled={username.trim() === '' || password.trim() === ''}
                     text='Đăng nhập'
                 />
-                <button type='button' onClick={test}>
-                    Click
-                </button>
                 <div className='flex items-center justify-between'>
                     <Link className='transition duration-200 opacity-50 hover:opacity-100'>Quên mật khẩu?</Link>
                     <div className='flex items-center gap-1'>

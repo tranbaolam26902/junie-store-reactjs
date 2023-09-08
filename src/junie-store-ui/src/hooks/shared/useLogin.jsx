@@ -5,14 +5,14 @@ import { useDispatch } from 'react-redux';
 import { setAccessToken, setUserDto } from '@redux/features/shared/auth';
 
 // Services
-import { axios } from '@services/shared';
+import { axiosPrivate } from '@services/shared';
 
 export default function useLogin() {
     // Hooks
     const dispatch = useDispatch();
 
     const login = async (username, password) => {
-        const { data } = await axios.post('/api/account/login', {
+        const { data } = await axiosPrivate.post('/api/account/login', {
             username,
             password
         });

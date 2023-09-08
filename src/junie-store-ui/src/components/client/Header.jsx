@@ -1,17 +1,20 @@
 // Libraries
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 
 // Assets
 import { icons } from '@assets/icons';
 import { images } from '@assets/images';
 
+// Redux
+import { selectAuth } from '@redux/features/shared/auth';
+
 // Components
-import { Button, Container, SidebarModal } from '@components/shared';
 import { CartItem, SearchResultItem } from '@components/client';
-import { Loading, Underline } from '@components/shared/animations';
-import { useSelector } from 'react-redux';
-import { selectAuth } from '~/redux/features/shared/auth';
+import { Button, Container, SidebarModal } from '@components/shared';
+import { Fade, Loading, Underline } from '@components/shared/animations';
 
 // Temp categories
 const categories = [
@@ -70,9 +73,13 @@ export default function Header() {
     // States
     const auth = useSelector(selectAuth);
     const [showMobileNavbar, setShowMobileNavbar] = useState(false);
+    const [showAccountOptions, setShowAccountOptions] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [showCart, setShowCart] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
+
+    // Refs
+    const accountButtonRef = useRef(null);
 
     // Event handlers
     const handleShowMobileNavbar = () => {
@@ -80,6 +87,12 @@ export default function Header() {
     };
     const handleHideMobileNavbar = () => {
         setShowMobileNavbar(false);
+    };
+    const handleToggleShowAccountOptions = () => {
+        setShowAccountOptions((state) => !state);
+    };
+    const handleHideAccountOptions = () => {
+        setShowAccountOptions(false);
     };
     const handleShowSearch = () => {
         setShowSearch(true);
@@ -93,6 +106,19 @@ export default function Header() {
     const handleHideCart = () => {
         setShowCart(false);
     };
+
+    /* Hide account options when clicking outside */
+    useEffect(() => {
+        const handleHideAccountOptionsWhenClickOutside = (e) => {
+            if (e.target.closest('button') !== accountButtonRef.current) handleHideAccountOptions();
+        };
+
+        document.addEventListener('mousedown', handleHideAccountOptionsWhenClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleHideAccountOptionsWhenClickOutside);
+        };
+    }, []);
 
     return (
         <header className='sticky z-10 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
@@ -128,10 +154,39 @@ export default function Header() {
                             <Underline />
                         </button>
                         {auth.accessToken ? (
-                            <div>bruh</div>
+                            <div className='relative group'>
+                                <button
+                                    ref={accountButtonRef}
+                                    type='button'
+                                    className='relative flex gap-1'
+                                    onClick={handleToggleShowAccountOptions}
+                                >
+                                    <img src={icons.profile} alt='profile-icon' className='pb-0.5 w-5' />
+                                    <span>Tài khoản</span>
+                                    <Underline />
+                                </button>
+                                <AnimatePresence>
+                                    {showAccountOptions && (
+                                        <Fade className='absolute top-full right-0 flex flex-col p-4 w-max bg-primary border border-gray rounded-md shadow-md'>
+                                            <Link
+                                                to='/account'
+                                                className='px-4 py-2 rounded transition duration-200 hover:bg-gray/30'
+                                            >
+                                                Thông tin tài khoản
+                                            </Link>
+                                            <button
+                                                type='button'
+                                                className='px-4 py-2 text-start text-red rounded transition duration-200 hover:bg-gray/30'
+                                            >
+                                                Đăng xuất
+                                            </button>
+                                        </Fade>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         ) : (
-                            <Link to='/account' type='button' className='relative group'>
-                                <span>Tài khoản</span>
+                            <Link to='/account/login' className='relative group'>
+                                <span>Đăng nhập</span>
                                 <Underline />
                             </Link>
                         )}
