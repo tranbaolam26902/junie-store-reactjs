@@ -2,7 +2,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    accessToken: ''
+    accessToken: '',
+    userDto: {}
 };
 const authSlice = createSlice({
     name: 'auth',
@@ -10,10 +11,13 @@ const authSlice = createSlice({
     reducers: {
         setAccessToken: (state, action) => {
             state.accessToken = action.payload;
+        },
+        setUserDto: (state, action) => {
+            state.userDto = action.payload;
         }
     }
 });
 
 export const authReducer = authSlice.reducer;
 export const selectAuth = (state) => state.auth;
-export const { setAccessToken } = authSlice.actions;
+export const { setAccessToken, setUserDto } = authSlice.actions;
