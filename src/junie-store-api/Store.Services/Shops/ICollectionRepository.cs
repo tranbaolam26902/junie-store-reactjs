@@ -40,4 +40,8 @@ public interface ICollectionRepository
 	Task<bool> DeleteImageUrlsAsync(Guid productId, CancellationToken cancellationToken = default);
 	
 	Task<bool> DeleteProductAsync(Guid productId, CancellationToken cancellationToken = default);
+
+	Task<bool> DeleteProductHistoryAsync(Guid historyId, CancellationToken cancellationToken = default);
+
+	Task<bool> ToggleDeleteProductAsync(Guid productId, Guid userId, string reason, CancellationToken cancellationToken = default);
 }
