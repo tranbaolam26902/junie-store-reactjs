@@ -55,9 +55,9 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 			.HasMaxLength(2048)
 			.HasDefaultValue("");
 
-		builder.Property(p => p.Status)
+		builder.Property(p => p.IsDeleted)
 			.IsRequired()
-			.HasDefaultValue(ProductStatus.None);
+			.HasDefaultValue(false);
 
 		// Configure the timestamps
 		builder.Property(o => o.CreateDate)

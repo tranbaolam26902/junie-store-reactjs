@@ -2,11 +2,6 @@
 
 namespace Store.Core.Entities;
 
-public enum ProductStatus
-{
-	None
-}
-
 public class Product : IEntity
 {
 	public Guid Id { get; set; }
@@ -35,7 +30,7 @@ public class Product : IEntity
 
 	public bool Active { get; set; }
 
-	public ProductStatus Status { get; set; }
+	public bool IsDeleted { get; set; }
 
 	public Guid CategoryId { get; set; }
 

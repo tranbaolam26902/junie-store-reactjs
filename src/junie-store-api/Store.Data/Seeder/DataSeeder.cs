@@ -80,7 +80,7 @@ public class DataSeeder : IDataSeeder
 		var categories = new List<Category>()
 		{
 			new() { Name = "Bông tai", Description = "Bông tai", UrlSlug = "bong-tai"},
-			new() { Name = "Dây truyền", Description = "Dây truyền", UrlSlug = "day-truyen"},
+			new() { Name = "Dây chuyền", Description = "Dây chuyền", UrlSlug = "day-chuyen"},
 			new() { Name = "Vòng tay", Description = "Vòng tay", UrlSlug = "vong-tay"},
 			new() { Name = "Nhẫn", Description = "Nhẫn", UrlSlug = "nhan"},
 		};
