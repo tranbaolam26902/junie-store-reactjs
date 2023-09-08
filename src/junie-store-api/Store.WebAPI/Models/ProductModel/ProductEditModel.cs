@@ -21,4 +21,6 @@ public class ProductEditModel
 	public Guid CategoryId { get; set; }
 
 	public Guid SupplierId { get; set; }
+
+	public string EditReason{ get; set; }
 }
