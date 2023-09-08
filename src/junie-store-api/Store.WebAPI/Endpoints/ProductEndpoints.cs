@@ -84,8 +84,19 @@ public static class ProductEndpoints
 
 		#region DELETE Method
 
+		routeGroupBuilder.MapDelete("/toggleDelete/{id:guid}", ToggleDeleteProduct)
+			.WithName("ToggleDeleteProduct")
+			.Produces(204)
+			.Produces(404);
+
 		routeGroupBuilder.MapDelete("/{id:guid}", DeleteProduct)
 			.WithName("DeleteProduct")
+			.Produces(204)
+			.Produces(404);
+
+		routeGroupBuilder.MapDelete("/histories", DeleteHistory)
+			.WithName("DeleteProductHistory")
+			.RequireAuthorization("RequireAdminRole")
 			.Produces(204)
 			.Produces(404);
 
@@ -372,6 +383,47 @@ public static class ProductEndpoints
 			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
 		}
 	}
+
+	private static async Task<IResult> ToggleDeleteProduct(
+		[FromRoute] Guid id,
+		HttpContext context,
+		[FromBody] string reason,
+		[FromServices] ICollectionRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var user = IdentityManager.GetCurrentUser(context);
+
+			return await repository.ToggleDeleteProductAsync(id, user.Id, reason)
+				? Results.Ok(ApiResponse.Success("Sản phẩm đã được chuyển trạng thái.", HttpStatusCode.NoContent))
+				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Sản phẩm không tồn tại với id: `{id}`"));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> DeleteHistory(
+		[FromBody] IList<Guid> listId,
+		[FromServices] ICollectionRepository repository)
+	{
+		try
+		{
+			foreach (var historyId in listId)
+			{
+				await repository.DeleteProductHistoryAsync(historyId);
+			}
+
+			return Results.Ok(ApiResponse.Success("Xóa thành công.", HttpStatusCode.NoContent));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
 	private static async Task<IResult> DeleteProduct(
 		Guid id,
 		[FromServices] ICollectionRepository repository,
@@ -385,6 +437,12 @@ public static class ProductEndpoints
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.NotFound,
 					$"Sản phẩm không tồn tại với id: `{id}`."));
+			} 
+			else if (oldProduct.IsDeleted == false)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotAcceptable,
+					$"Sản phẩm chưa đánh dấu xóa."));
 			}
 
 			var pictures = await repository.GetImageUrlsAsync(id);
