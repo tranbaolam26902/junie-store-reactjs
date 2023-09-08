@@ -122,10 +122,7 @@ export default function Blog() {
                                 className='transition duration-500 group-hover:scale-105'
                             />
                         </Link>
-                        <Link
-                            to={`/blogs/${blog.slug}`}
-                            className='pt-2 w-fit text-xs tracking-wider font-semibold text-secondary/70 uppercase transition duration-200 hover:opacity-70'
-                        >
+                        <Link className='pt-2 w-fit text-xs tracking-wider font-semibold text-secondary/70 uppercase transition duration-200 hover:opacity-70'>
                             Kiến thức
                         </Link>
                         <Link
