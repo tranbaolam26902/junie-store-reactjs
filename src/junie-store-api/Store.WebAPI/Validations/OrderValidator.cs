@@ -8,29 +8,28 @@ public class OrderValidator : AbstractValidator<OrderEditModel>
 	public OrderValidator()
 	{
 		RuleFor(post => post.LastName)
-			.NotEmpty().WithMessage("Họ không được bỏ trống")
-			.MaximumLength(500).WithMessage("Họ tên đề không được nhiều hơn 500 ký tự");
+			.NotEmpty().WithMessage("Last name cannot be left blank")
+			.MaximumLength(512).WithMessage("Last name must not exceed 512 characters");
 
 		RuleFor(post => post.FirstName)
-			.NotEmpty().WithMessage("Tên không được bỏ trống")
-			.MaximumLength(500).WithMessage("Họ tên đề không được nhiều hơn 500 ký tự");
+			.NotEmpty().WithMessage("First name cannot be left blank")
+			.MaximumLength(512).WithMessage("Full name must not exceed 512 characters");
 
 		RuleFor(s => s.Note)
-			.MaximumLength(2000).WithMessage("Ghi chú không được nhiều hơn 2000 ký tự");
+			.MaximumLength(2048).WithMessage("Note cannot exceed 2048 characters");
 
 		RuleFor(post => post.ShipTel)
-			.NotEmpty().WithMessage("Số điện thoại không được bỏ trống")
-			.MaximumLength(500).WithMessage("Họ tên đề không được nhiều hơn 500 ký tự");
+			.NotEmpty().WithMessage("Phone number cannot be left blank")
+			.MaximumLength(512).WithMessage("Phone number must not exceed 512 characters");
 
 		RuleFor(post => post.ShipAddress)
-			.NotEmpty().WithMessage("Địa chỉ không được bỏ trống")
-			.MaximumLength(500).WithMessage("Họ tên đề không được nhiều hơn 500 ký tự");
+			.NotEmpty().WithMessage("Address cannot be left blank")
+			.MaximumLength(1024).WithMessage("Address must not exceed 1024 characters");
 
 		RuleFor(s => s.Email)
 			.EmailAddress()
-			.WithMessage("Không đúng định dạng email")
+			.WithMessage("Invalid email format")
 			.NotEmpty()
-			.WithMessage("Email không được bỏ trống");
-		
+			.WithMessage("Email cannot be left blank");
 	}
 }
