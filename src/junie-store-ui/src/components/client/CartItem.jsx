@@ -34,7 +34,7 @@ export default function CartItem({ product }) {
                     <sup className='pl-0.5 underline'>đ</sup>
                 </span>
                 <div className='flex items-center gap-4'>
-                    <div className='flex items-center h-full rounded-sm border border-gray'>
+                    <div className='flex items-center h-full bg-primary rounded-sm border border-gray'>
                         <button
                             type='button'
                             className={`p-2.5 h-full${quantity <= 1 ? ' opacity-30' : ''}`}

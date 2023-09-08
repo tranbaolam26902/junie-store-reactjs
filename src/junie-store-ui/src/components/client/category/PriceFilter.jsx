@@ -1,6 +1,9 @@
 // Libraries
 import { useRef, useState } from 'react';
 
+// Components
+import { Input } from '@components/shared';
+
 export default function PriceFilter() {
     // Constants
     const MIN_PRICE = 0;
@@ -102,7 +105,7 @@ export default function PriceFilter() {
             {/* Start: Input */}
             <div className='flex items-center justify-between gap-4 mt-4'>
                 <div className='relative'>
-                    <input
+                    <Input
                         type='number'
                         ref={minRef}
                         defaultValue={MIN_PRICE}
@@ -116,7 +119,7 @@ export default function PriceFilter() {
                 </div>
                 <span>đến</span>
                 <div className='relative'>
-                    <input
+                    <Input
                         type='number'
                         ref={maxRef}
                         defaultValue={MAX_PRICE}

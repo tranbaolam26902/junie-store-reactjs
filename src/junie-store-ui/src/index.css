@@ -159,3 +159,20 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
     -moz-appearance: textfield;
 }
+
+/* Hide Edge reveal button */
+::-ms-reveal {
+    display: none;
+}
+
+/* Hide select's arrow icon */
+select {
+    /* for Firefox */
+    -moz-appearance: none;
+    /* for Safari, Chrome, Opera */
+    -webkit-appearance: none;
+}
+/* for IE10 */
+select::-ms-expand {
+    display: none;
+}

@@ -2,7 +2,7 @@
 import { images } from '@assets/images';
 
 // Components
-import { Button } from '@components/shared';
+import { Button, Input } from '@components/shared';
 
 export default function NewsLetterSection() {
     return (
@@ -22,12 +22,7 @@ export default function NewsLetterSection() {
                             Bạn sẽ nhận được các ưu đã dành riêng, sản phẩm mới hàng tuần.
                         </span>
                         <form className='flex flex-col lg:flex-row gap-4'>
-                            <input
-                                type='email'
-                                className='flex-1 px-4 py-3 rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                                placeholder='Email của bạn'
-                                required
-                            />
+                            <Input type='email' placeholder='Email của bạn' required />
                             <Button submit secondary text='Đăng ký' className='px-9 py-4' />
                         </form>
                     </div>

@@ -124,10 +124,10 @@ export default function Header() {
                             <span>Tìm kiếm</span>
                             <Underline />
                         </button>
-                        <button type='button' className='relative group'>
+                        <Link to='/account' type='button' className='relative group'>
                             <span>Tài khoản</span>
                             <Underline />
-                        </button>
+                        </Link>
                     </div>
                     <button type='button' className='relative -m-2 p-2' onClick={handleShowCart}>
                         <img src={icons.cart} alt='cart-icon' className='w-[1.125rem]' />
@@ -158,6 +158,7 @@ export default function Header() {
                         ))}
                     </nav>
                     <Link
+                        to='/account'
                         className='flex items-center gap-4 -mb-4 -mx-6 px-6 py-4 border border-t border-gray'
                         onClick={handleHideMobileNavbar}
                     >
@@ -198,7 +199,7 @@ export default function Header() {
                     </section>
                     {products.length > 0 && (
                         <section className='relative px-6 py-4'>
-                            <Button text='Xem tất cả kết quả' secondary full />
+                            <Button to='/search' text='Xem tất cả kết quả' secondary full onClick={handleHideSearch} />
                             <div className='absolute -top-4 left-0 right-4 h-4 bg-gradient-to-t from-primary to-transparent'></div>
                         </section>
                     )}
@@ -235,6 +236,7 @@ export default function Header() {
                     {products.length > 0 && (
                         <section className='relative px-6 py-4 border-t border-gray'>
                             <Button
+                                to='/checkout'
                                 text={
                                     <div className='flex items-center justify-center gap-3'>
                                         <span className='text-sm font-semibold uppercase'>Thanh toán</span>
@@ -251,6 +253,7 @@ export default function Header() {
                                 }
                                 secondary
                                 full
+                                onClick={handleHideCart}
                             />
                         </section>
                     )}
