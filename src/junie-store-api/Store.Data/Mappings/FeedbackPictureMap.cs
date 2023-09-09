@@ -4,23 +4,23 @@ using Store.Core.Entities;
 
 namespace Store.Data.Mappings;
 
-public class FeedbackImageMap : IEntityTypeConfiguration<FeedbackImage>
+public class FeedbackPictureMap : IEntityTypeConfiguration<FeedbackPicture>
 {
-	public void Configure(EntityTypeBuilder<FeedbackImage> builder)
+	public void Configure(EntityTypeBuilder<FeedbackPicture> builder)
 	{
-		builder.ToTable("FeedbackImages");
+		builder.ToTable("FeedbackPictures");
 
 		builder.HasKey(x => x.Id);
 
-		builder.Property(s => s.ImageUrl)
+		builder.Property(s => s.Path)
 			.IsRequired()
 			.HasMaxLength(512)
 			.HasDefaultValue("");
 
 		builder.HasOne(s => s.Feedback)
-			.WithMany(s => s.Images)
+			.WithMany(s => s.Pictures)
 			.HasForeignKey(s => s.FeedbackId)
-			.HasConstraintName("FK_Feedback_Images")
+			.HasConstraintName("FK_Feedback_Pictures")
 			.OnDelete(DeleteBehavior.Cascade);
 	}
 }
