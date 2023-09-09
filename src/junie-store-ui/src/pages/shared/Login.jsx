@@ -1,6 +1,6 @@
 // Libraries
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 // Hooks
 import { useLogin } from '@hooks/shared';
@@ -13,6 +13,7 @@ export default function Login() {
     // Hooks
     const login = useLogin();
     const navigate = useNavigate();
+    const location = useLocation();
 
     // States
     const [username, setUsername] = useState('');
@@ -25,8 +26,11 @@ export default function Login() {
 
         const loginResult = await login(username.trim(), password.trim());
 
-        if (loginResult.isSuccess) navigate('/');
-        else setErrorMessages(loginResult.errors);
+        if (loginResult.isSuccess) {
+            const from = location.state?.from?.pathname || '/'; // Get location before login to restore after login. If it doesn't exist, navigate user to home page after login
+
+            navigate(from, { replace: true });
+        } else setErrorMessages(loginResult.errors);
     };
 
     return (

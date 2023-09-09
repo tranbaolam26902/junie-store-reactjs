@@ -1,12 +1,15 @@
 // Libraries
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 // Assets
 import { icons } from '@assets/icons';
 import { images } from '@assets/images';
+
+// Hooks
+import { useLogout } from '@hooks/shared';
 
 // Redux
 import { selectAuth } from '@redux/features/shared/auth';
@@ -70,6 +73,11 @@ const products = [
 ];
 
 export default function Header() {
+    // Hooks
+    const logout = useLogout();
+    const navigate = useNavigate();
+    const location = useLocation();
+
     // States
     const auth = useSelector(selectAuth);
     const [showMobileNavbar, setShowMobileNavbar] = useState(false);
@@ -93,6 +101,11 @@ export default function Header() {
     };
     const handleHideAccountOptions = () => {
         setShowAccountOptions(false);
+    };
+    const handleLogout = async () => {
+        const logoutResult = await logout();
+
+        if (logoutResult.isSuccess) navigate('/account/login', { state: { from: location } });
     };
     const handleShowSearch = () => {
         setShowSearch(true);
@@ -177,6 +190,7 @@ export default function Header() {
                                             <button
                                                 type='button'
                                                 className='px-4 py-2 text-start text-red rounded transition duration-200 hover:bg-gray/30'
+                                                onClick={handleLogout}
                                             >
                                                 Đăng xuất
                                             </button>
@@ -185,7 +199,12 @@ export default function Header() {
                                 </AnimatePresence>
                             </div>
                         ) : (
-                            <Link to='/account/login' className='relative group'>
+                            <Link
+                                to='/account/login'
+                                state={{ from: location }}
+                                type='button'
+                                className='relative group'
+                            >
                                 <span>Đăng nhập</span>
                                 <Underline />
                             </Link>
