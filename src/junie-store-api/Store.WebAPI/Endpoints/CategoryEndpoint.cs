@@ -75,16 +75,22 @@ public static class CategoryEndpoint
 		[FromServices] ICategoryRepository repository,
 		[FromServices] IMapper mapper)
 	{
+		try
+		{
+			var products =
+				await repository.GetPagedCategoriesAsync(
+					model.Keyword,
+					model,
+					p => p.ProjectToType<CategoryDto>());
 
-		var products =
-			await repository.GetPagedCategoriesAsync(
-				model.Keyword,
-				model,
-				p => p.ProjectToType<CategoryDto>());
+			var paginationResult = new PaginationResult<CategoryDto>(products);
 
-		var paginationResult = new PaginationResult<CategoryDto>(products);
-
-		return Results.Ok(ApiResponse.Success(paginationResult));
+			return Results.Ok(ApiResponse.Success(paginationResult));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> GetCategoryById(
@@ -92,13 +98,19 @@ public static class CategoryEndpoint
 		[FromServices] ICategoryRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		var category = await repository.GetCategoryByIdAsync(id);
-		var categoryItem = mapper.Map<CategoryDto>(category);
+		try
+		{
+			var category = await repository.GetCategoryByIdAsync(id);
+			var categoryItem = mapper.Map<CategoryDto>(category);
 
-
-		return category == null
-			? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound))
-			: Results.Ok(ApiResponse.Success(categoryItem));
+			return category == null
+				? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound))
+				: Results.Ok(ApiResponse.Success(categoryItem));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> AddCategory(
@@ -106,17 +118,24 @@ public static class CategoryEndpoint
 		[FromServices] ICategoryRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		if (await repository.IsCategorySlugExistedAsync(Guid.Empty, model.UrlSlug))
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` has been used."));
+			if (await repository.IsCategorySlugExistedAsync(Guid.Empty, model.UrlSlug))
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` đã được sử dụng."));
+			}
+
+			var category = mapper.Map<Category>(model);
+
+			await repository.AddOrUpdateCategoryAsync(category);
+
+			return Results.Ok(ApiResponse.Success(mapper.Map<CategoryDto>(category), HttpStatusCode.Created));
 		}
-
-		var category = mapper.Map<Category>(model);
-
-		await repository.AddOrUpdateCategoryAsync(category);
-
-		return Results.Ok(ApiResponse.Success(mapper.Map<CategoryDto>(category), HttpStatusCode.Created));
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> UpdateCategory(
@@ -125,18 +144,25 @@ public static class CategoryEndpoint
 		[FromServices] ICategoryRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		if (await repository.IsCategorySlugExistedAsync(id, model.UrlSlug))
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(
-				HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` has been used."));
+			if (await repository.IsCategorySlugExistedAsync(id, model.UrlSlug))
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` đã được sử dụng."));
+			}
+
+			var category = mapper.Map<Category>(model);
+			category.Id = id;
+
+			return await repository.AddOrUpdateCategoryAsync(category) != null
+				? Results.Ok(ApiResponse.Success("Danh mục đã được cập nhật!", HttpStatusCode.NoContent))
+				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound));
 		}
-
-		var category = mapper.Map<Category>(model);
-		category.Id = id;
-
-		return await repository.AddOrUpdateCategoryAsync(category) != null
-			? Results.Ok(ApiResponse.Success("Category is updated!", HttpStatusCode.NoContent))
-			: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound));
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> ToggleShowOnMenu(
@@ -147,10 +173,10 @@ public static class CategoryEndpoint
 		{
 			if (await repository.ToggleShowOnMenu(id).ConfigureAwait(false))
 			{
-				return Results.Ok(ApiResponse.Success("Toggle post success", HttpStatusCode.NoContent));
+				return Results.Ok(ApiResponse.Success("Chuyển trạng thái thành công.", HttpStatusCode.NoContent));
 			}
 
-			return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "The category does not exist"));
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Danh mục không tồn tại"));
 		}
 		catch (Exception e)
 		{
@@ -162,8 +188,15 @@ public static class CategoryEndpoint
 		[FromRoute] Guid id,
 		[FromServices] ICategoryRepository repository)
 	{
-		return await repository.ToggleDeleteCategoryAsync(id)
-			? Results.Ok(ApiResponse.Success("Category is toggled", HttpStatusCode.NoContent))
-			: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"The category does not exist with id: `{id}`"));
+		try
+		{
+			return await repository.ToggleDeleteCategoryAsync(id)
+				? Results.Ok(ApiResponse.Success("Chuyển trạng thái thành công.", HttpStatusCode.NoContent))
+				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Danh mục không tồn tại với id: `{id}`"));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 }
