@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Store.Core.Contracts;
+using Store.Core.DTO;
 using Store.Core.Entities;
 using Store.Core.Identity;
 using Store.Core.Queries;
@@ -19,18 +20,31 @@ public class UserRepository : IUserRepository
 		_dbContext = context;
 		_hasher = hasher;
 	}
-	public async Task<User> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
+	public async Task<LoginResult> LoginAsync(User userLogin, CancellationToken cancellationToken = default)
 	{
 		var user = await _dbContext.Set<User>()
 			.Include(s => s.Roles)
-			.FirstOrDefaultAsync(user =>
-			user.Username.Equals(username), cancellationToken);
-
-		if (user != null && _hasher.VerifyPassword(user.Password, password))
+			.FirstOrDefaultAsync(u =>
+			u.Username.Equals(userLogin.Username), cancellationToken);
+		var result = new LoginResult()
 		{
-			return user;
+			User = user
+		};
+
+		if (user == null)
+		{
+			result.Status = LoginStatus.UserName;
+		} 
+		else if (_hasher.VerifyPassword(user.Password, userLogin.Password))
+		{
+			result.Status = LoginStatus.Success;
 		}
-		return null;
+		else
+		{
+			result.Status = LoginStatus.Password;
+		}
+
+		return result;
 	}
 
 	public async Task<bool> DeleteRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)

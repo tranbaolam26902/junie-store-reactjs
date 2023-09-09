@@ -1,4 +1,5 @@
 ﻿using Store.Core.Contracts;
+using Store.Core.DTO;
 using Store.Core.Entities;
 using Store.Core.Queries;
 
@@ -6,7 +7,7 @@ namespace Store.Services.Shops;
 
 public interface IUserRepository
 {
-	Task<User> LoginAsync(string username, string password, CancellationToken cancellationToken = default);
+	Task<LoginResult> LoginAsync(User userLogin, CancellationToken cancellationToken = default);
 
 	Task<bool> DeleteRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 	Task<UserLogin> GetRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
