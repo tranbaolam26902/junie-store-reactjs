@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Cryptography;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -103,14 +104,17 @@ public static class AccountEndpoints
 		[FromServices] IMapper mapper)
 	{
 		// Authenticate user with provided username and password
-		var user = IdentityManager.Authenticate(model, repository, mapper);
+
+		var user = mapper.Map<User>(model);
+		var result = await IdentityManager.Authenticate(user, repository, mapper);
 
 		// Retrieve user DTO object from task result
-		UserDto userDto = await user;
 
 		// Check if authentication was successful
-		if (userDto != null)
+		if (result.Status == LoginStatus.Success)
 		{
+			var userDto = mapper.Map<UserDto>(result.User);
+
 			// Generate a new access token and refresh token
 			var token = IdentityManager.Generate(userDto, configuration);
 			var refreshToken = IdentityManager.GenerateRefreshToken();
@@ -127,8 +131,10 @@ public static class AccountEndpoints
 
 			return Results.Ok(ApiResponse.Success(accessToken));
 		}
+
+
 		// Return error response
-		return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Incorrect username or password"));
+		return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, IdentityManager.LoginResult(result.Status)));
 	}
 
 	private static async Task<IResult> RefreshToken(
@@ -148,11 +154,15 @@ public static class AccountEndpoints
 			// Handle different cases depending on the validity of the refresh token
 			if (user == null)
 			{
-				return Results.Ok(ApiResponse.Fail(HttpStatusCode.Unauthorized, "Invalid Refresh Token."));
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.Unauthorized, "Refresh Token không tồn tại."));
 			}
 			else if (user.UserLogin.TokenExpires < DateTime.Now)
 			{
-				return Results.Ok(ApiResponse.Fail(HttpStatusCode.Unauthorized, "Token expired."));
+				var lastLoginDate = user.UserLogin.TokenExpires;
+				var currentDate = DateTime.Now;
+
+				var daysSinceLastLogin = (currentDate - lastLoginDate).Days;
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.Unauthorized, $"Token đã hết hạn vào {daysSinceLastLogin} ngày trước."));
 			}
 
 			// Generate a new access token and refresh token
@@ -190,9 +200,9 @@ public static class AccountEndpoints
 			{
 				await repository.DeleteRefreshTokenAsync(refreshToken);
 				context.Response.Cookies.Delete("refreshToken");
-				return Results.Ok(ApiResponse.Success("Cookie is deleted"));
+				return Results.Ok(ApiResponse.Success("Cookie đã được xóa."));
 			}
-			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Delete fail"));
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Cookie không tồn tại."));
 
 		}
 		catch (Exception e)
@@ -218,7 +228,7 @@ public static class AccountEndpoints
 				var userDto = mapper.Map<UserDto>(user);
 				return Results.Ok(ApiResponse.Success(userDto));
 			}
-			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Password is incorrect"));
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Mật khẩu không chính xác."));
 		}
 		catch (Exception e)
 		{
@@ -239,7 +249,7 @@ public static class AccountEndpoints
 			var userExist = await repository.IsUserExistedAsync(user.Username);
 			if (userExist)
 			{
-				return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "The user already exists"));
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Tài khoản đã tồn tại."));
 			}
 
 			var newUser = await repository.Register(user, model.ListRoles);
@@ -260,17 +270,24 @@ public static class AccountEndpoints
 		[FromServices] IConfiguration configuration,
 		[FromServices] IMapper mapper)
 	{
-		var user = await repository.GetUserByIdAsync(model.UserId, true);
-		if (user == null)
+		try
 		{
-			return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "User not found"));
+			var user = await repository.GetUserByIdAsync(model.UserId, true);
+			if (user == null)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Tài khoản không tồn tại."));
+			}
+
+			var newUser = await repository.SetUserRolesAsync(user.Id, model.RoleId);
+
+			var userDto = mapper.Map<UserDto>(newUser);
+
+			return Results.Ok(ApiResponse.Success(userDto));
 		}
-
-		var newUser = await repository.SetUserRolesAsync(user.Id, model.RoleId);
-
-		var userDto = mapper.Map<UserDto>(newUser);
-
-		return Results.Ok(ApiResponse.Success(userDto));
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> UpdateProfile(
@@ -291,7 +308,7 @@ public static class AccountEndpoints
 
 			if (result == null)
 			{
-				return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Update fail"));
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Cập nhật thất bại."));
 			}
 
 			var userDto = mapper.Map<UserDto>(user);
@@ -308,14 +325,21 @@ public static class AccountEndpoints
 		[FromServices] IUserRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		var userQuery = mapper.Map<UserQuery>(model);
+		try
+		{
+			var userQuery = mapper.Map<UserQuery>(model);
 
-		var userList = await repository.GetPagedUsersAsync(
-			userQuery,
-			model,
-			p => p.ProjectToType<UserDto>());
+			var userList = await repository.GetPagedUsersAsync(
+				userQuery,
+				model,
+				p => p.ProjectToType<UserDto>());
 
-		return Results.Ok(ApiResponse.Success(userList));
+			return Results.Ok(ApiResponse.Success(userList));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> GetProfile(
@@ -342,10 +366,16 @@ public static class AccountEndpoints
 		[FromServices] IUserRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		var roles = await repository.GetRolesAsync();
-		var listRoles = mapper.Map<IList<RoleDto>>(roles);
+		try
+		{
+			var roles = await repository.GetRolesAsync();
+			var listRoles = mapper.Map<IList<RoleDto>>(roles);
 
-		return Results.Ok(ApiResponse.Success(listRoles));
+			return Results.Ok(ApiResponse.Success(listRoles));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
-
 }

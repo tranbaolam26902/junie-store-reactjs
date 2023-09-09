@@ -20,16 +20,16 @@ public class Feedback
 
 	public Product Product { get; set; }
 
-	public IList<FeedbackImage> Images { get; set; }
+	public IList<FeedbackPicture> Pictures { get; set; }
 }
 
-public class FeedbackImage
+public class FeedbackPicture
 {
 	public Guid Id { get; set; }
 	
 	public Guid FeedbackId { get; set; }
 
-	public string ImageUrl { get; set; }
+	public string Path { get; set; }
 
 	// ======================================================
 	// Navigation properties

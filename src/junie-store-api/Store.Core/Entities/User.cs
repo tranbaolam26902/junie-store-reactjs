@@ -41,6 +41,14 @@ public class Role : IEntity
 	public IList<User> Users { get; set; }
 }
 
+public enum LoginStatus
+{
+	None,
+	UserName,
+	Password,
+	Success
+}
+
 public class UserLogin : IEntity
 {
 	public Guid Id { get; set; }
