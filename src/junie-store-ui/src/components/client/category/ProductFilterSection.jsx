@@ -15,10 +15,26 @@ export default function ProductFilterSection({ show, onHide }) {
                 <section className='fixed inset-0 z-20 lg:z-auto lg:relative lg:block lg:w-72'>
                     <Fade className='absolute inset-0 lg:hidden bg-black/30 cursor-pointer' onClick={onHide} />
                     <motion.div
-                        initial={{ x: '-100%', opacity: 0 }}
-                        animate={{ x: 0, opacity: 1, transition: { duration: 0.2, ease: easeInOut } }}
-                        exit={{ x: '-100%', opacity: 0, transition: { duration: 0.2, ease: easeInOut } }}
-                        className='overflow-y-auto lg:sticky lg:top-20 px-6 py-4 lg:p-0 w-96 max-w-[80vw] h-full lg:w-auto lg:h-auto bg-primary'
+                        variants={{
+                            initial: {
+                                translateX: 'var(--x-from)',
+                                transition: {
+                                    duration: 0.4,
+                                    ease: easeInOut
+                                }
+                            },
+                            animate: {
+                                translateX: 'var(--x-to)',
+                                transition: {
+                                    duration: 0.4,
+                                    ease: easeInOut
+                                }
+                            }
+                        }}
+                        initial='initial'
+                        animate='animate'
+                        exit={{ x: 'var(--x-from)', transition: { duration: 0.4, ease: easeInOut } }}
+                        className='overflow-y-auto lg:sticky lg:top-20 px-6 py-4 lg:p-0 w-96 max-w-[80vw] h-full lg:w-auto lg:h-auto bg-primary [--x-from:-100%] [--x-to:0%] lg:[--x-from:0%]'
                     >
                         <div className='flex items-center justify-between'>
                             <span className='font-garamond text-2xl'>Bộ lọc</span>
