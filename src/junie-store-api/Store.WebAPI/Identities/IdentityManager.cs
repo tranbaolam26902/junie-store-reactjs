@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using System.Text;
 using Store.Core.Collections;
 using Store.Core.Contracts;
+using Store.Core.DTO;
+using Store.Core.Entities;
 
 namespace Store.WebAPI.Identities;
 
@@ -65,16 +67,19 @@ public class IdentityManager
 		return token;
 	}
 
-	public static async Task<UserDto> Authenticate(UserLoginModel userLogin, IUserRepository repository, IMapper mapper)
+	public static async Task<LoginResult> Authenticate(User userLogin, IUserRepository repository, IMapper mapper)
 	{
-		var currentUser = await repository.LoginAsync(userLogin.Username, userLogin.Password);
-		var result = mapper.Map<UserDto>(currentUser);
-		if (result != null)
+		return await repository.LoginAsync(userLogin);
+	}
+
+	public static string LoginResult(LoginStatus status)
+	{
+		if (status == LoginStatus.UserName)
 		{
-			return result;
+			return "Tên đăng nhập không chính xác.";
 		}
 
-		return null;
+		return "Mật khẩu không chính xác.";
 	}
 
 	public static RefreshToken GenerateRefreshToken()
