@@ -34,8 +34,6 @@ export default function CartSection() {
                     <CartItem key={product.id} product={product} />
                 ))}
             </div>
-            <CartItem product={products[0]} />
-            <CartItem product={products[0]} />
             <div className='flex items-center gap-2 py-4'>
                 <Input placeholder='Mã giảm giá' className='py-3.5' />
                 <Button secondary disabled text='Áp dụng' />

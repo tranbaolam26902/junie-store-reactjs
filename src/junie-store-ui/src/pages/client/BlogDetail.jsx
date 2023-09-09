@@ -5,14 +5,15 @@ import {
     BlogHeaderSection,
     FeaturedBlogSection
 } from '@components/client/blogs';
+import { PageTransition } from '@components/shared/animations';
 
 export default function BlogDetail() {
     return (
-        <section>
+        <PageTransition>
             <BlogHeaderSection />
             <BlogContentSection />
             <FeaturedBlogSection />
             <BlogCommentSection />
-        </section>
+        </PageTransition>
     );
 }
