@@ -19,7 +19,7 @@ public class CollectionRepository : ICollectionRepository
 	public async Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
-			.Include(s => s.Category)
+			.Include(s => s.Categories)
 			.Include(s => s.Pictures)
 			.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 	}
@@ -27,7 +27,7 @@ public class CollectionRepository : ICollectionRepository
 	public async Task<Product> GetProductBySlugAsync(string slug, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
-			.Include(s => s.Category)
+			.Include(s => s.Categories)
 			.Include(s => s.Pictures)
 			.FirstOrDefaultAsync(s => s.UrlSlug.Equals(slug), cancellationToken);
 	}
@@ -96,13 +96,15 @@ public class CollectionRepository : ICollectionRepository
 	{
 		var product = await GetProductBySlugAsync(slug, cancellationToken);
 
-		return await _dbContext.Set<Product>()
-			.Include(s => s.Category)
-			.Include(s => s.Pictures)
-			.Where(s => s.Id != product.Id && product.CategoryId == s.CategoryId)
-			.OrderBy(s => Guid.NewGuid())
-			.Take(num)
-			.ToListAsync(cancellationToken);
+		//return await _dbContext.Set<Product>()
+		//	.Include(s => s.Category)
+		//	.Include(s => s.Pictures)
+		//	.Where(s => s.Id != product.Id && product.CategoryId == s.CategoryId)
+		//	.OrderBy(s => Guid.NewGuid())
+		//	.Take(num)
+		//	.ToListAsync(cancellationToken);
+
+		return null;
 	}
 
 	public async Task<IPagedList<T>> GetPagedProductsAsync<T>(IProductQuery condition, IPagingParams pagingParams, Func<IQueryable<Product>, IQueryable<T>> mapper)
@@ -202,13 +204,15 @@ public class CollectionRepository : ICollectionRepository
 	private IQueryable<Product> FilterProduct(IProductQuery condition)
 	{
 		return _dbContext.Set<Product>()
-			.Include(s => s.Category)
+			.Include(s => s.Categories)
 			.Include(s => s.Pictures)
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)
-			.WhereIf(!string.IsNullOrEmpty(condition.CategorySlug), s => s.Category.UrlSlug.Contains(condition.CategorySlug))
-			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s => s.UrlSlug.Contains(condition.ProductSlug))
+			.WhereIf(!string.IsNullOrEmpty(condition.CategorySlug), s => 
+				s.Categories.Any(c => c.UrlSlug.Contains(condition.CategorySlug)))
+			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s => 
+				s.UrlSlug.Contains(condition.ProductSlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
 				s.Name.Contains(condition.Keyword) ||
 				s.Description.Contains(condition.Keyword) ||
