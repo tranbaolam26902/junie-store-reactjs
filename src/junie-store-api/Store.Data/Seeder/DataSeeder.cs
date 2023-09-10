@@ -136,7 +136,6 @@ public class DataSeeder : IDataSeeder
 				Quantity = 10,
 				Name = "Nhẫn Charlotte",
 				CreateDate = DateTime.Now,
-				CategoryId = categories[3].Id,
 				ShortIntro =
 					"Tinh tế, duyên dáng những vẫn sang trọng là những điều mà chúng ta sẽ cảm nhận được khi đeo trên mình các trang sức làm từ ngọc trai." +
 					" Ẩn chứa trong mỗi viên ngọc trai đều là một vẻ đẹp đầy sự thu hút, mà càng nhìn lại càng thấy yêu hơn.",
@@ -154,6 +153,10 @@ public class DataSeeder : IDataSeeder
 						Path = "images/default.png",
 						Active = true
 					}
+				},
+				Categories = new List<Category>()
+				{
+					categories[0]
 				},
 				Sku = "R-CHARLOTTE",
 				Note = "",
