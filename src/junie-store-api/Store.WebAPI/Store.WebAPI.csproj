@@ -38,7 +38,6 @@
     <Folder Include="Models\PictureModel\" />
     <Folder Include="Identities\" />
     <Folder Include="Middlewares\" />
-    <Folder Include="Validations\" />
     <Folder Include="wwwroot\uploads\pictures\" />
     <Folder Include="wwwroot\images" />
   </ItemGroup>

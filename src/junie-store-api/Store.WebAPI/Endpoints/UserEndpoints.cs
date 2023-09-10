@@ -15,7 +15,7 @@ using Store.WebAPI.Models.UserModel;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class AccountEndpoints
+public static class UserEndpoints
 {
 	public static WebApplication MapAccountEndpoints(
 		this WebApplication app)
@@ -62,10 +62,7 @@ public static class AccountEndpoints
 		builder.MapPost("/register", Register)
 			.WithName("Register")
 			.AddEndpointFilter<ValidatorFilter<RegisterModel>>()
-			.RequireAuthorization("RequireAdminRole")
-			.Produces<ApiResponse<UserDto>>()
-			.Produces(StatusCodes.Status401Unauthorized)
-			.Produces(StatusCodes.Status403Forbidden);
+			.Produces<ApiResponse<UserDto>>();
 
 		#endregion
 
@@ -252,7 +249,7 @@ public static class AccountEndpoints
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Tài khoản đã tồn tại."));
 			}
 
-			var newUser = await repository.Register(user, model.ListRoles);
+			var newUser = await repository.Register(user);
 
 			var userDto = mapper.Map<UserDto>(newUser);
 
@@ -278,7 +275,7 @@ public static class AccountEndpoints
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Tài khoản không tồn tại."));
 			}
 
-			var newUser = await repository.SetUserRolesAsync(user.Id, model.RoleId);
+			var newUser = await repository.SetUserRolesAsync(user.Id, model.RoleIdList);
 
 			var userDto = mapper.Map<UserDto>(newUser);
 

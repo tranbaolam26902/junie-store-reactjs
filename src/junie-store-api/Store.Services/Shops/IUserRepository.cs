@@ -16,7 +16,7 @@ public interface IUserRepository
 
 	Task<bool> ChangePasswordAsync(User user, string oldPassword, string newPassword, CancellationToken cancellationToken = default);
 
-	Task<User> Register(User user, IEnumerable<Guid> roles,
+	Task<User> Register(User user,
 		CancellationToken cancellationToken = default);
 
 	Task<Role> GetRoleByNameAsync(string role,
@@ -25,7 +25,7 @@ public interface IUserRepository
 	Task<bool> IsUserExistedAsync(string userName, CancellationToken cancellationToken = default);
 
 	Task<IList<Role>> GetRolesAsync(CancellationToken cancellationToken = default);
-	Task<User> SetUserRolesAsync(Guid userId, Guid roleId, CancellationToken cancellationToken = default);
+	Task<User> SetUserRolesAsync(Guid userId, IList<Guid> roles, CancellationToken cancellationToken = default);
 
 	Task<UserLogin> SetRefreshTokenAsync(Guid userId, IRefreshToken refreshToken, CancellationToken cancellationToken = default);
 

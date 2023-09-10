@@ -12,7 +12,7 @@ public class OrderEditModel
 
 	public string ShipAddress { get; set; }
 
-	public string ShipTel { get; set; } 
+	public string Phone { get; set; } 
 
 	public string Note { get; set; }
 

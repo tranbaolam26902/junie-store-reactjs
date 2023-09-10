@@ -13,13 +13,11 @@ public class RegisterModel
 	public string Phone { get; set; }
 
 	public string Address { get; set; }
-
-	public IList<Guid> ListRoles { get; set; }
 }
 
 public class UserRolesEditModel
 {
 	public Guid UserId { get; set; }
 
-	public Guid RoleId { get; set; }
+	public IList<Guid> RoleIdList { get; set; }
 }

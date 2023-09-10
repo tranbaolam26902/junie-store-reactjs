@@ -94,7 +94,7 @@ public class UserRepository : IUserRepository
 		}
 	}
 
-	public async Task<User> Register(User user, IEnumerable<Guid> roles, CancellationToken cancellationToken = default)
+	public async Task<User> Register(User user, CancellationToken cancellationToken = default)
 	{
 		var userExist = await _dbContext.Set<User>().AnyAsync(s => s.Username == user.Username, cancellationToken);
 		if (userExist)
@@ -105,13 +105,12 @@ public class UserRepository : IUserRepository
 		user.Roles = new List<Role>();
 		user.Password = _hasher.Hash(user.Password);
 
-		if (UpdateUserRoles(ref user, roles))
-		{
-			_dbContext.Users.Add(user);
-			await _dbContext.SaveChangesAsync(cancellationToken);
-			return user;
-		}
-		return null;
+		user.Roles = await _dbContext.Set<Role>()
+			.Where(s => s.Name == "User").ToListAsync(cancellationToken);
+
+		_dbContext.Users.Add(user);
+		await _dbContext.SaveChangesAsync(cancellationToken);
+		return user;
 	}
 
 	public async Task<Role> GetRoleByNameAsync(string role, CancellationToken cancellationToken = default)
@@ -133,21 +132,8 @@ public class UserRepository : IUserRepository
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task<User> SetUserRolesAsync(Guid userId, Guid roleId, CancellationToken cancellationToken = default)
+	public async Task<User> SetUserRolesAsync(Guid userId, IList<Guid> roles, CancellationToken cancellationToken = default)
 	{
-
-		var roles = new List<Guid>();
-		var roleAdmin = await _dbContext.Set<Role>().FirstOrDefaultAsync(s => s.Name == "Admin", cancellationToken);
-
-		if (roleAdmin.Id == roleId)
-		{
-			roles = await _dbContext.Set<Role>().Select(s => s.Id).ToListAsync(cancellationToken);
-		}
-		else
-		{
-			roles.Add(roleId);
-		}
-
 		var user = await _dbContext.Set<User>()
 			.Include(s => s.Roles)
 			.FirstOrDefaultAsync(s => s.Id == userId, cancellationToken);

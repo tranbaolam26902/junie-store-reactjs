@@ -46,7 +46,7 @@ public static class ProductEndpoints
 			.Produces<ApiResponse<ProductDto>>();
 
 		routeGroupBuilder.MapGet("/bySlug/{slug:regex(^[a-z0-9_-]+$)}", GetProductBySlug)
-			.WithName("GetProductBySlug")
+			.WithName("GetProductBySlugAsync")
 			.Produces<ApiResponse<ProductDto>>();
 
 		#endregion
@@ -136,7 +136,7 @@ public static class ProductEndpoints
 	{
 		try
 		{
-			var product = await repository.GetProductBySlug(slug);
+			var product = await repository.GetProductBySlugAsync(slug);
 
 			if (product == null)
 			{

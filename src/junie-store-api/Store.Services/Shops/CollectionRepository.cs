@@ -24,7 +24,7 @@ public class CollectionRepository : ICollectionRepository
 			.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 	}
 
-	public async Task<Product> GetProductBySlug(string slug, CancellationToken cancellationToken = default)
+	public async Task<Product> GetProductBySlugAsync(string slug, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
 			.Include(s => s.Category)
@@ -94,7 +94,7 @@ public class CollectionRepository : ICollectionRepository
 
 	public async Task<IList<Product>> GetRelatedProductsAsync(string slug, int num = 10, CancellationToken cancellationToken = default)
 	{
-		var product = await GetProductBySlug(slug, cancellationToken);
+		var product = await GetProductBySlugAsync(slug, cancellationToken);
 
 		return await _dbContext.Set<Product>()
 			.Include(s => s.Category)
