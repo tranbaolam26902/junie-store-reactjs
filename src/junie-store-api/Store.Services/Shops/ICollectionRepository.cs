@@ -8,7 +8,7 @@ public interface ICollectionRepository
 {
 	Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default);
 	
-	Task<Product> GetProductBySlug(string slug, CancellationToken cancellationToken = default);
+	Task<Product> GetProductBySlugAsync(string slug, CancellationToken cancellationToken = default);
 
 	Task<bool> IsProductSlugExistedAsync(Guid productId, string slug, CancellationToken cancellationToken = default);
 
