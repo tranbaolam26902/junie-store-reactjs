@@ -46,32 +46,47 @@ public static class OrderEndpoints
 		[FromServices] IOrderRepository repository,
 		[FromServices] IMapper mapper)
 	{
-		var condition = mapper.Map<OrderQuery>(model);
+		try
+		{
+			var condition = mapper.Map<OrderQuery>(model);
 
-		var orders =
-			await repository.GetPagedOrdersAsync(
-				condition,
-				model,
-				p => p.ProjectToType<OrderDto>());
+			var orders =
+				await repository.GetPagedOrdersAsync(
+					condition,
+					model,
+					p => p.ProjectToType<OrderDto>());
 
-		var paginationResult = new PaginationResult<OrderDto>(orders);
+			var paginationResult = new PaginationResult<OrderDto>(orders);
 
-		return Results.Ok(ApiResponse.Success(paginationResult));
+			return Results.Ok(ApiResponse.Success(paginationResult));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
 	}
 
 	private static async Task<IResult> CheckOut(
 		OrderEditModel model,
 		[FromServices] IOrderRepository repository,
+		[FromServices] ICollectionRepository productRepo,
 		[FromServices] IMapper mapper)
 	{
 		try
 		{
+			var outOfStockProductNames = new List<string>();
 			foreach (var edit in model.Detail)
 			{
 				if (!await repository.CheckQuantityProduct(edit.Id, edit.Quantity))
 				{
-					return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Out of stock"));
+					var product = await productRepo.GetProductByIdAsync(edit.Id);
+					outOfStockProductNames.Add(product.Name);
 				}
+			}
+
+			if (outOfStockProductNames.Any())
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.UnprocessableEntity, outOfStockProductNames.ToArray()));
 			}
 
 			var newOrder = mapper.Map<Order>(model);
