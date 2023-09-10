@@ -18,7 +18,7 @@ public class OrderValidator : AbstractValidator<OrderEditModel>
 		RuleFor(s => s.Note)
 			.MaximumLength(2048).WithMessage("Ghi chú không được nhiều hơn 2048 ký tự.");
 
-		RuleFor(post => post.ShipTel)
+		RuleFor(post => post.Phone)
 			.NotEmpty().WithMessage("Số điện thoại không được để trống")
 			.MaximumLength(12).WithMessage("Số điện thoại không được nhiều hơn 12 ký tự.");
 
