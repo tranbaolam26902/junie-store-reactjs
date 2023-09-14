@@ -94,7 +94,7 @@ public class UserRepository : IUserRepository
 		}
 	}
 
-	public async Task<User> Register(User user, CancellationToken cancellationToken = default)
+	public async Task<User> RegisterAsync(User user, CancellationToken cancellationToken = default)
 	{
 		var userExist = await _dbContext.Set<User>().AnyAsync(s => s.Username == user.Username, cancellationToken);
 		if (userExist)
