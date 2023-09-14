@@ -13,14 +13,17 @@ public class AccountMap : IEntityTypeConfiguration<User>
 		builder.HasKey(p => p.Id);
 
 		builder.Property(p => p.Name)
-			.HasMaxLength(128);
+			.IsRequired()
+			.HasMaxLength(128)
+			.HasDefaultValue("");
 
 		builder.Property(p => p.Email)
-			.IsRequired();
+			.IsRequired()
+			.HasDefaultValue("");
 
 		builder.Property(s => s.Username)
 			.IsRequired()
-			.HasMaxLength(64);
+			.HasMaxLength(128);
 
 		builder.Property(s => s.Password)
 			.IsRequired()
