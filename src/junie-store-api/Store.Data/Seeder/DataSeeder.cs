@@ -29,7 +29,7 @@ public class DataSeeder : IDataSeeder
 		var categories = AddCategories();
 		var discounts = AddDiscount();
 		var suppliers = AddSuppliers();
-		var products = AddProduct(categories, users, suppliers);
+		var products = AddProduct(categories, suppliers);
 
 	}
 
@@ -83,6 +83,7 @@ public class DataSeeder : IDataSeeder
 			new() { Name = "Dây chuyền", Description = "Dây chuyền", UrlSlug = "day-chuyen"},
 			new() { Name = "Vòng tay", Description = "Vòng tay", UrlSlug = "vong-tay"},
 			new() { Name = "Nhẫn", Description = "Nhẫn", UrlSlug = "nhan"},
+			new() { Name = "Sale", Description = "Sale", UrlSlug = "sale"},
 		};
 
 		_dbContext.Categories.AddRange(categories);
@@ -127,7 +128,7 @@ public class DataSeeder : IDataSeeder
 		return suppliers;
 	}
 
-	private IList<Product> AddProduct(IList<Category> categories, IList<User> users, IList<Supplier> suppliers)
+	private IList<Product> AddProduct(IList<Category> categories, IList<Supplier> suppliers)
 	{
 		var product = new List<Product>()
 		{
@@ -136,10 +137,11 @@ public class DataSeeder : IDataSeeder
 				Quantity = 10,
 				Name = "Nhẫn Charlotte",
 				CreateDate = DateTime.Now,
-				ShortIntro =
-					"Tinh tế, duyên dáng những vẫn sang trọng là những điều mà chúng ta sẽ cảm nhận được khi đeo trên mình các trang sức làm từ ngọc trai." +
-					" Ẩn chứa trong mỗi viên ngọc trai đều là một vẻ đẹp đầy sự thu hút, mà càng nhìn lại càng thấy yêu hơn.",
-				Description = "Lần đầu tiên cho ra mắt sản phẩm về nhẫn, " +
+				Instruction = "Được làm từ những chất liệu cao cấp và bền bỉ nhưng do đặc tính cơ bản của chất liệu, " +
+				              "Junie khuyến khích khách hàng nên tuân theo các nguyên tắc bảo quản trang sức nói chung.\r\n\r\nNên tháo trang sức ra trước khi tiếp xúc với bất kỳ môi trường ẩm hoặc ma sát mạnh (vd: rửa tay, đi ngủ, tắm rửa,...) để đảm bảo và duy trì độ bóng của sản phẩm cũng như kéo dài tuổi thọ của sản phẩm.",
+				Description = "Tinh tế, duyên dáng những vẫn sang trọng là những điều mà chúng ta sẽ cảm nhận được khi đeo trên mình các trang sức làm từ ngọc trai." +
+				              " Ẩn chứa trong mỗi viên ngọc trai đều là một vẻ đẹp đầy sự thu hút, mà càng nhìn lại càng thấy yêu hơn." +
+				              "Lần đầu tiên cho ra mắt sản phẩm về nhẫn, " +
 				              "Junie ưu ái mang tới sự kết hợp từ ngọc trai nước ngọt nhỏ nhắn nhưng không kém phần nổi bật và những viên đá Cubic Zirconia lấp lánh kiêu sa." +
 				              "\r\n\r\nMột chiếc nhẫn nhỏ xinh mà bạn có thể diện vào bất cứ lúc nào, bất cứ ở nơi đâu và bất cứ khi bạn muốn lựa chọn vẻ xinh đẹp riêng phù hợp với chính mình.",
 				Active = true,
@@ -150,7 +152,7 @@ public class DataSeeder : IDataSeeder
 				{
 					new()
 					{
-						Path = "images/default.png",
+						Path = "images/default.webp",
 						Active = true
 					}
 				},
@@ -160,7 +162,8 @@ public class DataSeeder : IDataSeeder
 				},
 				Sku = "R-CHARLOTTE",
 				Note = "",
-				Supplier = suppliers[0]
+				Supplier = suppliers[0],
+				MinQuantity = 10
 			}
 		};
 
