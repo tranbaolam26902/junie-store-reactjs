@@ -63,11 +63,9 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 		builder.Property(o => o.CreateDate)
 			.HasColumnType("datetime");
 
-		builder.HasOne(p => p.Category)
-			.WithMany(c => c.Products)
-			.HasForeignKey(p => p.CategoryId)
-			.HasConstraintName("FK_Products_Categories")
-			.OnDelete(DeleteBehavior.Cascade);
+		builder.HasMany(s => s.Categories)
+			.WithMany(s => s.Products)
+			.UsingEntity(pt => pt.ToTable("ProductCategory"));
 
 		builder.HasMany(s => s.Pictures)
 			.WithOne(s => s.Product)

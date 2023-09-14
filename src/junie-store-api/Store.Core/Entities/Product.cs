@@ -32,8 +32,6 @@ public class Product : IEntity
 
 	public bool IsDeleted { get; set; }
 
-	public Guid CategoryId { get; set; }
-
 	public Guid SupplierId { get; set; }
 
 	// ======================================================
@@ -42,7 +40,7 @@ public class Product : IEntity
 
 	public Supplier Supplier { get; set; }
 
-	public Category Category { get; set; }
+	public IList<Category> Categories { get; set; }
 
 	public IList<OrderDetail> Details { get; set; }
 

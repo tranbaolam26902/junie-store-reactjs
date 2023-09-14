@@ -22,4 +22,5 @@ public interface ICategoryRepository
 	Task<bool> ToggleShowOnMenu(Guid id, CancellationToken cancellationToken = default);
 
 	Task<Category> GetCategoryByIdAsync(Guid id, CancellationToken cancellationToken = default);
+	Task<Category> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default);
 }

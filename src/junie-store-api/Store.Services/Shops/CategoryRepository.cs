@@ -57,6 +57,12 @@ public class CategoryRepository : ICategoryRepository
 			.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 	}
 
+	public async Task<Category> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default)
+	{
+		return await _dbContext.Set<Category>()
+			.FirstOrDefaultAsync(s => s.UrlSlug == slug, cancellationToken);
+	}
+
 	public async Task<Category> AddOrUpdateCategoryAsync(Category category, CancellationToken cancellationToken = default)
 	{
 		if (_dbContext.Set<Category>().Any(s => s.Id == category.Id))

@@ -274,7 +274,7 @@ public static class ProductEndpoints
 			var product = mapper.Map<Product>(model);
 
 			product.CreateDate = DateTime.Now;
-			product.Category = null;
+			//product.Category = null;
 			product.Supplier = null;
 
 			await repository.AddOrUpdateProductAsync(product, user.Id);
@@ -320,7 +320,7 @@ public static class ProductEndpoints
 			var product = await repository.GetProductByIdAsync(id);
 			mapper.Map(model, product);
 
-			product.Category = null;
+			//product.Category = null;
 			product.Supplier = null;
 
 			await repository.AddOrUpdateProductAsync(product, user.Id, model.EditReason);

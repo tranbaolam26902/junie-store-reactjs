@@ -16,19 +16,24 @@ public static class CategoryEndpoint
 	public static WebApplication MapCategoriesEndpoint(
 		this WebApplication app)
 	{
-		var routeGroupBuilder = app.MapGroup("/api/categories");
+		var builder = app.MapGroup("/api/categories");
 
 		#region GET Method
 
-		routeGroupBuilder.MapGet("/", GetCategories)
+		builder.MapGet("/", GetCategories)
 			.WithName("GetCategories")
 			.Produces<ApiResponse<IPagedList<CategoryDto>>>();
 
-		routeGroupBuilder.MapGet("/{id:guid}", GetCategoryById)
+		builder.MapGet("/{id:guid}", GetCategoryById)
 			.WithName("GetCategoryById")
-			.Produces<ApiResponse<Category>>();
+			.Produces<ApiResponse<CategoryDto>>();
 
-		routeGroupBuilder.MapGet("/toggleShowOnMenu/{id:guid}", ToggleShowOnMenu)
+		builder.MapGet("/bySlug/{slug:regex(^[a-z0-9_-]+$)}", GetCategoryBySlug)
+			.WithName("GetCategoryBySlug")
+			.Produces<ApiResponse<CategoryDto>>();
+
+
+		builder.MapGet("/toggleShowOnMenu/{id:guid}", ToggleShowOnMenu)
 			.WithName("ToggleCategoryShowOnMenu")
 			.Produces(204)
 			.Produces(404);
@@ -37,7 +42,7 @@ public static class CategoryEndpoint
 
 		#region POST Method
 
-		routeGroupBuilder.MapPost("/", AddCategory)
+		builder.MapPost("/", AddCategory)
 			.WithName("AddCategory")
 			.RequireAuthorization("RequireManagerRole")
 			.Produces(201)
@@ -48,7 +53,7 @@ public static class CategoryEndpoint
 
 		#region PUT Method
 
-		routeGroupBuilder.MapPut("/{id:guid}", UpdateCategory)
+		builder.MapPut("/{id:guid}", UpdateCategory)
 			.WithName("UpdateCategory")
 			.RequireAuthorization("RequireManagerRole")
 			.Produces(204)
@@ -59,7 +64,7 @@ public static class CategoryEndpoint
 
 		#region DELETE Method
 
-		routeGroupBuilder.MapDelete("/toggleDelete/{id:guid}", ToggleDeleteCategory)
+		builder.MapDelete("/toggleDelete/{id:guid}", ToggleDeleteCategory)
 			.WithName("ToggleDeleteCategory")
 			.RequireAuthorization("RequireManagerRole")
 			.Produces(204)
@@ -93,6 +98,26 @@ public static class CategoryEndpoint
 		}
 	}
 
+	private static async Task<IResult> GetCategoryBySlug(
+		[FromRoute] string slug,
+		[FromServices] ICategoryRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var category = await repository.GetCategoryBySlugAsync(slug);
+			var categoryItem = mapper.Map<CategoryDto>(category);
+
+			return category == null
+				? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound))
+				: Results.Ok(ApiResponse.Success(categoryItem));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
 	private static async Task<IResult> GetCategoryById(
 		[FromRoute] Guid id,
 		[FromServices] ICategoryRepository repository,
@@ -112,6 +137,7 @@ public static class CategoryEndpoint
 			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
 		}
 	}
+
 
 	private static async Task<IResult> AddCategory(
 		CategoryEditModel model,
