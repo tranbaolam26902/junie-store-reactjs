@@ -261,23 +261,22 @@ public static class ProductEndpoints
 					$"Sản phẩm đã tồn tại với tên: `{model.Name}`"));
 			}
 
-			var isExitsCategory = await categoryRepo.GetCategoryByIdAsync(model.CategoryId);
 			var isExitsSupplier = await supplierRepo.GetSupplierByIdAsync(model.SupplierId);
 
-			if (isExitsSupplier == null || isExitsCategory == null)
+			if (isExitsSupplier == null)
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.NotFound,
-					$"Mã nhà cung cấp hoặc danh mục không tồn tại!"));
+					$"Nhà cung cấp không tồn tại!"));
 			}
 
 			var product = mapper.Map<Product>(model);
 
 			product.CreateDate = DateTime.Now;
-			//product.Category = null;
+			product.Categories = new List<Category>();
 			product.Supplier = null;
 
-			await repository.AddOrUpdateProductAsync(product, user.Id);
+			await repository.AddOrUpdateProductAsync(product, model.Categories, user.Id);
 
 			return Results.Ok(ApiResponse.Success(
 			mapper.Map<ProductDto>(product), HttpStatusCode.Created));
@@ -300,21 +299,20 @@ public static class ProductEndpoints
 		try
 		{
 			var user = IdentityManager.GetCurrentUser(context);
-			if (await repository.IsProductExistedAsync(Guid.Empty, model.Name))
+			if (await repository.IsProductExistedAsync(id, model.Name))
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.Conflict,
 					$"Sản phẩm đã tồn tại với tên: `{model.Name}`"));
 			}
 
-			var isExitsCategory = await categoryRepo.GetCategoryByIdAsync(model.CategoryId);
 			var isExitsSupplier = await supplierRepo.GetSupplierByIdAsync(model.SupplierId);
 
-			if (isExitsSupplier == null || isExitsCategory == null)
+			if (isExitsSupplier == null)
 			{
 				return Results.Ok(ApiResponse.Fail(
 					HttpStatusCode.NotFound,
-					$"Mã nhà cung cấp hoặc danh mục không tồn tại!"));
+					$"Nhà cung cấp không tồn tại!"));
 			}
 
 			var product = await repository.GetProductByIdAsync(id);
@@ -323,7 +321,7 @@ public static class ProductEndpoints
 			//product.Category = null;
 			product.Supplier = null;
 
-			await repository.AddOrUpdateProductAsync(product, user.Id, model.EditReason);
+			await repository.AddOrUpdateProductAsync(product, model.Categories, user.Id, model.EditReason);
 			return Results.Ok(ApiResponse.Success(
 				mapper.Map<ProductDto>(product), HttpStatusCode.Created));
 		}

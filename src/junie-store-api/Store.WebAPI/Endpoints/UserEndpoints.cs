@@ -60,7 +60,7 @@ public static class UserEndpoints
 			.Produces<ApiResponse<AccessTokenModel>>();
 
 		builder.MapPost("/register", Register)
-			.WithName("Register")
+			.WithName("RegisterAsync")
 			.AddEndpointFilter<ValidatorFilter<RegisterModel>>()
 			.Produces<ApiResponse<UserDto>>();
 
@@ -249,7 +249,7 @@ public static class UserEndpoints
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, "Tài khoản đã tồn tại."));
 			}
 
-			var newUser = await repository.Register(user);
+			var newUser = await repository.RegisterAsync(user);
 
 			var userDto = mapper.Map<UserDto>(newUser);
 
