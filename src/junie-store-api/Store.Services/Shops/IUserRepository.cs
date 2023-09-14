@@ -16,7 +16,7 @@ public interface IUserRepository
 
 	Task<bool> ChangePasswordAsync(User user, string oldPassword, string newPassword, CancellationToken cancellationToken = default);
 
-	Task<User> Register(User user,
+	Task<User> RegisterAsync(User user,
 		CancellationToken cancellationToken = default);
 
 	Task<Role> GetRoleByNameAsync(string role,
