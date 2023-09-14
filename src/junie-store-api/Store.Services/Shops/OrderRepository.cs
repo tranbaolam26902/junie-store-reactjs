@@ -47,13 +47,13 @@ public class OrderRepository : IOrderRepository
 			{
 				ProductId = product.Id,
 				Price = product.Price - (product.Price * product.Discount) / 100,
-				Quantity = item.Quantity,
+				//Quantity = item.Quantity,
 				OrderId = order.Id
 			};
 			product.Quantity -= item.Quantity;
 			_dbContext.Entry(product).State = EntityState.Modified;
 
-			order.Total += detail.Quantity * detail.Price;
+			//order.Total += detail.Quantity * detail.Price;
 			order.Details.Add(detail);
 		}
 
