@@ -4,6 +4,7 @@ using Store.Core.Entities;
 using Store.Core.Queries;
 using Store.Data.Contexts;
 using Store.Services.Extensions;
+using System.Data;
 
 namespace Store.Services.Shops;
 
@@ -16,11 +17,10 @@ public class CollectionRepository : ICollectionRepository
 		_dbContext = context;
 	}
 
-	public async Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default)
+	public async Task<Product> GetProductByIdAsync(Guid id, bool getAll = false, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
 			.Include(s => s.Categories)
-			.Include(s => s.Pictures)
 			.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 	}
 
@@ -45,17 +45,20 @@ public class CollectionRepository : ICollectionRepository
 			.AnyAsync(s => s.Id != productId && s.UrlSlug == slug, cancellationToken);
 	}
 
-	public async Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string note = "", CancellationToken cancellationToken = default)
+	public async Task<Product> AddOrUpdateProductAsync(Product product, IList<Guid> categories, Guid userId, string editReason = "", CancellationToken cancellationToken = default)
 	{
 		var history = new ProductHistory()
 		{
 			ActionTime = DateTime.Now,
-			Note = note,
+			EditReason = editReason,
 			UserId = userId,
 			ProductId = product.Id
 		};
 
 		product.UrlSlug = FriendlyUrls.GenerateSlug(product.Name);
+
+		//UpdateProductCategories(ref product, categories);
+
 		if (_dbContext.Set<Product>().Any(s => s.Id == product.Id))
 		{
 			history.HistoryAction = ProductHistoryAction.Update;
@@ -63,12 +66,12 @@ public class CollectionRepository : ICollectionRepository
 		}
 		else
 		{
-			product.Sku = "SP-" + Guid.NewGuid().ToString().Split('-')[0].ToUpper();
 			_dbContext.Products.Add(product);
 
 			history.HistoryAction = ProductHistoryAction.Create;
 			history.ProductId = product.Id;
 		}
+
 
 		_dbContext.ProductHistories.Add(history);
 		await _dbContext.SaveChangesAsync(cancellationToken);
@@ -178,7 +181,7 @@ public class CollectionRepository : ICollectionRepository
 
 	public async Task<bool> ToggleDeleteProductAsync(Guid productId, Guid userId, string reason, CancellationToken cancellationToken = default)
 	{
-		var product = await GetProductByIdAsync(productId, cancellationToken);
+		var product = await GetProductByIdAsync(productId, false, cancellationToken);
 
 		if (product == null)
 		{
@@ -189,7 +192,7 @@ public class CollectionRepository : ICollectionRepository
 		{
 			ActionTime = DateTime.Now,
 			HistoryAction = ProductHistoryAction.Delete,
-			Note = reason,
+			EditReason = reason,
 			UserId = userId,
 			ProductId = productId
 		};
@@ -199,6 +202,31 @@ public class CollectionRepository : ICollectionRepository
 		return await _dbContext.Set<Product>()
 			.Where(s => s.Id == productId)
 			.ExecuteUpdateAsync(s => s.SetProperty(c => c.IsDeleted, c => !c.IsDeleted), cancellationToken) > 0;
+	}
+
+	public bool UpdateProductCategories(ref Product product, IEnumerable<Guid> selectCategories)
+	{
+		if (selectCategories == null) return false;
+
+		var categories = _dbContext.Categories.ToList();
+		var currentCategoryNames = new HashSet<Guid>(product.Categories.Select(x => x.Id));
+
+		foreach (var category in categories)
+		{
+			var enumerable = selectCategories as Guid[] ?? selectCategories.ToArray();
+			if (enumerable.ToList().Contains(category.Id))
+			{
+				if (!currentCategoryNames.ToList().Contains(category.Id))
+				{
+					product.Categories.Add(category);
+				}
+			}
+			else if (currentCategoryNames.ToList().Contains(category.Id))
+			{
+				product.Categories.Remove(category);
+			}
+		}
+		return true;
 	}
 
 	private IQueryable<Product> FilterProduct(IProductQuery condition)
@@ -216,7 +244,7 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
 				s.Name.Contains(condition.Keyword) ||
 				s.Description.Contains(condition.Keyword) ||
-				s.ShortIntro.Contains(condition.Keyword) ||
+				s.Instruction.Contains(condition.Keyword) ||
 				s.Sku.Contains(condition.Keyword) ||
 				s.UrlSlug.Contains(condition.Keyword));
 	}
@@ -230,6 +258,6 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(condition.Day > 0, s => s.ActionTime.Day == condition.Day)
 			.WhereIf(condition.Month > 0, s => s.ActionTime.Month == condition.Month)
 			.WhereIf(condition.Year > 0, s => s.ActionTime.Year == condition.Year)
-			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s => s.Note.Contains(condition.Keyword));
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s => s.EditReason.Contains(condition.Keyword));
 	}
 }

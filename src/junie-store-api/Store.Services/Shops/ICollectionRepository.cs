@@ -6,7 +6,7 @@ namespace Store.Services.Shops;
 
 public interface ICollectionRepository
 {
-	Task<Product> GetProductByIdAsync(Guid id, CancellationToken cancellationToken = default);
+	Task<Product> GetProductByIdAsync(Guid id, bool getAll = false, CancellationToken cancellationToken = default);
 	
 	Task<Product> GetProductBySlugAsync(string slug, CancellationToken cancellationToken = default);
 
@@ -14,7 +14,7 @@ public interface ICollectionRepository
 
 	Task<bool> IsProductExistedAsync(Guid productId, string name, CancellationToken cancellationToken = default);
 
-	Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string note = "", CancellationToken cancellationToken = default);
+	Task<Product> AddOrUpdateProductAsync(Product product, IList<Guid> categories, Guid userId, string editReason = "", CancellationToken cancellationToken = default);
 
 	Task<IPagedList<Product>> GetPagedProductsAsync(IProductQuery productQuery, IPagingParams pagingParams,
 		CancellationToken cancellationToken = default);
