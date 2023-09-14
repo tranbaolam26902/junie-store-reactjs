@@ -6,9 +6,11 @@ public class OrderDetail
 
 	public Guid ProductId { get; set; }
 
-	public int Quantity { get; set; }
-
+	public Guid ProductCodeId { get; set; }
+	
 	public double Price { get; set; }
+
+	public int Quantity { get; set; }
 
 	public double TotalPrice
 	{
@@ -27,7 +29,7 @@ public class OrderDetail
 	// ======================================================
 
 
-	public virtual Order Order { get; set; }
+	public Order Order { get; set; }
 	
-	public virtual Product Product { get; set; }
+	public Product Product { get; set; }
 }

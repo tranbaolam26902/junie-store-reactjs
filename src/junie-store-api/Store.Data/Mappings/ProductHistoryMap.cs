@@ -16,7 +16,7 @@ public class ProductHistoryMap : IEntityTypeConfiguration<ProductHistory>
 			.IsRequired()
 			.HasColumnType("datetime");
 
-		builder.Property(s => s.Note)
+		builder.Property(s => s.EditReason)
 			.IsRequired()
 			.HasMaxLength(2048);
 

@@ -12,9 +12,9 @@ public class Product : IEntity
 
 	public string Name { get; set; }
 
-	public string ShortIntro { get; set; }
-
 	public DateTime CreateDate { get; set; }
+
+	public string Instruction { get; set; }
 
 	public string Description { get; set; }
 

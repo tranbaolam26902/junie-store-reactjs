@@ -19,7 +19,7 @@ public class ProductValidator : AbstractValidator<ProductEditModel>
 			.MaximumLength(128)
 			.WithMessage("Tên sản phẩm không được nhiều hơn 128 ký tự.");
 
-		RuleFor(s => s.ShortIntro)
+		RuleFor(s => s.Instruction)
 			.MaximumLength(256)
 			.WithMessage("Giới thiệu không được nhiều hơn 256 ký tự.");
 

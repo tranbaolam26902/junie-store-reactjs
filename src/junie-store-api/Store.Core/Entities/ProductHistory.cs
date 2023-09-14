@@ -23,7 +23,7 @@ public class ProductHistory : IEntity
 
 	public ProductHistoryAction HistoryAction { get; set; }
 
-	public string Note { get; set; }
+	public string EditReason { get; set; }
 
 	// Navigation properties
 

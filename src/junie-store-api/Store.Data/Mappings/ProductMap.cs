@@ -25,12 +25,14 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 			.HasMaxLength(256)
 			.HasDefaultValue("");
 
-		builder.Property(s => s.ShortIntro)
+		builder.Property(s => s.Instruction)
 			.IsRequired()
-			.HasMaxLength(256);
+			.HasMaxLength(2048)
+			.HasDefaultValue("");
 
 		builder.Property(s => s.Description)
-			.HasMaxLength(2048);
+			.HasMaxLength(2048)
+			.HasDefaultValue("");
 
 		builder.Property(s => s.Price)
 			.IsRequired()

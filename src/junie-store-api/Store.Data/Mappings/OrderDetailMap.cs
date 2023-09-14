@@ -12,8 +12,13 @@ public class OrderDetailMap : IEntityTypeConfiguration<OrderDetail>
 		{
 			od.OrderId,
 			od.ProductId,
+			od.ProductCodeId
 		});
 
 		builder.ToTable("OrderDetails");
+
+		builder.Property(s => s.Price)
+			.IsRequired()
+			.HasDefaultValue(0);
 	}
 }
