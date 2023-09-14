@@ -4,7 +4,9 @@ public class ProductEditModel
 {
 	public string Name { get; set; }
 
-	public string ShortIntro { get; set; }
+	public string Sku { get; set; }
+
+	public string Instruction { get; set; }
 
 	public string Description { get; set; }
 
@@ -18,9 +20,9 @@ public class ProductEditModel
 
 	public string Note { get; set; }
 
-	public Guid CategoryId { get; set; }
-
 	public Guid SupplierId { get; set; }
 
 	public string EditReason{ get; set; }
+
+	public IList<Guid> Categories { get; set; }
 }
