@@ -39,8 +39,10 @@ public class CategoryRepository : ICategoryRepository
 
 	}
 
-	public async Task<bool> IsCategorySlugExistedAsync(Guid id, string slug, CancellationToken cancellationToken = default)
+	public async Task<bool> IsCategoryExistedAsync(Guid id, string name, CancellationToken cancellationToken = default)
 	{
+		var slug = name.GenerateSlug();
+
 		return await _dbContext.Set<Category>().AnyAsync(s => s.Id != id && s.UrlSlug.Equals(slug), cancellationToken);
 	}
 
@@ -65,6 +67,8 @@ public class CategoryRepository : ICategoryRepository
 
 	public async Task<Category> AddOrUpdateCategoryAsync(Category category, CancellationToken cancellationToken = default)
 	{
+
+		category.UrlSlug = category.Name.GenerateSlug();
 		if (_dbContext.Set<Category>().Any(s => s.Id == category.Id))
 		{
 			_dbContext.Entry(category).State = EntityState.Modified;

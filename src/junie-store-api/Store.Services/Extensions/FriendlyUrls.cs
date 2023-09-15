@@ -2,13 +2,12 @@
 
 namespace Store.Services.Extensions;
 
-public class FriendlyUrls
+public static class FriendlyUrls
 {
-	public static string GenerateSlug(string input)
+
+	public static string GenerateSlug(this string input)
 	{
 		var slugHelper = new SlugHelper();
 		return slugHelper.GenerateSlug(input);
 	}
-
-
 }

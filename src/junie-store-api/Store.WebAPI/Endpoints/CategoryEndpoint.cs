@@ -146,10 +146,12 @@ public static class CategoryEndpoint
 	{
 		try
 		{
-			if (await repository.IsCategorySlugExistedAsync(Guid.Empty, model.UrlSlug))
+			
+			if (await repository.IsCategoryExistedAsync(Guid.Empty, model.Name))
 			{
 				return Results.Ok(ApiResponse.Fail(
-					HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` đã được sử dụng."));
+					HttpStatusCode.Conflict,
+					$"Danh mục đã tồn tại với tên: `{model.Name}`"));
 			}
 
 			var category = mapper.Map<Category>(model);
@@ -172,10 +174,11 @@ public static class CategoryEndpoint
 	{
 		try
 		{
-			if (await repository.IsCategorySlugExistedAsync(id, model.UrlSlug))
+			if (await repository.IsCategoryExistedAsync(id, model.Name))
 			{
 				return Results.Ok(ApiResponse.Fail(
-					HttpStatusCode.NotFound, $"Slug `{model.UrlSlug}` đã được sử dụng."));
+					HttpStatusCode.Conflict,
+					$"Danh mục đã tồn tại với tên: `{model.Name}`"));
 			}
 
 			var category = mapper.Map<Category>(model);

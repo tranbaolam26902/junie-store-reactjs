@@ -47,9 +47,8 @@ public class CollectionRepository : ICollectionRepository
 
 	public async Task<bool> IsProductExistedAsync(Guid productId, string name, CancellationToken cancellationToken = default)
 	{
-		var slug = FriendlyUrls.GenerateSlug(name);
 		return await _dbContext.Set<Product>()
-			.AnyAsync(s => s.Id != productId && s.UrlSlug == slug, cancellationToken);
+			.AnyAsync(s => s.Id != productId && s.UrlSlug == name.GenerateSlug(), cancellationToken);
 	}
 
 	public async Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string editReason = "", CancellationToken cancellationToken = default)
@@ -62,7 +61,7 @@ public class CollectionRepository : ICollectionRepository
 			ProductId = product.Id
 		};
 
-		product.UrlSlug = FriendlyUrls.GenerateSlug(product.Name);
+		product.UrlSlug = product.Name.GenerateSlug();
 
 		if (_dbContext.Set<Product>().Any(s => s.Id == product.Id))
 		{
