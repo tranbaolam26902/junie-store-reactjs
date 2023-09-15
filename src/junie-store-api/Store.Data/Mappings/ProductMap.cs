@@ -67,7 +67,7 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 
 		builder.HasMany(s => s.Categories)
 			.WithMany(s => s.Products)
-			.UsingEntity(pt => pt.ToTable("ProductCategory"));
+			.UsingEntity(pt => pt.ToTable("ProductCategories"));
 
 		builder.HasMany(s => s.Pictures)
 			.WithOne(s => s.Product)
