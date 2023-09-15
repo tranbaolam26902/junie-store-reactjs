@@ -4,7 +4,6 @@ using Store.Core.Entities;
 using Store.Core.Queries;
 using Store.Data.Contexts;
 using Store.Services.Extensions;
-using System.Data;
 
 namespace Store.Services.Shops;
 
@@ -19,8 +18,16 @@ public class CollectionRepository : ICollectionRepository
 
 	public async Task<Product> GetProductByIdAsync(Guid id, bool getAll = false, CancellationToken cancellationToken = default)
 	{
+		if (getAll)
+		{
+			return await _dbContext.Set<Product>()
+				.Include(s => s.Categories)
+				.Include(s => s.Feedback)
+				.Include(s => s.Pictures)
+				.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+		}
+
 		return await _dbContext.Set<Product>()
-			.Include(s => s.Categories)
 			.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 	}
 
@@ -45,7 +52,7 @@ public class CollectionRepository : ICollectionRepository
 			.AnyAsync(s => s.Id != productId && s.UrlSlug == slug, cancellationToken);
 	}
 
-	public async Task<Product> AddOrUpdateProductAsync(Product product, IList<Guid> categories, Guid userId, string editReason = "", CancellationToken cancellationToken = default)
+	public async Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string editReason = "", CancellationToken cancellationToken = default)
 	{
 		var history = new ProductHistory()
 		{
@@ -57,24 +64,38 @@ public class CollectionRepository : ICollectionRepository
 
 		product.UrlSlug = FriendlyUrls.GenerateSlug(product.Name);
 
-		//UpdateProductCategories(ref product, categories);
-
 		if (_dbContext.Set<Product>().Any(s => s.Id == product.Id))
 		{
 			history.HistoryAction = ProductHistoryAction.Update;
+			product.Categories = null;
 			_dbContext.Entry(product).State = EntityState.Modified;
 		}
 		else
 		{
+			product.CreateDate = DateTime.Now;
 			_dbContext.Products.Add(product);
 
 			history.HistoryAction = ProductHistoryAction.Create;
 			history.ProductId = product.Id;
 		}
 
-
 		_dbContext.ProductHistories.Add(history);
+
 		await _dbContext.SaveChangesAsync(cancellationToken);
+		return product;
+	}
+
+	public async Task<Product> SetProductCategoriesAsync(Product product, IList<Guid> categories, CancellationToken cancellationToken = default)
+	{
+		product = await _dbContext.Set<Product>()
+			.Include(s => s.Categories)
+			.FirstOrDefaultAsync(s => s.Id == product.Id, cancellationToken);
+
+		UpdateProductCategories(ref product, categories);
+
+		_dbContext.Entry(product).State = EntityState.Modified;
+		await _dbContext.SaveChangesAsync(cancellationToken);
+
 		return product;
 	}
 
@@ -132,7 +153,7 @@ public class CollectionRepository : ICollectionRepository
 		{
 			return false;
 		}
-		
+
 		var picture = new Picture()
 		{
 			Id = Guid.NewGuid(),
@@ -161,7 +182,7 @@ public class CollectionRepository : ICollectionRepository
 
 		_dbContext.Pictures.RemoveRange(pictures);
 		await _dbContext.SaveChangesAsync(cancellationToken);
-		
+
 		return true;
 	}
 
@@ -237,9 +258,9 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)
-			.WhereIf(!string.IsNullOrEmpty(condition.CategorySlug), s => 
+			.WhereIf(!string.IsNullOrEmpty(condition.CategorySlug), s =>
 				s.Categories.Any(c => c.UrlSlug.Contains(condition.CategorySlug)))
-			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s => 
+			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s =>
 				s.UrlSlug.Contains(condition.ProductSlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
 				s.Name.Contains(condition.Keyword) ||

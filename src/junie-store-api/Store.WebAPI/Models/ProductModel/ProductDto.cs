@@ -12,7 +12,7 @@ public class ProductDto
 
 	public string Sku { get; set; }
 
-	public string ShortIntro { get; set; }
+	public string Instruction { get; set; }
 
 	public DateTime CreateDate { get; set; }
 

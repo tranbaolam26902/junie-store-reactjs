@@ -77,7 +77,7 @@ public static class UserEndpoints
 
 		builder.MapPut("/updateProfile", UpdateProfile)
 			.WithName("UpdateProfile")
-			.AddEndpointFilter<ValidatorFilter<UserEditModel>>()
+			//.AddEndpointFilter<ValidatorFilter<UserEditModel>>()
 			.RequireAuthorization()
 			.Produces<ApiResponse<UserDto>>();
 
