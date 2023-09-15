@@ -8,6 +8,7 @@ import blog1Image from './blog-1.jpg';
 import blog2Image from './blog-2.jpg';
 import blog3Image from './blog-3.jpg';
 import newsLetterBackgroundImage from './news-letter-background.jpg';
+import placeholderImage from './placeholder.jpg';
 import product1Image from './product-1.jpg';
 import productImage from './product.jpg';
 import productHoverImage from './product-hover.jpg';
@@ -24,6 +25,7 @@ export const images = {
     blog2: blog2Image,
     blog3: blog3Image,
     newsLetterBackground: newsLetterBackgroundImage,
+    placeholder: placeholderImage,
     product1: product1Image,
     product: productImage,
     productHover: productHoverImage,
