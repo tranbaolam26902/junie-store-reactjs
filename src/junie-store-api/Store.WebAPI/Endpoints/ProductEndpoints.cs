@@ -112,7 +112,7 @@ public static class ProductEndpoints
 	{
 		try
 		{
-			var product = await repository.GetProductByIdAsync(id);
+			var product = await repository.GetProductByIdAsync(id, true);
 
 			if (product == null)
 			{
@@ -272,11 +272,12 @@ public static class ProductEndpoints
 
 			var product = mapper.Map<Product>(model);
 
-			product.CreateDate = DateTime.Now;
-			product.Categories = new List<Category>();
+			product.Categories = null;
 			product.Supplier = null;
 
-			await repository.AddOrUpdateProductAsync(product, model.Categories, user.Id);
+			await repository.AddOrUpdateProductAsync(product, user.Id, model.EditReason);
+
+			await repository.SetProductCategoriesAsync(product, model.Categories);
 
 			return Results.Ok(ApiResponse.Success(
 			mapper.Map<ProductDto>(product), HttpStatusCode.Created));
@@ -316,12 +317,22 @@ public static class ProductEndpoints
 			}
 
 			var product = await repository.GetProductByIdAsync(id);
+			if (product == null)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound,
+					$"Sản phẩm không tồn tại!"));
+			}
+
 			mapper.Map(model, product);
 
-			//product.Category = null;
+			product.Categories = null;
 			product.Supplier = null;
 
-			await repository.AddOrUpdateProductAsync(product, model.Categories, user.Id, model.EditReason);
+			await repository.AddOrUpdateProductAsync(product, user.Id, model.EditReason);
+
+			await repository.SetProductCategoriesAsync(product, model.Categories);
+
 			return Results.Ok(ApiResponse.Success(
 				mapper.Map<ProductDto>(product), HttpStatusCode.Created));
 		}
