@@ -27,7 +27,6 @@ public class CollectionRepository : ICollectionRepository
 				.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 		}
 
-
 		return await _dbContext.Set<Product>()
 			.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 	}
