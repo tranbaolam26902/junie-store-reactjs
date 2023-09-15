@@ -24,7 +24,7 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        const loginResult = await login(username.trim(), password.trim());
+        const loginResult = await login(username, password);
 
         if (loginResult.isSuccess) {
             const from = location.state?.from?.pathname || '/'; // Get location before login to restore after login. If it doesn't exist, navigate user to home page after login
