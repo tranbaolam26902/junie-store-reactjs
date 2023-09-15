@@ -14,7 +14,10 @@ public interface ICollectionRepository
 
 	Task<bool> IsProductExistedAsync(Guid productId, string name, CancellationToken cancellationToken = default);
 
-	Task<Product> AddOrUpdateProductAsync(Product product, IList<Guid> categories, Guid userId, string editReason = "", CancellationToken cancellationToken = default);
+	Task<Product> AddOrUpdateProductAsync(Product product, Guid userId, string editReason = "", CancellationToken cancellationToken = default);
+
+	Task<Product> SetProductCategoriesAsync(Product product, IList<Guid> categories,
+		CancellationToken cancellationToken = default);
 
 	Task<IPagedList<Product>> GetPagedProductsAsync(IProductQuery productQuery, IPagingParams pagingParams,
 		CancellationToken cancellationToken = default);
