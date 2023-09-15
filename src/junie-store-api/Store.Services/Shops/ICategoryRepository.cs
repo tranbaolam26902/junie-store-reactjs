@@ -17,7 +17,7 @@ public interface ICategoryRepository
 
 	Task<bool> ToggleDeleteCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default);
 
-	Task<bool> IsCategorySlugExistedAsync(Guid id, string slug, CancellationToken cancellationToken = default);
+	Task<bool> IsCategoryExistedAsync(Guid id, string name, CancellationToken cancellationToken = default);
 
 	Task<bool> ToggleShowOnMenu(Guid id, CancellationToken cancellationToken = default);
 
