@@ -2,7 +2,6 @@
 using Store.Core.Entities;
 using Store.WebAPI.Models.CategoryModel;
 using Store.WebAPI.Models.PictureModel;
-using Store.WebAPI.Models.ProductHistoryModel;
 using Store.WebAPI.Models.ProductModel;
 using Store.WebAPI.Models.SupplierModel;
 using Store.WebAPI.Models.UserModel;
@@ -24,6 +23,9 @@ public class MapsterConfiguration : IRegister
 		config.NewConfig<Picture, PictureDto>();
 
 		config.NewConfig<Product, ProductDto>();
+		config.NewConfig<ProductEditModel, Product>()
+			.Ignore(s => s.Categories);
+
 
 		config.NewConfig<Supplier, SupplierDto>()
 			.Map(dest => dest.ProductCount,
