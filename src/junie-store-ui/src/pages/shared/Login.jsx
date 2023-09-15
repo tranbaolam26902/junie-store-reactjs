@@ -44,28 +44,24 @@ export default function Login() {
                             {errorMessage}
                         </span>
                     ))}
-                    <div className='flex flex-col gap-1'>
-                        <Input
-                            label='Tên đăng nhập'
-                            id='username'
-                            placeholder='Nhập tên đăng nhập'
-                            autoFocus
-                            onChange={(e) => {
-                                setUsername(e.target.value);
-                            }}
-                        />
-                    </div>
-                    <div className='flex flex-col gap-1'>
-                        <Input
-                            label='Mật khẩu'
-                            id='password'
-                            type='password'
-                            placeholder='Nhập mật khẩu'
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                            }}
-                        />
-                    </div>
+                    <Input
+                        label='Tên đăng nhập'
+                        id='username'
+                        placeholder='Nhập tên đăng nhập'
+                        autoFocus
+                        onChange={(e) => {
+                            setUsername(e.target.value);
+                        }}
+                    />
+                    <Input
+                        label='Mật khẩu'
+                        id='password'
+                        type='password'
+                        placeholder='Nhập mật khẩu'
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
+                    />
                     <Button
                         submit
                         secondary
@@ -74,7 +70,12 @@ export default function Login() {
                         text='Đăng nhập'
                     />
                     <div className='flex items-center justify-between'>
-                        <Link className='transition duration-200 opacity-50 hover:opacity-100'>Quên mật khẩu?</Link>
+                        <Link
+                            to='/account/password-recovery'
+                            className='transition duration-200 opacity-50 hover:opacity-100'
+                        >
+                            Quên mật khẩu?
+                        </Link>
                         <div className='flex items-center gap-1'>
                             <span className='font-thin'>Chưa có tài khoản?</span>
                             <Link to='/account/sign-up' className='relative group'>

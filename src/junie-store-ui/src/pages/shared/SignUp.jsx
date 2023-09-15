@@ -84,62 +84,54 @@ export default function SignUp() {
                             {errorMessage}
                         </span>
                     ))}
-                    <div className='flex flex-col gap-1'>
-                        <Input
-                            label='Tên đăng nhập'
-                            id='username'
-                            type='text'
-                            value={username}
-                            placeholder='Nhập tên đăng nhập'
-                            autoFocus
-                            onChange={(e) => {
-                                setUsername(e.target.value);
-                            }}
-                        />
-                    </div>
-                    <div className='flex flex-col gap-1'>
-                        <Input
-                            label='Mật khẩu'
-                            id='password'
-                            type='password'
-                            value={password}
-                            placeholder='Nhập mật khẩu'
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                                setConfirmPasswordMessage('');
-                            }}
-                        />
-                    </div>
-                    <div className='flex flex-col gap-1'>
-                        <Input
-                            label='Xác nhận mật khẩu'
-                            id='confirm-password'
-                            type='password'
-                            value={confirmPassword}
-                            message={confirmPasswordMessage}
-                            placeholder='Xác nhận mật khẩu'
-                            onChange={(e) => {
-                                setConfirmPassword(e.target.value);
-                                setConfirmPasswordMessage('');
-                            }}
-                            onBlur={validatePassword}
-                        />
-                    </div>
-                    <div className='flex flex-col gap-1'>
-                        <Input
-                            label='Email'
-                            id='email'
-                            type='email'
-                            value={email}
-                            message={emailMessage}
-                            placeholder='Nhập email'
-                            onChange={(e) => {
-                                setEmail(e.target.value);
-                                setEmailMessage('');
-                            }}
-                            onBlur={validateEmail}
-                        />
-                    </div>
+                    <Input
+                        label='Tên đăng nhập'
+                        id='username'
+                        type='text'
+                        value={username}
+                        placeholder='Nhập tên đăng nhập'
+                        autoFocus
+                        onChange={(e) => {
+                            setUsername(e.target.value);
+                        }}
+                    />
+                    <Input
+                        label='Mật khẩu'
+                        id='password'
+                        type='password'
+                        value={password}
+                        placeholder='Nhập mật khẩu'
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setConfirmPasswordMessage('');
+                        }}
+                    />
+                    <Input
+                        label='Xác nhận mật khẩu'
+                        id='confirm-password'
+                        type='password'
+                        value={confirmPassword}
+                        message={confirmPasswordMessage}
+                        placeholder='Xác nhận mật khẩu'
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value);
+                            setConfirmPasswordMessage('');
+                        }}
+                        onBlur={validatePassword}
+                    />
+                    <Input
+                        label='Email'
+                        id='email'
+                        type='email'
+                        value={email}
+                        message={emailMessage}
+                        placeholder='Nhập email'
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            setEmailMessage('');
+                        }}
+                        onBlur={validateEmail}
+                    />
                     <Button
                         submit
                         secondary
