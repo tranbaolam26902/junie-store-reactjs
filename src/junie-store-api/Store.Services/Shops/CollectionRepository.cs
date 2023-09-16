@@ -224,6 +224,13 @@ public class CollectionRepository : ICollectionRepository
 			.ExecuteUpdateAsync(s => s.SetProperty(c => c.IsDeleted, c => !c.IsDeleted), cancellationToken) > 0;
 	}
 
+	public async Task<bool> ToggleActiveProductAsync(Guid productId, CancellationToken cancellationToken = default)
+	{
+		return await _dbContext.Set<Product>()
+			.Where(s => s.Id == productId)
+			.ExecuteUpdateAsync(s => s.SetProperty(c => c.Active, c => !c.Active), cancellationToken) > 0;
+	}
+
 	public bool UpdateProductCategories(ref Product product, IEnumerable<Guid> selectCategories)
 	{
 		if (selectCategories == null) return false;
@@ -254,6 +261,8 @@ public class CollectionRepository : ICollectionRepository
 		return _dbContext.Set<Product>()
 			.Include(s => s.Categories)
 			.Include(s => s.Pictures)
+			.WhereIf(condition.Active, s => s.Active)
+			.WhereIf(condition.IsDeleted, s => s.IsDeleted)
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)

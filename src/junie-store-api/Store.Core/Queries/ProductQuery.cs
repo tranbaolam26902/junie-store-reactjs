@@ -9,8 +9,12 @@ public class ProductQuery : IProductQuery
     public string CategorySlug { get; set; } = "";
     
     public string ProductSlug { get; set; } = "";
-    
-    public int? Day { get; set; }
+
+    public bool Active { get; set; } = false;
+
+    public bool IsDeleted { get; set; } = false;
+
+    public int? Day { get; set; } = 0;
     
     public int? Month { get; set; } = 0;
     

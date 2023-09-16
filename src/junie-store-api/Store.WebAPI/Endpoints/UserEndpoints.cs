@@ -103,7 +103,7 @@ public static class UserEndpoints
 		// Authenticate user with provided username and password
 
 		var user = mapper.Map<User>(model);
-		var result = await IdentityManager.Authenticate(user, repository, mapper);
+		var result = await user.Authenticate(repository, mapper);
 
 		// Retrieve user DTO object from task result
 
@@ -113,11 +113,11 @@ public static class UserEndpoints
 			var userDto = mapper.Map<UserDto>(result.User);
 
 			// Generate a new access token and refresh token
-			var token = IdentityManager.Generate(userDto, configuration);
+			var token = userDto.Generate(configuration);
 			var refreshToken = IdentityManager.GenerateRefreshToken();
 
 			// Set the new refresh token in the HTTP response's cookies
-			await IdentityManager.SetRefreshToken(userDto.Id, refreshToken, context, repository);
+			await repository.SetRefreshToken(userDto.Id, refreshToken, context);
 
 			// Return the new access token
 			var accessToken = new AccessTokenModel()
@@ -164,11 +164,11 @@ public static class UserEndpoints
 
 			// Generate a new access token and refresh token
 			var userDto = mapper.Map<UserDto>(user);
-			var token = IdentityManager.Generate(userDto, configuration);
+			var token = userDto.Generate(configuration);
 			var newRefreshToken = IdentityManager.GenerateRefreshToken();
 
 			// Set the new refresh token in the HTTP response's cookies
-			await IdentityManager.SetRefreshToken(userDto.Id, newRefreshToken, context, repository);
+			await repository.SetRefreshToken(userDto.Id, newRefreshToken, context);
 
 			// Return the new access token
 			var accessToken = new AccessTokenModel()
@@ -216,7 +216,7 @@ public static class UserEndpoints
 	{
 		try
 		{
-			var identity = IdentityManager.GetCurrentUser(context);
+			var identity = context.GetCurrentUser();
 			var user = await repository.GetUserByIdAsync(identity.Id, true);
 
 
@@ -346,7 +346,7 @@ public static class UserEndpoints
 	{
 		try
 		{
-			var identity = IdentityManager.GetCurrentUser(context);
+			var identity = context.GetCurrentUser();
 
 			var user = await repository.GetUserByIdAsync(identity.Id);
 			var userDto = mapper.Map<UserDto>(user);

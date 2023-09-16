@@ -1,9 +1,8 @@
 ﻿using Store.Core.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Store.WebAPI.Models.OrderModel;
 
-public class OrderDto
+public class OrderItem
 {
 	public Guid Id { get; set; }
 
@@ -30,39 +29,19 @@ public class OrderDto
 		var total = Details.Sum(s => s.Price);
 		if (Discount != null)
 		{
-			total *=  Discount.DiscountPercentage / 100;
+			total *= Discount.DiscountPercentage / 100;
 		}
 
 		return total;
 	}
 
 	public DiscountDto Discount { get; set; }
-	public IList<OrderDetailDto> Details { get; set; }
+	public IList<OrderDetailItem> Details { get; set; }
 }
 
-public class DiscountDto
+public class OrderDetailItem : OrderDetailDto
 {
-	public Guid Id { get; set; }
+	public string Name { get; set; }
 
-	public int Quantity { get; set; }
-
-	public float MinPrice { get; set; }
-
-	public DateTime ExpiryDate { get; set; }
-
-	public string Code { get; set; }
-
-	public float DiscountPercentage { get; set; }
-}
-
-public class OrderDetailDto
-{
-	public Guid OrderId { get; set; }
-
-	public Guid ProductId { get; set; }
-
-	public int Quantity { get; set; }
-
-	public double Price { get; set; }
-
+	public string Sku { get; set; }
 }

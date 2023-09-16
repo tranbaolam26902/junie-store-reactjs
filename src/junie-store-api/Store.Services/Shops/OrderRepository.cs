@@ -16,18 +16,62 @@ public class OrderRepository : IOrderRepository
 	{
 		_dbContext = context;
 	}
-	public async Task<Order> CreateOrderAsync(Order order, CancellationToken cancellation = default)
+	public async Task<Order> AddOrderAsync(Order order, User user, CancellationToken cancellation = default)
 	{
-		order.Status = OrderStatus.New;
+		order.Email = user.Email;
+		order.UserId = user.Id;
 		order.OrderDate = DateTime.Now;
-		var slugHelper = new SlugHelper();
-		order.CodeOrder = slugHelper.GenerateSlug(Guid.NewGuid().ToString());
 
+		var codes = Guid.NewGuid().ToString().Split('-');
+		order.CodeOrder = $"HD{codes[0]}{codes[1]}".ToUpper();
 
 		_dbContext.Orders.Add(order);
-
 		await _dbContext.SaveChangesAsync(cancellation);
 		return order;
+	}
+
+	public async Task<Order> AddDiscountOrderAsync(Order order, string discountCode, CancellationToken cancellation = default)
+	{
+		var discount = await CheckValidDiscountAsync(discountCode, order.Total, cancellation);
+
+		order.Discount = discount;
+
+		discount.Quantity--;
+		_dbContext.Entry(discount).State = EntityState.Modified;
+
+		_dbContext.Entry(order).State = EntityState.Modified;
+		await _dbContext.SaveChangesAsync(cancellation);
+
+		return order;
+	}
+
+	public async Task<Discount> CheckValidDiscountAsync(string discountCode, double totalBill,
+		CancellationToken cancellation)
+	{
+		var discount = await _dbContext.Set<Discount>()
+			.FirstOrDefaultAsync(s => 
+				s.Code == discountCode &&
+				s.Active &&
+				s.ExpiryDate >= DateTime.Now, cancellation);
+
+		if (discount == null)
+		{
+			// No valid discount found
+			return null;
+		}
+
+		if (discount.Quantity <= 0)
+		{
+			return null;
+		}
+
+		if (totalBill < discount.MinPrice)
+		{
+			return null;
+		}
+
+		// Valid discount found
+		return discount;
 	}
 
 	public async Task<Order> AddProductOrderAsync(Guid orderId, IList<OrderDetailEdit> details, CancellationToken cancellation = default)
@@ -66,7 +110,7 @@ public class OrderRepository : IOrderRepository
 	public async Task<bool> CheckQuantityProduct(Guid productId, int quantity, CancellationToken cancellation = default)
 	{
 		var product = await _dbContext.Set<Product>()
-			.FirstOrDefaultAsync(s => s.Id == productId, cancellation);
+			.FirstOrDefaultAsync(s => s.Id == productId && s.Active, cancellation);
 
 		if (product == null)
 		{
@@ -85,6 +129,7 @@ public class OrderRepository : IOrderRepository
 	{
 		var order = await _dbContext.Set<Order>()
 			.Include(s => s.Details)
+			.ThenInclude(s => s.Product)
 			.Include(s => s.Discount)
 			.FirstOrDefaultAsync(s => s.Id == orderId, cancellation);
 
@@ -99,6 +144,15 @@ public class OrderRepository : IOrderRepository
 		}
 
 		return order;
+	}
+
+	public async Task<Order> GetOrderByCoreAsync(string code, CancellationToken cancellation = default)
+	{
+		return await _dbContext.Set<Order>()
+			.Include(s => s.Details)
+			.ThenInclude(s => s.Product)
+			.Include(s => s.Discount)
+			.FirstOrDefaultAsync(s => s.CodeOrder == code, cancellation);
 	}
 
 	public async Task<Order> ToggleOrderAsync(Order order, CancellationToken cancellation = default)

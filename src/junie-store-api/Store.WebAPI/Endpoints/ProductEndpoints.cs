@@ -49,6 +49,12 @@ public static class ProductEndpoints
 			.WithName("GetProductBySlugAsync")
 			.Produces<ApiResponse<ProductDto>>();
 
+		routeGroupBuilder.MapGet("/toggleActive/{id:guid}", ToggleActiveProduct)
+			.WithName("ToggleActiveProduct")
+			.RequireAuthorization("RequireManagerRole")
+			.Produces(204)
+			.Produces(404);
+
 		#endregion
 
 		#region POST Method
@@ -86,11 +92,13 @@ public static class ProductEndpoints
 
 		routeGroupBuilder.MapDelete("/toggleDelete/{id:guid}", ToggleDeleteProduct)
 			.WithName("ToggleDeleteProduct")
+			.RequireAuthorization("RequireManagerRole")
 			.Produces(204)
 			.Produces(404);
 
 		routeGroupBuilder.MapDelete("/{id:guid}", DeleteProduct)
 			.WithName("DeleteProduct")
+			.RequireAuthorization("RequireAdminRole")
 			.Produces(204)
 			.Produces(404);
 
@@ -393,16 +401,31 @@ public static class ProductEndpoints
 		}
 	}
 
+	private static async Task<IResult> ToggleActiveProduct(
+		[FromRoute] Guid id,
+		[FromServices] ICollectionRepository repository)
+	{
+		try
+		{
+			return await repository.ToggleActiveProductAsync(id)
+				? Results.Ok(ApiResponse.Success("Sản phẩm đã được chuyển trạng thái.", HttpStatusCode.NoContent))
+				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Sản phẩm không tồn tại với id: `{id}`"));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
 	private static async Task<IResult> ToggleDeleteProduct(
 		[FromRoute] Guid id,
 		HttpContext context,
 		[FromBody] string reason,
-		[FromServices] ICollectionRepository repository,
-		[FromServices] IMapper mapper)
+		[FromServices] ICollectionRepository repository)
 	{
 		try
 		{
-			var user = IdentityManager.GetCurrentUser(context);
+			var user = context.GetCurrentUser();
 
 			return await repository.ToggleDeleteProductAsync(id, user.Id, reason)
 				? Results.Ok(ApiResponse.Success("Sản phẩm đã được chuyển trạng thái.", HttpStatusCode.NoContent))
