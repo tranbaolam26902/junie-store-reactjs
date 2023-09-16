@@ -70,6 +70,11 @@ public static class CategoryEndpoint
 			.Produces(204)
 			.Produces(404);
 
+		builder.MapDelete("/{id:guid}", DeleteCategory)
+			.WithName("DeleteCategory")
+			.RequireAuthorization("RequireAdminRole")
+			.Produces<ApiResponse>(204)
+			.Produces<ApiResponse>(404);
 		#endregion
 
 		return app;
@@ -129,7 +134,7 @@ public static class CategoryEndpoint
 			var categoryItem = mapper.Map<CategoryDto>(category);
 
 			return category == null
-				? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound))
+				? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Danh mục không tồn tại."))
 				: Results.Ok(ApiResponse.Success(categoryItem));
 		}
 		catch (Exception e)
@@ -200,7 +205,7 @@ public static class CategoryEndpoint
 	{
 		try
 		{
-			if (await repository.ToggleShowOnMenu(id).ConfigureAwait(false))
+			if (await repository.ToggleShowOnMenuAsync(id).ConfigureAwait(false))
 			{
 				return Results.Ok(ApiResponse.Success("Chuyển trạng thái thành công.", HttpStatusCode.NoContent));
 			}
@@ -222,6 +227,37 @@ public static class CategoryEndpoint
 			return await repository.ToggleDeleteCategoryAsync(id)
 				? Results.Ok(ApiResponse.Success("Chuyển trạng thái thành công.", HttpStatusCode.NoContent))
 				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Danh mục không tồn tại với id: `{id}`"));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> DeleteCategory(
+		[FromRoute] Guid id,
+		[FromServices] ICategoryRepository repository)
+	{
+		try
+		{
+			var category = await repository.GetCategoryByIdAsync(id);
+			if (category == null)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotFound,
+					$"Danh mục không tồn tại."));
+			} 
+			else if (!category.IsDeleted)
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.NotAcceptable,
+					$"Danh mục chưa được đánh dấu xóa."));
+			}
+
+			await repository.DeleteCategoryAsync(id);
+
+			return Results.Ok(ApiResponse.Success("Xóa danh mục thành công.", HttpStatusCode.NoContent));
+
 		}
 		catch (Exception e)
 		{
