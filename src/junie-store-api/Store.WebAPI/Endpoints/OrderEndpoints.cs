@@ -10,6 +10,7 @@ using Mapster;
 using Store.Core.Collections;
 using Store.WebAPI.Filters;
 using Store.Core.Queries;
+using Store.WebAPI.Identities;
 
 namespace Store.WebAPI.Endpoints;
 
@@ -22,10 +23,12 @@ public static class OrderEndpoints
 
 		routeGroupBuilder.MapGet("/", GetOrder)
 			.WithName("GetOrder")
+			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<IPagedList<OrderDto>>>();
 
 		routeGroupBuilder.MapPost("/checkout", CheckOut)
 			.WithName("CheckOut")
+			.RequireAuthorization()
 			.AddEndpointFilter<ValidatorFilter<OrderEditModel>>()
 			.Produces<ApiResponse<OrderDto>>();
 
@@ -33,8 +36,13 @@ public static class OrderEndpoints
 			.WithName("GetOrderById")
 			.Produces<ApiResponse<OrderDto>>();
 
+		routeGroupBuilder.MapGet("/OrderCode/{orderCode}", GetOrderByCode)
+			.WithName("GetOrderByCode")
+			.Produces<ApiResponse<OrderItem>>();
+
 		routeGroupBuilder.MapGet("/Toggle/{orderId:guid}", ToggleOrderById)
 			.WithName("ToggleOrderById")
+			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<OrderDto>>();
 
 
@@ -67,7 +75,8 @@ public static class OrderEndpoints
 	}
 
 	private static async Task<IResult> CheckOut(
-		OrderEditModel model,
+		HttpContext context,
+		[FromBody] OrderEditModel model,
 		[FromServices] IOrderRepository repository,
 		[FromServices] ICollectionRepository productRepo,
 		[FromServices] IMapper mapper)
@@ -89,12 +98,17 @@ public static class OrderEndpoints
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.UnprocessableEntity, outOfStockProductNames.ToArray()));
 			}
 
+			var userDto = context.GetCurrentUser();
+
 			var newOrder = mapper.Map<Order>(model);
+			var user = mapper.Map<User>(userDto);
 
-			var order = await repository.CreateOrderAsync(newOrder);
-
-			order = await repository.AddProductOrderAsync(order.Id, model.Detail);
-
+			var order = await repository.AddOrderAsync(newOrder, user);
+			
+			await repository.AddProductOrderAsync(order.Id, model.Detail);
+			
+			await repository.AddDiscountOrderAsync(order, model.DiscountCode);
+			
 			var result = mapper.Map<OrderDto>(order);
 
 			return Results.Ok(ApiResponse.Success(result));
@@ -120,6 +134,29 @@ public static class OrderEndpoints
 			}
 
 			var orderDto = mapper.Map<OrderDto>(order);
+			return Results.Ok(ApiResponse.Success(orderDto));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> GetOrderByCode(
+		[FromRoute] string orderCode,
+		[FromServices] IOrderRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var order = await repository.GetOrderByCoreAsync(orderCode);
+
+			if (order == null)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Order is not found"));
+			}
+
+			var orderDto = mapper.Map<OrderItem>(order);
 			return Results.Ok(ApiResponse.Success(orderDto));
 		}
 		catch (Exception e)
