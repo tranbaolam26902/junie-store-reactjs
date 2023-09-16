@@ -6,29 +6,34 @@ namespace Store.WebAPI.Models.OrderModel;
 public class OrderDto
 {
 	public Guid Id { get; set; }
-	public DateTime OrderDate { get; set; }
 
-	public string UrlSlug { get; set; }
+	public string CodeOrder { get; set; }
+
+	public DateTime OrderDate { get; set; }
 
 	public OrderStatus Status { get; set; }
 
-	public string FirstName { get; set; }
-
-	public string LastName { get; set; }
+	public string Name { get; set; }
 
 	public string Email { get; set; }
 
 	public string ShipAddress { get; set; }
 
-	public string ShipTel { get; set; } // Số điện thoại người nhận
+	public string Phone { get; set; } // Số điện thoại người nhận
 
 	public string Note { get; set; }
 
-	public double Total { get { return CalculateTotal(); } }
+	public double Total => CalculateTotal();
 
 	private double CalculateTotal()
 	{
-		return Details.Sum(s => s.Price);
+		var total = Details.Sum(s => s.Price);
+		if (Discount != null)
+		{
+			total *=  Discount.DiscountPercentage / 100;
+		}
+
+		return total;
 	}
 
 	public DiscountDto Discount { get; set; }
