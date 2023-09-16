@@ -13,14 +13,12 @@ using Store.Core.Entities;
 
 namespace Store.WebAPI.Identities;
 
-public class IdentityManager
+public static class IdentityManager
 {
-	public static UserDto GetCurrentUser(
+	public static UserDto GetCurrentUser(this
 		HttpContext context)
 	{
-		var identity = context.User.Identity as ClaimsIdentity;
-
-		if (identity != null)
+		if (context.User.Identity is ClaimsIdentity identity)
 		{
 			var userClaims = identity.Claims;
 
@@ -38,11 +36,11 @@ public class IdentityManager
 		return null;
 	}
 
-	public static JwtSecurityToken Generate(
+	public static JwtSecurityToken Generate(this
 		UserDto user,
 		IConfiguration config)
 	{
-		var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+		var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"] ?? ""));
 		var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
 		var claims = new List<Claim>()
@@ -67,12 +65,12 @@ public class IdentityManager
 		return token;
 	}
 
-	public static async Task<LoginResult> Authenticate(User userLogin, IUserRepository repository, IMapper mapper)
+	public static async Task<LoginResult> Authenticate(this User userLogin, IUserRepository repository, IMapper mapper)
 	{
 		return await repository.LoginAsync(userLogin);
 	}
 
-	public static string LoginResult(LoginStatus status)
+	public static string LoginResult(this LoginStatus status)
 	{
 		if (status == LoginStatus.UserName)
 		{
@@ -95,10 +93,10 @@ public class IdentityManager
 	}
 
 	public static async Task SetRefreshToken(
+		this IUserRepository repository,
 		Guid userId,
 		RefreshToken newRefreshToken,
-		HttpContext context,
-		IUserRepository repository)
+		HttpContext context)
 	{
 		// Sets the options for the refresh token cookie
 		var cookieOptions = new CookieOptions()
