@@ -11,4 +11,6 @@ public class CategoryDto
 	public string Description { get; set; }
 
 	public bool ShowOnMenu { get; set; }
+
+	public bool IsDeleted { get; set; }
 }

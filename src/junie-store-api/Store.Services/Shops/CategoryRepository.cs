@@ -46,11 +46,18 @@ public class CategoryRepository : ICategoryRepository
 		return await _dbContext.Set<Category>().AnyAsync(s => s.Id != id && s.UrlSlug.Equals(slug), cancellationToken);
 	}
 
-	public async Task<bool> ToggleShowOnMenu(Guid id, CancellationToken cancellationToken = default)
+	public async Task<bool> ToggleShowOnMenuAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Category>()
 			.Where(s => s.Id == id)
 			.ExecuteUpdateAsync(s => s.SetProperty(c => c.ShowOnMenu, c => !c.ShowOnMenu), cancellationToken) > 0;
+	}
+
+	public async Task<bool> DeleteCategoryAsync(Guid id, CancellationToken cancellation = default)
+	{
+		return await _dbContext.Set<Category>()
+			.Where(s => s.Id == id)
+			.ExecuteDeleteAsync(cancellation) > 0;
 	}
 
 	public async Task<Category> GetCategoryByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -84,9 +91,19 @@ public class CategoryRepository : ICategoryRepository
 
 	public async Task<bool> ToggleDeleteCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default)
 	{
-		return await _dbContext.Set<Category>()
-			.Where(x => x.Id == categoryId)
-			.ExecuteUpdateAsync(s =>
-				s.SetProperty(c => c.IsDeleted, c => !c.IsDeleted), cancellationToken) > 0;
+		var category = await GetCategoryByIdAsync(categoryId, cancellationToken);
+		if (category == null)
+		{
+			return false;
+		}
+
+		category.ShowOnMenu = false;
+
+		category.IsDeleted = !category.IsDeleted;
+
+		_dbContext.Entry(category).State = EntityState.Modified;
+		await _dbContext.SaveChangesAsync(cancellationToken);
+
+		return true;
 	}
 }
