@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using Store.Core.Entities;
 using Store.WebAPI.Models.CategoryModel;
+using Store.WebAPI.Models.OrderModel;
 using Store.WebAPI.Models.PictureModel;
 using Store.WebAPI.Models.ProductModel;
 using Store.WebAPI.Models.SupplierModel;
@@ -21,6 +22,10 @@ public class MapsterConfiguration : IRegister
 
 		config.NewConfig<Category, CategoryDto>();
 		config.NewConfig<Picture, PictureDto>();
+
+		config.NewConfig<OrderDetail, OrderDetailItem>()
+			.Map(dest => dest.Name, src => src.Product.Name)
+			.Map(dest => dest.Sku, src => src.Product.Sku);
 
 		config.NewConfig<Product, ProductDto>();
 		config.NewConfig<ProductEditModel, Product>()
