@@ -11,8 +11,7 @@ public class OrderDetailMap : IEntityTypeConfiguration<OrderDetail>
 		builder.HasKey(od => new
 		{
 			od.OrderId,
-			od.ProductId,
-			od.ProductCodeId
+			od.ProductId
 		});
 
 		builder.ToTable("OrderDetails");
