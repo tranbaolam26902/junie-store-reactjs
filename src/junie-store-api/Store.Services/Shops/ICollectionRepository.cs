@@ -47,4 +47,6 @@ public interface ICollectionRepository
 	Task<bool> DeleteProductHistoryAsync(Guid historyId, CancellationToken cancellationToken = default);
 
 	Task<bool> ToggleDeleteProductAsync(Guid productId, Guid userId, string reason, CancellationToken cancellationToken = default);
+
+	Task<bool> ToggleActiveProductAsync(Guid productId, CancellationToken cancellationToken = default);
 }
