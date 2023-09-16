@@ -127,8 +127,7 @@ public class OrderRepository : IOrderRepository
 			.WhereIf(condition.Month > 0, s => s.OrderDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.OrderDate.Day == condition.Day)
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
-				s.FirstName.ToLower().Contains(condition.Keyword.ToLower()) ||
-				s.LastName.ToLower().Contains(condition.Keyword.ToLower()) ||
+				s.Name.ToLower().Contains(condition.Keyword.ToLower()) ||
 				s.Email.Contains(condition.Keyword) ||
 				s.Phone.Contains(condition.Keyword) ||
 				s.ShipAddress.Contains(condition.Keyword));
