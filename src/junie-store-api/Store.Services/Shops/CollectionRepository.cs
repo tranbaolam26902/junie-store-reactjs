@@ -119,15 +119,15 @@ public class CollectionRepository : ICollectionRepository
 	{
 		var product = await GetProductBySlugAsync(slug, cancellationToken);
 
-		//return await _dbContext.Set<Product>()
-		//	.Include(s => s.Category)
-		//	.Include(s => s.Pictures)
-		//	.Where(s => s.Id != product.Id && product.CategoryId == s.CategoryId)
-		//	.OrderBy(s => Guid.NewGuid())
-		//	.Take(num)
-		//	.ToListAsync(cancellationToken);
-
-		return null;
+		return await _dbContext.Set<Product>()
+			.Include(s => s.Categories)
+			.Include(s => s.Pictures)
+			.Where(s => s.Id != product.Id && 
+			            s.Categories.Any(c => product.Categories.Select(pc => pc.Id).Contains(c.Id)))
+			.OrderBy(s => Guid.NewGuid())
+			.Take(num)
+			.ToListAsync(cancellationToken);
+		
 	}
 
 	public async Task<IPagedList<T>> GetPagedProductsAsync<T>(IProductQuery condition, IPagingParams pagingParams, Func<IQueryable<Product>, IQueryable<T>> mapper)

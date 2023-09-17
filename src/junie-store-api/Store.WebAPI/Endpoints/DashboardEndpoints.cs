@@ -8,7 +8,7 @@ using Store.WebAPI.Models.DashboardModel;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class DashboardEndpoint
+public static class DashboardEndpoints
 {
 	public static WebApplication MapDashboardEndpoint(
 		this WebApplication app)

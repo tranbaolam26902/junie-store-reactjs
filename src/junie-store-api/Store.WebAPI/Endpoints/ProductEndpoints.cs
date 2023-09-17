@@ -261,7 +261,7 @@ public static class ProductEndpoints
 	{
 		try
 		{
-			var user = IdentityManager.GetCurrentUser(context);
+			var user = context.GetCurrentUser();
 			if (await repository.IsProductExistedAsync(Guid.Empty, model.Name))
 			{
 				return Results.Ok(ApiResponse.Fail(
