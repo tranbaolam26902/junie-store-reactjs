@@ -104,14 +104,14 @@ public class CollectionRepository : ICollectionRepository
 		return FilterProduct(productQuery).ToPagedListAsync(pagingParams, cancellationToken);
 	}
 
-	public async Task<IList<Product>> GetTopSaleAsync(CancellationToken cancellationToken = default)
+	public async Task<IList<Product>> GetTopSaleAsync(int num, CancellationToken cancellationToken = default)
 	{
 		return await _dbContext.Set<Product>()
 			.Include(s => s.Details)
 			.Include(s => s.Pictures)
 			.Where(s => s.Quantity > 0 && s.Active == true)
 			.OrderByDescending(s => s.Details.Count())
-			.Take(8)
+			.Take(num)
 			.ToListAsync(cancellationToken);
 	}
 
