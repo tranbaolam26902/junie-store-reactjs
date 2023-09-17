@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Store.Core.Contracts;
+﻿using Store.Core.Contracts;
 
 namespace Store.Core.Entities;
 
