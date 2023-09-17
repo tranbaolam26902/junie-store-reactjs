@@ -30,6 +30,8 @@ public class ProductDto
 
 	public bool IsDeleted { get; set; }
 
+	public int CountOrder { get; set; }
+
 	public IList<CategoryDto> Categories { get; set; }
 
 	public IList<PictureDto> Pictures { get; set; }
