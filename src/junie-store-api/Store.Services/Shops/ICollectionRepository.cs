@@ -22,7 +22,7 @@ public interface ICollectionRepository
 	Task<IPagedList<Product>> GetPagedProductsAsync(IProductQuery productQuery, IPagingParams pagingParams,
 		CancellationToken cancellationToken = default);
 
-	Task<IList<Product>> GetTopSaleAsync(CancellationToken cancellationToken = default);
+	Task<IList<Product>> GetTopSaleAsync(int num, CancellationToken cancellationToken = default);
 	
 	Task<IList<Product>> GetRelatedProductsAsync(string slug, int num = 10, CancellationToken cancellationToken = default);
 

@@ -33,7 +33,7 @@ public static class ProductEndpoints
 			.RequireAuthorization("RequireAdminRole")
 			.Produces<ApiResponse<IPagedList<ProductHistoryDto>>>();
 
-		routeGroupBuilder.MapGet("/TopSales", GetProductsTopSale)
+		routeGroupBuilder.MapGet("/TopSales/{num:int}", GetProductsTopSale)
 			.WithName("GetProductsTopSale")
 			.Produces<ApiResponse<IList<ProductDto>>>();
 
@@ -212,13 +212,14 @@ public static class ProductEndpoints
 	}
 
 	private static async Task<IResult> GetProductsTopSale(
+		[FromRoute] int num,
 		[FromServices] ICollectionRepository repository,
 		[FromServices] IMapper mapper)
 	{
 		try
 		{
 			var products =
-				await repository.GetTopSaleAsync();
+				await repository.GetTopSaleAsync(num);
 
 			var productsDto = mapper.Map<IList<ProductDto>>(products);
 
