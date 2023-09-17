@@ -99,7 +99,7 @@ public static class OrderEndpoints
 				if (!await repository.CheckQuantityProduct(edit.Id, edit.Quantity))
 				{
 					var product = await productRepo.GetProductByIdAsync(edit.Id);
-					outOfStockProductNames.Add(product.Name);
+					outOfStockProductNames.Add($"Sản phẩm: {product.Name} không khả dụng hoặc hết hàng");
 				}
 			}
 

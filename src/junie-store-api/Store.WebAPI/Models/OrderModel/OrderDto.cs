@@ -23,14 +23,16 @@ public class OrderDto
 
 	public string Note { get; set; }
 
+	public float DiscountPercentage { get; set; }
+
 	public double Total => CalculateTotal();
 
 	private double CalculateTotal()
 	{
 		var total = Details.Sum(s => s.Price * s.Quantity);
-		if (Discount != null)
+		if (DiscountPercentage > 0)
 		{
-			total *=  Discount.DiscountPercentage / 100;
+			total *=  DiscountPercentage / 100;
 		}
 
 		return total;
