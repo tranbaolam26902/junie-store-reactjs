@@ -1,83 +1,16 @@
 // Libraries
+import { useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
+import { useLoaderData } from 'react-router-dom';
 
 // Assets
 import { icons } from '@assets/icons';
-import { images } from '@assets/images';
 
 // Hooks
 import { usePrevNextButtons } from '@hooks/client/carousel';
 
 // COmponents
 import { ProductItem, Title } from '@components/client';
-
-// Temp products
-const products = [
-    {
-        id: 1,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 2,
-        name: 'Bông tai Gabi',
-        slug: 'gabi',
-        price: 275000,
-        quantity: 2,
-        image: images.productHover
-    },
-    {
-        id: 3,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 4,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 5,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 6,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 7,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 8,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    }
-];
 
 export default function FeaturedProductSection() {
     // Hooks
@@ -90,6 +23,14 @@ export default function FeaturedProductSection() {
         }
     });
     const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } = usePrevNextButtons(emblaApi);
+    const { featuredProducts } = useLoaderData();
+
+    // Side effects
+    /* Scroll to first slide when click on featured products */
+    useEffect(() => {
+        if (emblaApi) emblaApi.scrollTo(0);
+        // eslint-disable-next-line
+    }, [window.location.pathname]);
 
     return (
         <>
@@ -98,7 +39,7 @@ export default function FeaturedProductSection() {
                 {/* Start: Product section */}
                 <div className='overflow-hidden px-6 lg:px-0' ref={emblaRef}>
                     <div className='flex touch-pan-y -ml-6'>
-                        {products.map((product) => (
+                        {featuredProducts.map((product) => (
                             <div
                                 key={product.id}
                                 className='grow-0 shrink-0 basis-3/4 md:basis-2/5 lg:basis-1/3 xl:basis-1/4 pl-6'

@@ -1,19 +1,20 @@
 // Libraries
 import { useRef } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
+import { useLoaderData } from 'react-router-dom';
 
 // Hooks
 import { useDotButton, usePrevNextButtons } from '@hooks/client/carousel';
 
 // Assets
 import { icons } from '@assets/icons';
-import { images } from '@assets/images';
 
 export default function ProductImageSection() {
     // Hooks
     const [emblaRef, emblaApi] = useEmblaCarousel();
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
     const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } = usePrevNextButtons(emblaApi);
+    const { product } = useLoaderData();
 
     // Refs
     const mainImageRef = useRef(null);
@@ -35,7 +36,11 @@ export default function ProductImageSection() {
                                 selectedIndex === index ? ' after:opacity-100 after:scale-105' : ''
                             }`}
                         >
-                            <img src={images.product1} alt='product-image' className='w-16 xl:w-20 rounded' />
+                            <img
+                                src={`${import.meta.env.VITE_API_ENDPOINT}/${product.pictures[index]?.path}`}
+                                alt='product-image'
+                                className='w-16 xl:w-20 rounded'
+                            />
                         </button>
                     ))}
                 </div>
@@ -47,48 +52,15 @@ export default function ProductImageSection() {
                 <div className='overflow-hidden' ref={emblaRef}>
                     {/* Start: Image list section */}
                     <div ref={mainImageRef} className='flex touch-pan-y gap-2 lg:gap-0'>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
-                        <div className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
-                            <img className='w-full object-cover' src={images.product1} alt='Your alt text' />
-                        </div>
+                        {product.pictures.map((image) => (
+                            <div key={image.id} className='grow-0 shrink-0 basis-4/5 lg:basis-full'>
+                                <img
+                                    className='w-full object-cover'
+                                    src={`${import.meta.env.VITE_API_ENDPOINT}/${image.path}`}
+                                    alt='Your alt text'
+                                />
+                            </div>
+                        ))}
                     </div>
                     {/* End: Image list section */}
                 </div>

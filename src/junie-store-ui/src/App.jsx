@@ -5,6 +5,14 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
 import { Account, Login, SignUp } from '@pages/shared';
 
+// Services
+import {
+    getCategoryBySlug,
+    getBestSellingProducts,
+    getFeaturedProductBySlug,
+    getProductBySlug
+} from '@services/client';
+
 // Components
 import { ClientLayout } from '@components/client';
 import { PersistLogin, RequireLogin } from '@components/shared';
@@ -20,9 +28,35 @@ const router = createBrowserRouter([
                 element: <ClientLayout />,
                 children: [
                     /* Public routes */
-                    { path: '/', element: <Home /> },
-                    { path: '/categories/:categorySlug', element: <Category /> },
-                    { path: '/products/:productSlug', element: <Product /> },
+                    {
+                        path: '/',
+                        element: <Home />,
+                        loader: async () => {
+                            const bestSellingProducts = await getBestSellingProducts();
+
+                            return {
+                                bestSellingProducts
+                            };
+                        }
+                    },
+                    {
+                        path: '/categories/:categorySlug',
+                        element: <Category />,
+                        loader: async ({ params }) => await getCategoryBySlug(params.categorySlug)
+                    },
+                    {
+                        path: '/products/:productSlug',
+                        element: <Product />,
+                        loader: async ({ params }) => {
+                            const product = await getProductBySlug(params.productSlug);
+                            const featuredProducts = await getFeaturedProductBySlug(params.productSlug);
+
+                            return {
+                                product,
+                                featuredProducts
+                            };
+                        }
+                    },
                     { path: '/search', element: <SearchResult /> },
                     { path: '/blogs', element: <Blog /> },
                     { path: '/blogs/:blogSlug', element: <BlogDetail /> },

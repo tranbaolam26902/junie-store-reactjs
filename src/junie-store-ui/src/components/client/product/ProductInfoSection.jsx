@@ -1,3 +1,6 @@
+// Libraries
+import { useLoaderData } from 'react-router-dom';
+
 // Assets
 import { icons } from '@assets/icons';
 
@@ -5,19 +8,44 @@ import { icons } from '@assets/icons';
 import { Button } from '@components/shared';
 
 export default function ProductInfoSection() {
+    // Hooks
+    const { product } = useLoaderData();
+
     return (
         <section className='flex flex-col'>
             <div className='flex flex-col gap-4 py-6'>
-                <h1 className='font-garamond text-2xl lg:text-4xl'>Bông tai Victoria</h1>
-                <div className='flex gap-0.5'>
-                    <span className='text-2xl font-thin'>{new Intl.NumberFormat('vi-VN').format(125000)}</span>
-                    <span className='underline font-thin'>đ</span>
-                </div>
-                <span className='text-xs uppercase tracking-wider text-secondary/50'>SKU: E-VICTORIA-S</span>
+                <h1 className='font-garamond text-2xl lg:text-4xl'>{product.name}</h1>
+                {product.discount !== 0 ? (
+                    <div className='flex items-end gap-3 text-2xl'>
+                        <span className='text-red'>
+                            {new Intl.NumberFormat('vi-VN').format(
+                                product.price - (product.price * product.discount) / 100
+                            )}
+                            <sup className='pl-0.5 underline'>đ</sup>
+                        </span>
+                        <span className='text-lg text-secondary/70 line-through'>
+                            {new Intl.NumberFormat('vi-VN').format(product.price)}
+                            <sup className='pl-0.5 underline'>đ</sup>
+                        </span>
+                        <span className='flex items-center gap-1 mb-1 px-2 py-1 text-xs font-semibold text-primary tracking-wide uppercase bg-red rounded'>
+                            <span>Tiết kiệm</span>
+                            <span>
+                                {new Intl.NumberFormat('vi-VN').format((product.price * product.discount) / 100)}
+                                <span className='underline normal-case'>đ</span>
+                            </span>
+                        </span>
+                    </div>
+                ) : (
+                    <span className='text-2xl'>
+                        {new Intl.NumberFormat('vi-VN').format(product.price)}
+                        <sup className='pl-0.5 underline'>đ</sup>
+                    </span>
+                )}
+                <span className='text-xs uppercase tracking-wider text-secondary/50'>SKU: {product.sku}</span>
             </div>
             <hr className='my-0 text-gray' />
             <div className='flex flex-col gap-6 pt-6'>
-                <div className='flex flex-col gap-4'>
+                {/* <div className='flex flex-col gap-4'>
                     <span className='text-sm lg:text-base text-black/80'>Màu sắc: Silver</span>
                     <div className='flex gap-4'>
                         <button
@@ -29,7 +57,7 @@ export default function ProductInfoSection() {
                             className='w-10 h-10 aspect-square rounded-full bg-[#e9c37d] border-2 border-primary'
                         ></button>
                     </div>
-                </div>
+                </div> */}
                 <Button secondary full text='Thêm vào giỏ' />
                 <span className='text-sm text-green'>Còn hàng, dự kiến giao tới trong 1 - 3 ngày.</span>
                 <div className='p-4 flex flex-col gap-4 bg-primary rounded-lg border border-black'>
