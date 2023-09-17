@@ -24,27 +24,27 @@ const categories = [
     {
         id: 1,
         name: 'Mới',
-        slug: '/categories/new'
+        slug: '/categories/moi'
     },
     {
         id: 2,
         name: 'Bông tai',
-        slug: '/categories/earrings'
+        slug: '/categories/bong-tai'
     },
     {
         id: 3,
         name: 'Dây chuyền',
-        slug: '/categories/necklace'
+        slug: '/categories/vong-co'
     },
     {
         id: 4,
         name: 'Vòng tay',
-        slug: '/categories/bracelet'
+        slug: '/categories/vong-tay'
     },
     {
         id: 5,
         name: 'Nhẫn',
-        slug: '/categories/ring'
+        slug: '/categories/nhan'
     },
     {
         id: 6,
