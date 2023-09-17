@@ -61,6 +61,10 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 			.IsRequired()
 			.HasDefaultValue(false);
 
+		builder.Property(s => s.CountOrder)
+			.IsRequired()
+			.HasDefaultValue(0);
+
 		// Configure the timestamps
 		builder.Property(o => o.CreateDate)
 			.HasColumnType("datetime");

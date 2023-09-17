@@ -1,4 +1,5 @@
-﻿using Store.Core.Contracts;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Store.Core.Contracts;
 
 namespace Store.Core.Entities;
 
@@ -33,6 +34,8 @@ public class Product : IEntity
 	public bool IsDeleted { get; set; }
 
 	public Guid SupplierId { get; set; }
+	
+	public int CountOrder { get; set; }
 
 	// ======================================================
 	// Navigation properties
