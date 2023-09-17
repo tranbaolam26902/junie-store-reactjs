@@ -19,4 +19,8 @@ public interface IProductQuery
     public int? Day { get; set; }
 
     public string Keyword { get; set; }
+
+    public double MinPrice { get; set; }
+
+    public double MaxPrice { get; set; }
 }
