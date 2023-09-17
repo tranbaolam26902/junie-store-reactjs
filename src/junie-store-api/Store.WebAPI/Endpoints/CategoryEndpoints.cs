@@ -11,7 +11,7 @@ using Store.WebAPI.Models.CategoryModel;
 
 namespace Store.WebAPI.Endpoints;
 
-public static class CategoryEndpoint
+public static class CategoryEndpoints
 {
 	public static WebApplication MapCategoriesEndpoint(
 		this WebApplication app)
