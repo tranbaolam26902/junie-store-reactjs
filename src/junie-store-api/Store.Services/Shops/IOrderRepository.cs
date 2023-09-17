@@ -14,6 +14,7 @@ public interface IOrderRepository
 	Task<Discount> CheckValidDiscountAsync(string discountCode, double totalBill, CancellationToken cancellation = default);
 
 	Task<Order> AddProductOrderAsync(Guid orderId, IList<OrderDetailEdit> details, CancellationToken cancellation = default);
+	Task<Order> GetProductOrderAsync(IList<OrderDetailEdit> details, CancellationToken cancellation = default);
 
 	Task<bool> CheckQuantityProduct(Guid productId, int quantity, CancellationToken cancellation = default);
 

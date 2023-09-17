@@ -103,7 +103,7 @@ public static class UserEndpoints
 		// Authenticate user with provided username and password
 
 		var user = mapper.Map<User>(model);
-		var result = await user.Authenticate(repository, mapper);
+		var result = await user.Authenticate(repository);
 
 		// Retrieve user DTO object from task result
 
