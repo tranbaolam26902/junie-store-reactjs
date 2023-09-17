@@ -34,7 +34,7 @@ const categories = [
     {
         id: 3,
         name: 'Dây chuyền',
-        slug: '/categories/vong-co'
+        slug: '/categories/day-chuyen'
     },
     {
         id: 4,

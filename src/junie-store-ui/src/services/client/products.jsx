@@ -1,4 +1,4 @@
-// Libraries
+// Services
 import { axios } from '@services/shared';
 
 const getBestSellingProducts = async () => {

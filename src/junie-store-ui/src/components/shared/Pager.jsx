@@ -1,6 +1,15 @@
 // Libraries
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useDispatch } from 'react-redux';
+
+// Redux
+import {
+    decreaseProductPageNumber,
+    increaseProductPageNumber,
+    setProductPageNumber,
+    setProductPageSize
+} from '@redux/features/client/products';
 
 // Assets
 import { icons } from '@assets/icons';
@@ -8,7 +17,10 @@ import { icons } from '@assets/icons';
 // Components
 import { Fade } from '@components/shared/animations';
 
-export default function Pager() {
+export default function Pager({ metadata }) {
+    // Hooks
+    const dispatch = useDispatch();
+
     // States
     const [showSelectNumberOfItems, setShowSelectNumberOfItems] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
@@ -17,6 +29,22 @@ export default function Pager() {
     const selectNumberOfItemsRef = useRef(null);
 
     // Event handlers
+    const handlePrevPage = () => {
+        dispatch(decreaseProductPageNumber());
+        setPageNumber((state) => --state);
+    };
+    const handleNextPage = () => {
+        dispatch(increaseProductPageNumber());
+        setPageNumber((state) => ++state);
+    };
+    const handleChangePageNumber = (e) => {
+        if (e.key !== 'Enter') return;
+
+        if (pageNumber >= 1 && pageNumber <= metadata.pageCount) {
+            dispatch(setProductPageNumber(pageNumber));
+            e.target.blur();
+        }
+    };
     const handleToggleSelectNumberOfItems = () => {
         setShowSelectNumberOfItems((state) => !state);
     };
@@ -42,7 +70,12 @@ export default function Pager() {
         <section className='flex items-center justify-between'>
             <div className='flex flex-col md:flex-row items-center gap-4'>
                 <div className='flex items-center gap-4'>
-                    <button type='button' className='-mx-2 p-2'>
+                    <button
+                        type='button'
+                        disabled={!metadata.hasPreviousPage}
+                        className={`-mx-2 p-2${!metadata.hasPreviousPage ? ' opacity-50' : ''}`}
+                        onClick={handlePrevPage}
+                    >
                         <img src={icons.leftArrow} alt='left-arrow-icon' className='w-4' />
                     </button>
                     <input
@@ -52,19 +85,30 @@ export default function Pager() {
                         onInput={(e) => {
                             if (/^[0-9]*$/.test(e.target.value)) setPageNumber(e.target.value);
                         }}
-                        onBlur={() => {
-                            if (pageNumber === '' || pageNumber <= 0) setPageNumber(1);
+                        onBlur={(e) => {
+                            if (
+                                e.target.value !== pageNumber ||
+                                e.target.value < 1 ||
+                                e.target.value > metadata.pageCount
+                            )
+                                setPageNumber(metadata.pageNumber);
                         }}
+                        onKeyUp={handleChangePageNumber}
                     />
-                    <button type='button' className='-mx-2 p-2'>
+                    <button
+                        type='button'
+                        disabled={!metadata.hasNextPage}
+                        className={`-mx-2 p-2${!metadata.hasNextPage ? ' opacity-50' : ''}`}
+                        onClick={handleNextPage}
+                    >
                         <img src={icons.rightArrow} alt='right-arrow-icon' className='w-4' />
                     </button>
                 </div>
                 <div className='flex gap-1'>
                     <span className='font-thin tracking-wider'>Trang</span>
-                    <span className=''>1</span>
+                    <span className=''>{metadata.pageNumber}</span>
                     <span className='font-thin tracking-wider'>trên</span>
-                    <span className=''>32</span>
+                    <span className=''>{metadata.pageCount}</span>
                 </div>
             </div>
             <div className='relative flex items-center gap-2'>
@@ -75,7 +119,7 @@ export default function Pager() {
                     className='flex items-center gap-2 px-4 h-8 rounded border border-gray'
                     onClick={handleToggleSelectNumberOfItems}
                 >
-                    <span>20</span>
+                    <span>{metadata.pageSize}</span>
                     <img
                         src={icons.caretDown}
                         alt='caret-down-icon'
@@ -88,9 +132,16 @@ export default function Pager() {
                     {showSelectNumberOfItems && (
                         <Fade className='absolute top-full right-0 z-10 flex flex-col items-start p-4 bg-primary rounded shadow'>
                             {[...Array(101).keys()]
-                                .filter((number) => number && number > 0 && number % 10 === 0)
+                                .filter((number) => number && number > 10 && number % 10 === 0)
                                 .map((number) => (
-                                    <button key={number} type='button' className='px-2 py-1 w-full text-left'>
+                                    <button
+                                        key={number}
+                                        type='button'
+                                        className='px-2 py-1 w-full text-left'
+                                        onClick={() => {
+                                            dispatch(setProductPageSize(number));
+                                        }}
+                                    >
                                         {number}
                                     </button>
                                 ))}

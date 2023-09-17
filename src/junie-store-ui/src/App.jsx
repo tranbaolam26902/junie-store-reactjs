@@ -6,7 +6,12 @@ import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, Sing
 import { Account, Login, SignUp } from '@pages/shared';
 
 // Services
-import { getBestSellingProducts, getFeaturedProductBySlug, getProductBySlug } from '@services/client';
+import {
+    getCategoryBySlug,
+    getBestSellingProducts,
+    getFeaturedProductBySlug,
+    getProductBySlug
+} from '@services/client';
 
 // Components
 import { ClientLayout } from '@components/client';
@@ -34,7 +39,11 @@ const router = createBrowserRouter([
                             };
                         }
                     },
-                    { path: '/categories/:categorySlug', element: <Category /> },
+                    {
+                        path: '/categories/:categorySlug',
+                        element: <Category />,
+                        loader: async ({ params }) => await getCategoryBySlug(params.categorySlug)
+                    },
                     {
                         path: '/products/:productSlug',
                         element: <Product />,
