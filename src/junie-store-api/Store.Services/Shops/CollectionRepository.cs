@@ -259,6 +259,7 @@ public class CollectionRepository : ICollectionRepository
 	private IQueryable<Product> FilterProduct(IProductQuery condition)
 	{
 		return _dbContext.Set<Product>()
+			.Include(s => s.Details)
 			.Include(s => s.Categories)
 			.Include(s => s.Pictures)
 			.WhereIf(condition.Active, s => s.Active)
