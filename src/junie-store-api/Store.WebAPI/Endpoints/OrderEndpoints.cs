@@ -83,6 +83,16 @@ public static class OrderEndpoints
 	{
 		try
 		{
+			if (!string.IsNullOrWhiteSpace(model.DiscountCode))
+			{
+				var tempOrder = await repository.GetProductOrderAsync(model.Detail);
+				var discount = await repository.CheckValidDiscountAsync(model.DiscountCode, tempOrder.Total);
+				if (discount == null)
+				{
+					return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotAcceptable, "Nhập mã giảm giá hợp lệ"));
+				}
+			}
+
 			var outOfStockProductNames = new List<string>();
 			foreach (var edit in model.Detail)
 			{
@@ -104,11 +114,14 @@ public static class OrderEndpoints
 			var user = mapper.Map<User>(userDto);
 
 			var order = await repository.AddOrderAsync(newOrder, user);
-			
+
 			await repository.AddProductOrderAsync(order.Id, model.Detail);
-			
-			await repository.AddDiscountOrderAsync(order, model.DiscountCode);
-			
+
+			if (!string.IsNullOrWhiteSpace(model.DiscountCode))
+			{
+				await repository.AddDiscountOrderAsync(order, model.DiscountCode);
+			}
+
 			var result = mapper.Map<OrderDto>(order);
 
 			return Results.Ok(ApiResponse.Success(result));
