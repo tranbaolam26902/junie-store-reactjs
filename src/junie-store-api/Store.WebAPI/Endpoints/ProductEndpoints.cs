@@ -177,7 +177,7 @@ public static class ProductEndpoints
 					p => p.ProjectToType<ProductDto>());
 
 			var paginationResult = new PaginationResult<ProductDto>(products);
-
+			
 			return Results.Ok(ApiResponse.Success(paginationResult));
 		}
 		catch (Exception e)
