@@ -65,7 +65,7 @@ public static class IdentityManager
 		return token;
 	}
 
-	public static async Task<LoginResult> Authenticate(this User userLogin, IUserRepository repository, IMapper mapper)
+	public static async Task<LoginResult> Authenticate(this User userLogin, IUserRepository repository)
 	{
 		return await repository.LoginAsync(userLogin);
 	}
