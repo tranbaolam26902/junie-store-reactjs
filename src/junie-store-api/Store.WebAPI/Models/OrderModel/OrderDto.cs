@@ -27,7 +27,7 @@ public class OrderDto
 
 	private double CalculateTotal()
 	{
-		var total = Details.Sum(s => s.Price);
+		var total = Details.Sum(s => s.Price * s.Quantity);
 		if (Discount != null)
 		{
 			total *=  Discount.DiscountPercentage / 100;
