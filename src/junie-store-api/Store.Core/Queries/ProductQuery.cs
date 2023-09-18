@@ -3,8 +3,10 @@
 public class ProductQuery : IProductQuery
 {
     public string Keyword { get; set; } = "";
-    public double MinPrice { get; set; }
-    public double MaxPrice { get; set; }
+
+    public double MinPrice { get; set; } = 0;
+
+    public double MaxPrice { get; set; } = 0;
 
     public Guid? CategoryId { get; set; } = Guid.Empty;
     

@@ -1,6 +1,6 @@
-﻿namespace Store.WebAPI.Models.CategoryModel;
+﻿namespace Store.Core.DTO;
 
-public class CategoryDto
+public class CategoryItem
 {
 	public Guid Id { get; set; }
 

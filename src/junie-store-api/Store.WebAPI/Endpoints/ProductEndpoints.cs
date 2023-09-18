@@ -168,6 +168,7 @@ public static class ProductEndpoints
 	{
 		try
 		{
+			
 			var condition = mapper.Map<ProductQuery>(model);
 
 			var products =
