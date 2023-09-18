@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Store.Core.Contracts;
+using Store.Core.DTO;
 using Store.Core.Entities;
 using Store.Data.Contexts;
 using Store.Services.Extensions;
@@ -24,6 +25,26 @@ public class CategoryRepository : ICategoryRepository
 				s.Name.Contains(keyword));
 
 		return categories.ToPagedListAsync(pagingParams, cancellationToken);
+	}
+
+	public async Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default)
+	{
+		var products = await _dbContext.Set<Product>()
+			.Include(p => p.Categories)
+			.Where(s => s.Categories.Any(c => c.UrlSlug == slug))
+			.ToListAsync(cancellationToken);
+		var categoryItems = products
+			.SelectMany(p => p.Categories)
+			.GroupBy(c => new { c.Id, c.Name, c.UrlSlug })
+			.Select(group => new CategoryItem()
+			{
+				Id = group.Key.Id,
+				Name = group.Key.Name,
+				UrlSlug = group.Key.UrlSlug,
+				ProductCount = group.Count()
+			})
+			.ToList();
+		return categoryItems;
 	}
 
 	public async Task<IPagedList<T>> GetPagedCategoriesAsync<T>(string keyword, IPagingParams pagingParams, Func<IQueryable<Category>, IQueryable<T>> mapper)
