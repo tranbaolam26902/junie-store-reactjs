@@ -13,4 +13,6 @@ public class CategoryDto
 	public bool ShowOnMenu { get; set; }
 
 	public bool IsDeleted { get; set; }
+
+	public int ProductCount { get; set; }
 }
