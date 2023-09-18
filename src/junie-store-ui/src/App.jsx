@@ -57,7 +57,7 @@ const router = createBrowserRouter([
                             };
                         }
                     },
-                    { path: '/search', element: <SearchResult /> },
+                    { path: '/search/:keyword', element: <SearchResult /> },
                     { path: '/blogs', element: <Blog /> },
                     { path: '/blogs/:blogSlug', element: <BlogDetail /> },
                     { path: '/account/login', element: <Login /> },
