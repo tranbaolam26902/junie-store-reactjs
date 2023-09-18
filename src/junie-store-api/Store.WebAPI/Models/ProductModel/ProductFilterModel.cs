@@ -3,12 +3,16 @@
 public class ProductFilterModel : PagingModel
 {
 	public string Keyword { get; set; }
+
 	public string CategorySlug { get; set; }
 
 	public string ProductSlug { get; set; }
 
-
 	public bool? Active { get; set; }
+
+	public double? MinPrice { get; set; }
+
+	public double? MaxPrice { get; set; }
 
 	public bool? IsDeleted { get; set; }
 
