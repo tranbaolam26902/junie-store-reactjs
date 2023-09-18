@@ -1,4 +1,5 @@
 ﻿using Store.Core.Contracts;
+using Store.Core.DTO;
 using Store.Core.Entities;
 
 namespace Store.Services.Shops;
@@ -7,6 +8,8 @@ public interface ICategoryRepository
 {
 	Task<IPagedList<Category>> GetPagedCategoriesAsync(string keyword, IPagingParams pagingParams,
 		CancellationToken cancellationToken = default);
+
+	Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default);
 
 	Task<IPagedList<T>> GetPagedCategoriesAsync<T>(
 		string keyword,

@@ -95,6 +95,7 @@ public class OrderRepository : IOrderRepository
 				OrderId = order.Id
 			};
 			product.Quantity -= item.Quantity;
+			product.CountOrder += item.Quantity;
 			_dbContext.Entry(product).State = EntityState.Modified;
 				
 			order.Total += detail.Quantity * detail.Price;

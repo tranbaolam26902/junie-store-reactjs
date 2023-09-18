@@ -32,6 +32,10 @@ public static class CategoryEndpoints
 			.WithName("GetCategoryBySlug")
 			.Produces<ApiResponse<CategoryDto>>();
 
+		builder.MapGet("/RelatedCategories/{slug:regex(^[a-z0-9_-]+$)}", GetRelatedCategoriesBySlug)
+			.WithName("GetRelatedCategoriesBySlug")
+			.Produces<ApiResponse<IList<CategoryDto>>>();
+
 
 		builder.MapGet("/toggleShowOnMenu/{id:guid}", ToggleShowOnMenu)
 			.WithName("ToggleCategoryShowOnMenu")
@@ -96,6 +100,25 @@ public static class CategoryEndpoints
 			var paginationResult = new PaginationResult<CategoryDto>(products);
 
 			return Results.Ok(ApiResponse.Success(paginationResult));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> GetRelatedCategoriesBySlug(
+		[FromRoute] string slug,
+		[FromServices] ICategoryRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var categoryItems = await repository.GetRelatedCategoryBySlugAsync(slug);
+
+			var categoriesDto = mapper.Map<IList<CategoryDto>>(categoryItems);
+
+			return Results.Ok(ApiResponse.Success(categoriesDto));
 		}
 		catch (Exception e)
 		{

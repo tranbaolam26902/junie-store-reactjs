@@ -259,6 +259,7 @@ public class CollectionRepository : ICollectionRepository
 	private IQueryable<Product> FilterProduct(IProductQuery condition)
 	{
 		return _dbContext.Set<Product>()
+			.Include(s => s.Details)
 			.Include(s => s.Categories)
 			.Include(s => s.Pictures)
 			.WhereIf(condition.Active, s => s.Active)
@@ -266,8 +267,11 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)
+			.WhereIf(condition.MinPrice > 0 && condition.MaxPrice > condition.MinPrice, s => 
+				s.Price > condition.MinPrice &&
+				s.Price < condition.MaxPrice)
 			.WhereIf(!string.IsNullOrEmpty(condition.CategorySlug), s =>
-				s.Categories.Any(c => c.UrlSlug.Contains(condition.CategorySlug)))
+				s.Categories.Any(c => condition.CategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs)))
 			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s =>
 				s.UrlSlug.Contains(condition.ProductSlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>

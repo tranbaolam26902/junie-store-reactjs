@@ -168,6 +168,7 @@ public static class ProductEndpoints
 	{
 		try
 		{
+			
 			var condition = mapper.Map<ProductQuery>(model);
 
 			var products =
@@ -177,7 +178,7 @@ public static class ProductEndpoints
 					p => p.ProjectToType<ProductDto>());
 
 			var paginationResult = new PaginationResult<ProductDto>(products);
-
+			
 			return Results.Ok(ApiResponse.Success(paginationResult));
 		}
 		catch (Exception e)
