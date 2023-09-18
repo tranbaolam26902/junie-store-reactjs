@@ -10,7 +10,6 @@
   <ItemGroup>
     <Folder Include="Collections\" />
     <Folder Include="Constants\" />
-    <Folder Include="DTO\" />
     <Folder Include="Identity\" />
     <Folder Include="Settings\" />
   </ItemGroup>
