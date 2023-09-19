@@ -34,11 +34,12 @@ public class OrderRepository : IOrderRepository
 	{
 		var discount = await CheckValidDiscountAsync(discountCode, order.Total, cancellation);
 
+		order.DiscountPercentage = discount.DiscountPercentage;
 		order.Discount = discount;
 
 		discount.Quantity--;
-		_dbContext.Entry(discount).State = EntityState.Modified;
 
+		_dbContext.Entry(discount).State = EntityState.Modified;
 		_dbContext.Entry(order).State = EntityState.Modified;
 		await _dbContext.SaveChangesAsync(cancellation);
 

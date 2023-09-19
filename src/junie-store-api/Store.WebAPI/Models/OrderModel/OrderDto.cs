@@ -1,5 +1,5 @@
 ﻿using Store.Core.Entities;
-using System.ComponentModel.DataAnnotations.Schema;
+using Store.WebAPI.Models.DiscountModel;
 
 namespace Store.WebAPI.Models.OrderModel;
 
@@ -40,21 +40,6 @@ public class OrderDto
 
 	public DiscountDto Discount { get; set; }
 	public IList<OrderDetailDto> Details { get; set; }
-}
-
-public class DiscountDto
-{
-	public Guid Id { get; set; }
-
-	public int Quantity { get; set; }
-
-	public float MinPrice { get; set; }
-
-	public DateTime ExpiryDate { get; set; }
-
-	public string Code { get; set; }
-
-	public float DiscountPercentage { get; set; }
 }
 
 public class OrderDetailDto

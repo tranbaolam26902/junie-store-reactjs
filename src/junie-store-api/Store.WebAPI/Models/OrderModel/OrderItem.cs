@@ -1,4 +1,5 @@
 ﻿using Store.Core.Entities;
+using Store.WebAPI.Models.DiscountModel;
 
 namespace Store.WebAPI.Models.OrderModel;
 
