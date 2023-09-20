@@ -2,8 +2,6 @@
 
 public interface IDiscountQuery
 {
-	public string Code { get; set; }
-
 	public int Quantity { get; set; }
 
 	public float MinPrice { get; set; }
@@ -16,5 +14,7 @@ public interface IDiscountQuery
 
 	public int? Day { get; set; }
 
-	public bool ShowOnMenu { get; set; }
+	public bool IsDiscountPercentage { get; set; }
+
+	public bool IsDiscountAmount { get; set; }
 }
