@@ -46,7 +46,7 @@ public class DiscountRepository : IDiscountRepository
 		return await _dbContext.Set<Discount>()
 			.Where(s => s.Id == discountId)
 			.ExecuteUpdateAsync(s => 
-				s.SetProperty(d => d.ShowOnMenu, c => !c.ShowOnMenu), cancellation) > 0;
+				s.SetProperty(d => d.IsDiscountPercentage, c => !c.IsDiscountPercentage), cancellation) > 0;
 	}
 
 	public Task<bool> ToggleActiveAsync(Guid discountId, CancellationToken cancellation = default)
@@ -64,12 +64,12 @@ public class DiscountRepository : IDiscountRepository
 	{
 		float tolerance = 0.0001f;
 		return _dbContext.Set<Discount>()
-			.WhereIf(condition.ShowOnMenu, d => d.ShowOnMenu)
-			.WhereIf(!string.IsNullOrWhiteSpace(condition.Code), d => d.Code == condition.Code)
+			.WhereIf(condition.IsDiscountAmount, d => !d.IsDiscountPercentage)
+			.WhereIf(condition.IsDiscountPercentage, d => d.IsDiscountPercentage)
 			.WhereIf(condition.Quantity > 0, d => d.Quantity == condition.Quantity)
 			.WhereIf(condition.MinPrice > 0, d => Math.Abs(d.MinPrice - condition.MinPrice) < tolerance)
 			.WhereIf(condition.DiscountPercent > 0,
-				d => Math.Abs(d.DiscountPercentage - condition.DiscountPercent) > tolerance)
+				d => Math.Abs(d.DiscountAmount - condition.DiscountPercent) > tolerance)
 			.WhereIf(condition.Day > 0, s =>
 				s.CreateDate.Day == condition.Day ||
 				s.ExpiryDate.Day == condition.Day)
