@@ -34,7 +34,9 @@ public class OrderRepository : IOrderRepository
 	{
 		var discount = await CheckValidDiscountAsync(discountCode, order.Total, cancellation);
 
-		order.DiscountPercentage = discount.DiscountPercentage;
+		order.DiscountAmount = discount.DiscountAmount;
+		order.IsDiscountPercentage = discount.IsDiscountPercentage;
+		
 		order.Discount = discount;
 
 		discount.Quantity--;
@@ -99,7 +101,7 @@ public class OrderRepository : IOrderRepository
 			product.CountOrder += item.Quantity;
 			_dbContext.Entry(product).State = EntityState.Modified;
 				
-			order.Total += detail.Quantity * detail.Price;
+			//order.Total += detail.Quantity * detail.Price;
 			order.Details.Add(detail);
 		}
 
