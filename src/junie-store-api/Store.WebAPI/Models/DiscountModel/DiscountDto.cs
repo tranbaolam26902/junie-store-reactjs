@@ -12,5 +12,7 @@ public class DiscountDto
 
 	public string Code { get; set; }
 
-	public float DiscountPercentage { get; set; }
+	public float DiscountAmount { get; set; }
+
+	public bool IsDiscountPercentage { get; set; }
 }

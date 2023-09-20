@@ -1,4 +1,6 @@
-﻿namespace Store.Core.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Store.Core.Entities;
 
 public class OrderDetail
 {
@@ -10,17 +12,8 @@ public class OrderDetail
 
 	public int Quantity { get; set; }
 
-	public double TotalPrice
-	{
-		get
-		{
-			if (Order.Discount != null)
-			{
-				return Math.Round(Price * Quantity * (1 - Order.Discount.DiscountPercentage), 2);
-			}
-			return Math.Round(Price * Quantity, 2);
-		}
-	}
+	[NotMapped]
+	public double TotalPrice => Math.Round(Price * Quantity, 2);
 
 	// ======================================================
 	// Navigation properties

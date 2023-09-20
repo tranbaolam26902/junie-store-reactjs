@@ -32,7 +32,7 @@ public class DiscountMap : IEntityTypeConfiguration<Discount>
 			.IsRequired()
 			.HasMaxLength(128);
 
-		builder.Property(s => s.DiscountPercentage)
+		builder.Property(s => s.DiscountAmount)
 			.IsRequired()
 			.HasDefaultValue(0);
 
@@ -40,7 +40,7 @@ public class DiscountMap : IEntityTypeConfiguration<Discount>
 			.IsRequired()
 			.HasDefaultValue(false);
 
-		builder.Property(s => s.ShowOnMenu)
+		builder.Property(s => s.IsDiscountPercentage)
 			.IsRequired()
 			.HasDefaultValue(false);
 	}

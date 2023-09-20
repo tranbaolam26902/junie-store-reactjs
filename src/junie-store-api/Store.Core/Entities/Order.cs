@@ -35,7 +35,9 @@ public class Order : IEntity
 
 	public string Note { get; set; }
 
-	public float DiscountPercentage { get; set; }
+	public float DiscountAmount { get; set; }
+
+	public bool IsDiscountPercentage { get; set; }
 
 	[NotMapped]
 	public double Total { get; set; }
