@@ -6,6 +6,8 @@ public class ProductFilterModel : PagingModel
 
 	public string CategorySlug { get; set; }
 
+	public string SubCategorySlug { get; set; }
+
 	public string ProductSlug { get; set; }
 
 	public bool? Active { get; set; }

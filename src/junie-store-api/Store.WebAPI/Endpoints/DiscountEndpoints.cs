@@ -63,6 +63,21 @@ public static class DiscountEndpoints
 		}
 	}
 
+	private static IResult AddDiscount(
+		[FromBody] DiscountEditModel model,
+		[FromServices] IDiscountRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			return Results.Ok();
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
 	private static async Task<IResult> CheckValidDiscount(
 		DiscountOrdersModel model,
 		[FromServices] IOrderRepository orderRepo,
