@@ -13,9 +13,6 @@ public interface IDiscountRepository
 
 	Task<Discount> AddOrUpdateDiscountAsync(Discount discount, CancellationToken cancellation = default);
 
-
-	Task<bool> ToggleShowOnMenuAsync(Guid discountId, CancellationToken cancellation = default);
-
 	Task<bool> ToggleActiveAsync(Guid discountId, CancellationToken cancellation = default);
 
 	Task<bool> DeleteDiscountAsync(Guid discountId, CancellationToken cancellation = default);

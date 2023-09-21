@@ -40,8 +40,8 @@ public class DiscountRepository : IDiscountRepository
 		await _dbContext.SaveChangesAsync(cancellation);
 		return discount;
 	}
-
-	public async Task<bool> ToggleShowOnMenuAsync(Guid discountId, CancellationToken cancellation = default)
+	
+	public async Task<bool> ToggleActiveAsync(Guid discountId, CancellationToken cancellation = default)
 	{
 		return await _dbContext.Set<Discount>()
 			.Where(s => s.Id == discountId)
@@ -49,14 +49,11 @@ public class DiscountRepository : IDiscountRepository
 				s.SetProperty(d => d.IsDiscountPercentage, c => !c.IsDiscountPercentage), cancellation) > 0;
 	}
 
-	public Task<bool> ToggleActiveAsync(Guid discountId, CancellationToken cancellation = default)
+	public async Task<bool> DeleteDiscountAsync(Guid discountId, CancellationToken cancellation = default)
 	{
-		throw new NotImplementedException();
-	}
-
-	public Task<bool> DeleteDiscountAsync(Guid discountId, CancellationToken cancellation = default)
-	{
-		throw new NotImplementedException();
+		return await _dbContext.Set<Discount>()
+			.Where(s => s.Id == discountId)
+			.ExecuteDeleteAsync(cancellation) > 0;
 	}
 
 
