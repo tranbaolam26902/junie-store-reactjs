@@ -34,7 +34,6 @@ public class MapsterConfiguration : IRegister
 		config.NewConfig<ProductEditModel, Product>()
 			.Ignore(s => s.Categories);
 
-
 		config.NewConfig<Supplier, SupplierDto>()
 			.Map(dest => dest.ProductCount,
 				src => src.Products == null ? 0 : src.Products.Count);
