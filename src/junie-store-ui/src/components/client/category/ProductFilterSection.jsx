@@ -1,6 +1,6 @@
 // Components
 import { AnimatePresence, easeInOut, motion } from 'framer-motion';
-import { useLoaderData, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 // Assets
 import { icons } from '@assets/icons';
@@ -10,11 +10,10 @@ import { Button } from '@components/shared';
 import { Fade } from '@components/shared/animations';
 import PriceFilter from './PriceFilter';
 
-export default function ProductFilterSection({ show, onHide }) {
+export default function ProductFilterSection({ show, onHide, categories }) {
     // Hooks
     const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
-    const { relatedCategories } = useLoaderData();
 
     // Event handlers
     const handleToggleFilter = (e) => {
@@ -58,33 +57,28 @@ export default function ProductFilterSection({ show, onHide }) {
                         </div>
                         <hr className='mt-2 -mx-6 lg:mx-0 lg:mt-5 text-gray' />
                         {/* Start: Category section */}
-                        {relatedCategories.some((category) => category.urlSlug !== params.categorySlug) && (
-                            <section>
-                                <span className='block py-5 text-sm font-semibold tracking-wider'>Loại sản phẩm</span>
-                                <div className='flex flex-col gap-1 pl-4'>
-                                    {relatedCategories.map((relatedCategory) => {
-                                        if (params.categorySlug === relatedCategory.urlSlug) return null;
-                                        return (
-                                            <div key={relatedCategory.id} className='flex items-center gap-1'>
-                                                <input
-                                                    id={relatedCategory.urlSlug}
-                                                    type='checkbox'
-                                                    value={relatedCategory.urlSlug}
-                                                    checked={searchParams.has(
-                                                        'SubCategorySlug',
-                                                        relatedCategory.urlSlug
-                                                    )}
-                                                    onChange={handleToggleFilter}
-                                                />
-                                                <label htmlFor={relatedCategory.urlSlug}>
-                                                    {relatedCategory.name} ({relatedCategory.productCount})
-                                                </label>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </section>
-                        )}
+                        <section>
+                            <span className='block py-5 text-sm font-semibold tracking-wider'>Loại sản phẩm</span>
+                            <div className='flex flex-col gap-1 pl-4'>
+                                {categories.map((category) => {
+                                    if (params.categorySlug === category.urlSlug) return null;
+                                    return (
+                                        <div key={category.id} className='flex items-center gap-1'>
+                                            <input
+                                                id={category.urlSlug}
+                                                type='checkbox'
+                                                value={category.urlSlug}
+                                                checked={searchParams.has('SubCategorySlug', category.urlSlug)}
+                                                onChange={handleToggleFilter}
+                                            />
+                                            <label htmlFor={category.urlSlug} className='select-none'>
+                                                {category.name} ({category.productCount})
+                                            </label>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </section>
                         {/* End: Category section */}
 
                         <PriceFilter />
