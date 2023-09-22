@@ -2,6 +2,7 @@
 using Store.Core.Contracts;
 using Store.Core.DTO;
 using Store.Core.Entities;
+using Store.Core.Queries;
 using Store.Data.Contexts;
 using Store.Services.Extensions;
 
@@ -27,12 +28,20 @@ public class CategoryRepository : ICategoryRepository
 		return categories.ToPagedListAsync(pagingParams, cancellationToken);
 	}
 
-	public async Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default)
+	public async Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(ICategoryQuery condition, CancellationToken cancellationToken = default)
 	{
 		var products = await _dbContext.Set<Product>()
 			.Include(p => p.Categories)
-			.Where(s => s.Categories.Any(c => c.UrlSlug == slug))
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.UrlSlug),
+			s => s.Categories.Any(c => c.UrlSlug == condition.UrlSlug))
+			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
+				s.Name.Contains(condition.Keyword) ||
+				s.Description.Contains(condition.Keyword) ||
+				s.Instruction.Contains(condition.Keyword) ||
+				s.Sku.Contains(condition.Keyword) ||
+				s.UrlSlug.Contains(condition.Keyword))
 			.ToListAsync(cancellationToken);
+
 		var categoryItems = products
 			.SelectMany(p => p.Categories)
 			.GroupBy(c => new { c.Id, c.Name, c.UrlSlug })
