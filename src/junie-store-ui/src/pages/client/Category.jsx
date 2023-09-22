@@ -213,7 +213,7 @@ export default function Category() {
                                                     onClick={() => {
                                                         searchParams.set('SortColumn', sortOption.SortColumn);
                                                         searchParams.set('SortOrder', sortOption.SortOrder);
-                                                        setSearchParams(searchParams);
+                                                        setSearchParams(searchParams, { replace: true });
                                                     }}
                                                 >
                                                     {sortOption.name}

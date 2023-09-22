@@ -20,7 +20,7 @@ export default function ProductFilterSection({ show, onHide }) {
     const handleToggleFilter = (e) => {
         if (e.target.checked) searchParams.append('SubCategorySlug', e.target.value);
         else searchParams.delete('SubCategorySlug', e.target.value);
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
     };
 
     return (
