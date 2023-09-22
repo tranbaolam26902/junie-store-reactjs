@@ -9,10 +9,14 @@ import { icons } from '@assets/icons';
 import { images } from '@assets/images';
 
 // Hooks
-import { useLogout } from '@hooks/shared';
+import { useDebounce, useLogout } from '@hooks/shared';
 
 // Redux
+import { selectProducts } from '@redux/features/client/products';
 import { selectAuth } from '@redux/features/shared/auth';
+
+// Services
+import { axios } from '@services/shared';
 
 // Components
 import { CartItem, SearchResultItem } from '@components/client';
@@ -52,42 +56,49 @@ const categories = [
         slug: '/categories/sale'
     }
 ];
-// Temp search result items
-const products = [
-    {
-        id: 1,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 2,
-        name: 'Bông tai Gabi',
-        slug: 'gabi',
-        price: 275000,
-        quantity: 2,
-        image: images.productHover
-    }
-];
 
 export default function Header() {
-    // Hooks
-    const logout = useLogout();
-    const navigate = useNavigate();
-    const location = useLocation();
-
     // States
     const auth = useSelector(selectAuth);
+    const products = useSelector(selectProducts);
     const [showMobileNavbar, setShowMobileNavbar] = useState(false);
     const [showAccountOptions, setShowAccountOptions] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [showCart, setShowCart] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
+    const [keyword, setKeyword] = useState('');
+    const [searchResultItems, setSearchResultItems] = useState([]);
+    const [isEmptyResults, setIsEmptyResults] = useState(false);
+
+    // Hooks
+    const logout = useLogout();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const debounceKeyword = useDebounce(keyword, 500);
 
     // Refs
     const accountButtonRef = useRef(null);
+
+    // Functions
+    const handleSearchProducts = async (keyword) => {
+        if (keyword.trim() === '') {
+            setSearchResultItems([]);
+            setIsEmptyResults(false);
+            return;
+        }
+
+        setIsFetching(true);
+        const { data } = await axios.get(`/api/products?Keyword=${keyword.trim()}&PageSize=10`);
+
+        if (data.isSuccess && data.result.items.length > 0) {
+            setSearchResultItems(data.result.items);
+            setIsEmptyResults(false);
+        } else {
+            setSearchResultItems([]);
+            setIsEmptyResults(true);
+        }
+        setIsFetching(false);
+    };
 
     // Event handlers
     const handleShowMobileNavbar = () => {
@@ -119,6 +130,13 @@ export default function Header() {
     const handleHideCart = () => {
         setShowCart(false);
     };
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (keyword.trim() === '') return;
+
+        navigate(`/search/${keyword}`);
+        handleHideSearch();
+    };
 
     /* Hide account options when clicking outside */
     useEffect(() => {
@@ -132,6 +150,11 @@ export default function Header() {
             document.removeEventListener('mousedown', handleHideAccountOptionsWhenClickOutside);
         };
     }, []);
+    /* Debounce search keyword */
+    useEffect(() => {
+        handleSearchProducts(keyword.trim());
+        // eslint-disable-next-line
+    }, [debounceKeyword]);
 
     return (
         <header className='sticky z-10 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
@@ -253,18 +276,22 @@ export default function Header() {
             {/* Start: Search section */}
             <SidebarModal right show={showSearch} onHide={handleHideSearch}>
                 <div className='flex flex-col h-full'>
-                    <section className='flex items-center gap-4 px-6 py-4 border-b border-gray'>
+                    <form className='flex items-center gap-4 px-6 py-4 border-b border-gray' onSubmit={handleSearch}>
                         <img src={icons.search} alt='search-icon' className='w-4' />
                         <input
                             type='text'
                             autoFocus
+                            value={keyword}
                             placeholder='Bạn đang muốn tìm kiếm gì?'
                             className='flex-1 outline-none border-none'
+                            onChange={(e) => {
+                                setKeyword(e.target.value);
+                            }}
                         />
                         <button type='button' className='-m-2 p-2' onClick={handleHideSearch}>
                             <img src={icons.close} alt='close-icon' className='w-4' />
                         </button>
-                    </section>
+                    </form>
                     <section className='flex-1 overflow-y-auto'>
                         {isFetching ? (
                             <div className='flex items-center justify-center h-full'>
@@ -272,15 +299,24 @@ export default function Header() {
                             </div>
                         ) : (
                             <div className='flex flex-col gap-4 p-6'>
-                                {products.map((product) => (
+                                {searchResultItems.map((product) => (
                                     <SearchResultItem key={product.id} product={product} onClick={handleHideSearch} />
                                 ))}
                             </div>
                         )}
+                        {isEmptyResults && (
+                            <span className='block text-center'>Không có kết quả nào được tìm thấy.</span>
+                        )}
                     </section>
-                    {products.length > 0 && (
+                    {searchResultItems.length > 0 && (
                         <section className='relative px-6 py-4'>
-                            <Button to='/search' text='Xem tất cả kết quả' secondary full onClick={handleHideSearch} />
+                            <Button
+                                to={`/search/${keyword}`}
+                                text='Xem tất cả kết quả'
+                                secondary
+                                full
+                                onClick={handleHideSearch}
+                            />
                             <div className='absolute -top-4 left-0 right-4 h-4 bg-gradient-to-t from-primary to-transparent'></div>
                         </section>
                     )}
@@ -308,9 +344,9 @@ export default function Header() {
                             </div>
                         ) : (
                             <div className='flex flex-col gap-4 p-6'>
-                                {products.map((product) => (
+                                {/* products.map((product) => (
                                     <CartItem key={product.id} product={product} />
-                                ))}
+                                )) */}
                             </div>
                         )}
                     </section>

@@ -27,7 +27,7 @@ export default function ProductItem({ product }) {
                     className='absolute top-0 w-full h-full aspect-[3/4] object-cover rounded opacity-0 transition duration-500 group-hover:opacity-100'
                 />
                 {product.discount !== 0 && (
-                    <span className='absolute top-2 left-2 z-10 flex items-center gap-1 px-2 py-1 text-xs font-semibold text-primary tracking-wide uppercase bg-red rounded'>
+                    <span className='absolute top-2 left-2 flex items-center gap-1 px-2 py-1 text-xs font-semibold text-primary tracking-wide uppercase bg-red rounded'>
                         <span>Tiết kiệm</span>
                         <span>
                             {new Intl.NumberFormat('vi-VN').format((product.price * product.discount) / 100)}

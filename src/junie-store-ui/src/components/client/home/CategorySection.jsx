@@ -12,25 +12,25 @@ const categories = [
     {
         id: 1,
         name: 'Bông tai',
-        slug: 'earrings',
+        slug: '/categories/bong-tai',
         image: images.earrings
     },
     {
         id: 2,
         name: 'Dây chuyền',
-        slug: 'necklace',
+        slug: '/categories/day-chuyen',
         image: images.necklace
     },
     {
         id: 3,
         name: 'Vòng tay',
-        slug: 'bracelet',
+        slug: '/categories/vong-tay',
         image: images.bracelet
     },
     {
         id: 4,
         name: 'Nhẫn',
-        slug: 'ring',
+        slug: '/categories/nhan',
         image: images.ring
     }
 ];
@@ -44,7 +44,7 @@ export default function CategorySection() {
                     {categories.map((category) => (
                         <Link
                             key={category.id}
-                            to={`/categories/${category.slug}`}
+                            to={category.slug}
                             className='overflow-hidden relative w-full rounded group'
                         >
                             <img
