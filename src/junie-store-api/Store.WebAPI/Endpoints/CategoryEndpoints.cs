@@ -166,7 +166,6 @@ public static class CategoryEndpoints
 		}
 	}
 
-
 	private static async Task<IResult> AddCategory(
 		CategoryEditModel model,
 		[FromServices] ICategoryRepository repository,
