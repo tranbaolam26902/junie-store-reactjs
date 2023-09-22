@@ -17,4 +17,12 @@ const getRelatedCategoriesBySlug = async (categorySlug) => {
     return null;
 };
 
-export { getCategoryBySlug, getRelatedCategoriesBySlug };
+const getCategories = async () => {
+    const { data } = await axios.get('/api/categories');
+
+    if (data.isSuccess) return data.result;
+
+    return null;
+};
+
+export { getCategoryBySlug, getRelatedCategoriesBySlug, getCategories };

@@ -88,7 +88,7 @@ export default function PriceFilter() {
     useEffect(() => {
         searchParams.set('MinPrice', minPrice);
         searchParams.set('MaxPrice', maxPrice);
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
         // eslint-disable-next-line
     }, [debounceMinPrice, debounceMaxPrice]);
     /* Reset price filter when navigate between categories */

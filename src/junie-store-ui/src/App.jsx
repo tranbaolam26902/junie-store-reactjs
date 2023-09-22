@@ -12,7 +12,8 @@ import {
     getFeaturedProductBySlug,
     getProductBySlug,
     getProductsByQueries,
-    getRelatedCategoriesBySlug
+    getRelatedCategoriesBySlug,
+    getCategories
 } from '@services/client';
 
 // Components
@@ -55,6 +56,13 @@ const handleLoadProductPage = async ({ params }) => {
         featuredProducts
     };
 };
+const handleLoadSearchPage = async () => {
+    const result = await getCategories();
+
+    return {
+        categories: result.items
+    };
+};
 
 // Config routes
 const router = createBrowserRouter([
@@ -84,7 +92,11 @@ const router = createBrowserRouter([
                         loader: handleLoadProductPage,
                         errorElement: <NotFound />
                     },
-                    { path: '/search/:keyword', element: <SearchResult /> },
+                    {
+                        path: '/search',
+                        element: <SearchResult />,
+                        loader: handleLoadSearchPage
+                    },
                     { path: '/blogs', element: <Blog /> },
                     { path: '/blogs/:blogSlug', element: <BlogDetail /> },
                     { path: '/account/login', element: <Login /> },
