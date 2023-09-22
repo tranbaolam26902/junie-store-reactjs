@@ -1,5 +1,6 @@
 // Components
 import { AnimatePresence, easeInOut, motion } from 'framer-motion';
+import { useLoaderData, useParams, useSearchParams } from 'react-router-dom';
 
 // Assets
 import { icons } from '@assets/icons';
@@ -9,6 +10,18 @@ import { Fade } from '@components/shared/animations';
 import PriceFilter from './PriceFilter';
 
 export default function ProductFilterSection({ show, onHide }) {
+    // Hooks
+    const params = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { relatedCategories } = useLoaderData();
+
+    // Event handlers
+    const handleToggleFilter = (e) => {
+        if (e.target.checked) searchParams.append('SubCategorySlug', e.target.value);
+        else searchParams.delete('SubCategorySlug', e.target.value);
+        setSearchParams(searchParams);
+    };
+
     return (
         <AnimatePresence>
             {show && (
@@ -44,27 +57,33 @@ export default function ProductFilterSection({ show, onHide }) {
                         </div>
                         <hr className='mt-2 -mx-6 lg:mx-0 lg:mt-5 text-gray' />
                         {/* Start: Category section */}
-                        <section>
-                            <span className='block py-5 text-sm font-semibold tracking-wider'>Loại sản phẩm</span>
-                            <div className='flex flex-col gap-1 pl-4'>
-                                <div className='flex items-center gap-1'>
-                                    <input id='earrings' type='checkbox' />
-                                    <label htmlFor='earrings'>Bông tai (107)</label>
+                        {relatedCategories.some((category) => category.urlSlug !== params.categorySlug) && (
+                            <section>
+                                <span className='block py-5 text-sm font-semibold tracking-wider'>Loại sản phẩm</span>
+                                <div className='flex flex-col gap-1 pl-4'>
+                                    {relatedCategories.map((relatedCategory) => {
+                                        if (params.categorySlug === relatedCategory.urlSlug) return null;
+                                        return (
+                                            <div key={relatedCategory.id} className='flex items-center gap-1'>
+                                                <input
+                                                    id={relatedCategory.urlSlug}
+                                                    type='checkbox'
+                                                    value={relatedCategory.urlSlug}
+                                                    checked={searchParams.has(
+                                                        'SubCategorySlug',
+                                                        relatedCategory.urlSlug
+                                                    )}
+                                                    onChange={handleToggleFilter}
+                                                />
+                                                <label htmlFor={relatedCategory.urlSlug}>
+                                                    {relatedCategory.name} ({relatedCategory.productCount})
+                                                </label>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                                <div className='flex items-center gap-1'>
-                                    <input id='necklace' type='checkbox' />
-                                    <label htmlFor='necklace'>Dây chuyền (50)</label>
-                                </div>
-                                <div className='flex items-center gap-1'>
-                                    <input id='bracelet' type='checkbox' />
-                                    <label htmlFor='bracelet'>Vòng tay (42)</label>
-                                </div>
-                                <div className='flex items-center gap-1'>
-                                    <input id='ring' type='checkbox' />
-                                    <label htmlFor='ring'>Nhẫn (48)</label>
-                                </div>
-                            </div>
-                        </section>
+                            </section>
+                        )}
                         {/* End: Category section */}
 
                         {/* Start: Price section */}

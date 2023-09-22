@@ -1,17 +1,29 @@
 // Libraries
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+// Hooks
+import { useDebounce } from '@hooks/shared';
 
 // Components
 import { Input } from '@components/shared';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 export default function PriceFilter() {
+    // Hooks
+    const [searchParams, setSearchParams] = useSearchParams();
+    const params = useParams();
+
     // Constants
     const MIN_PRICE = 0;
-    const MAX_PRICE = 260000;
+    const MAX_PRICE = 500000;
 
     // States
-    const [minPrice, setMinPrice] = useState(MIN_PRICE);
-    const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
+    const [minPrice, setMinPrice] = useState(searchParams.get('MinPrice') || MIN_PRICE);
+    const [maxPrice, setMaxPrice] = useState(searchParams.get('MaxPrice') || MAX_PRICE);
+
+    // Hooks
+    const debounceMinPrice = useDebounce(minPrice, 500);
+    const debounceMaxPrice = useDebounce(maxPrice, 500);
 
     // Refs
     const minRef = useRef(null);
@@ -69,6 +81,27 @@ export default function PriceFilter() {
         if (price > minPrice && price <= MAX_PRICE) setMaxPrice(price);
     };
 
+    // Side effects
+    /* Bind minPrice & maxPrice with searchParams
+     * Debounce for slider
+     * */
+    useEffect(() => {
+        searchParams.set('MinPrice', minPrice);
+        searchParams.set('MaxPrice', maxPrice);
+        setSearchParams(searchParams);
+        // eslint-disable-next-line
+    }, [debounceMinPrice, debounceMaxPrice]);
+    /* Reset price filter when navigate between categories */
+    useEffect(() => {
+        if (!searchParams.has('MinPrice') && !searchParams.has('MaxPrice')) {
+            setMinPrice(MIN_PRICE);
+            setMaxPrice(MAX_PRICE);
+            minRef.current.value = MIN_PRICE;
+            maxRef.current.value = MAX_PRICE;
+        }
+        // eslint-disable-next-line
+    }, [params.categorySlug]);
+
     return (
         <section>
             <span className='block py-5 text-sm font-semibold tracking-wider'>Giá</span>
@@ -108,7 +141,7 @@ export default function PriceFilter() {
                     <Input
                         type='number'
                         ref={minRef}
-                        defaultValue={MIN_PRICE}
+                        defaultValue={minPrice}
                         className='p-2 pl-6 w-full bg-primary border border-gray'
                         onBlur={handleChangeMinPriceText}
                         onKeyUp={(e) => {
@@ -122,7 +155,7 @@ export default function PriceFilter() {
                     <Input
                         type='number'
                         ref={maxRef}
-                        defaultValue={MAX_PRICE}
+                        defaultValue={maxPrice}
                         className='p-2 pl-6 w-full bg-primary border border-gray'
                         onBlur={handleChangeMaxPriceText}
                         onKeyUp={(e) => {

@@ -1,15 +1,7 @@
 // Libraries
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { useDispatch } from 'react-redux';
-
-// Redux
-import {
-    decreaseProductPageNumber,
-    increaseProductPageNumber,
-    setProductPageNumber,
-    setProductPageSize
-} from '@redux/features/client/products';
+import { useSearchParams } from 'react-router-dom';
 
 // Assets
 import { icons } from '@assets/icons';
@@ -19,29 +11,45 @@ import { Fade } from '@components/shared/animations';
 
 export default function Pager({ metadata }) {
     // Hooks
-    const dispatch = useDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // States
     const [showSelectNumberOfItems, setShowSelectNumberOfItems] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
+    const [isInvalid, setIsInvalid] = useState(false);
 
     // Refs
     const selectNumberOfItemsRef = useRef(null);
 
     // Event handlers
     const handlePrevPage = () => {
-        dispatch(decreaseProductPageNumber());
-        setPageNumber((state) => --state);
+        if (metadata.hasPreviousPage) {
+            setPageNumber((state) => {
+                state = --state;
+                searchParams.set('PageNumber', state);
+                setSearchParams(searchParams);
+
+                return state;
+            });
+        }
     };
     const handleNextPage = () => {
-        dispatch(increaseProductPageNumber());
-        setPageNumber((state) => ++state);
+        if (metadata.hasNextPage) {
+            setPageNumber((state) => {
+                state = ++state;
+                searchParams.set('PageNumber', state);
+                setSearchParams(searchParams);
+
+                return state;
+            });
+        }
     };
     const handleChangePageNumber = (e) => {
         if (e.key !== 'Enter') return;
 
-        if (pageNumber >= 1 && pageNumber <= metadata.pageCount) {
-            dispatch(setProductPageNumber(pageNumber));
+        if (e.target.value >= 1 && e.target.value <= metadata.pageCount) {
+            searchParams.set('PageNumber', pageNumber);
+            setSearchParams(searchParams);
             e.target.blur();
         }
     };
@@ -65,6 +73,19 @@ export default function Pager({ metadata }) {
             document.removeEventListener('mousedown', handleHideSelectNumberOfItemsWhenClickOutside);
         };
     }, []);
+    /* Bind component's pageNumber with metadata's pageNumber */
+    useEffect(() => {
+        setPageNumber(metadata.pageNumber);
+    }, [metadata.pageNumber]);
+    /* Reset to first page when total item is changed */
+    useEffect(() => {
+        if (searchParams.size === 0) return;
+
+        setPageNumber(1);
+        searchParams.set('PageNumber', 1);
+        setSearchParams(searchParams);
+        // eslint-disable-next-line
+    }, [metadata.totalItemCount, metadata.pageSize]);
 
     return (
         <section className='flex items-center justify-between'>
@@ -80,18 +101,25 @@ export default function Pager({ metadata }) {
                     </button>
                     <input
                         type='number'
-                        className='block px-2 pt-px w-12 h-8 text-center rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
+                        className={`block px-2 pt-px w-12 h-8 text-center rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 ${
+                            !isInvalid ? 'focus:outline-black' : 'focus:outline-red'
+                        }`}
                         value={pageNumber}
                         onInput={(e) => {
                             if (/^[0-9]*$/.test(e.target.value)) setPageNumber(e.target.value);
+                            if (e.target.value !== '' && (e.target.value < 1 || e.target.value > metadata.pageCount))
+                                setIsInvalid(true);
+                            else setIsInvalid(false);
                         }}
                         onBlur={(e) => {
                             if (
                                 e.target.value !== pageNumber ||
                                 e.target.value < 1 ||
                                 e.target.value > metadata.pageCount
-                            )
+                            ) {
                                 setPageNumber(metadata.pageNumber);
+                                setIsInvalid(false);
+                            }
                         }}
                         onKeyUp={handleChangePageNumber}
                     />
@@ -139,7 +167,8 @@ export default function Pager({ metadata }) {
                                         type='button'
                                         className='px-2 py-1 w-full text-left'
                                         onClick={() => {
-                                            dispatch(setProductPageSize(number));
+                                            searchParams.set('PageSize', number);
+                                            setSearchParams(searchParams);
                                         }}
                                     >
                                         {number}

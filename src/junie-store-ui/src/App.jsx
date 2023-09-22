@@ -3,19 +3,58 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // Pages
 import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
-import { Account, Login, SignUp } from '@pages/shared';
+import { Account, Login, NotFound, SignUp } from '@pages/shared';
 
 // Services
 import {
     getCategoryBySlug,
     getBestSellingProducts,
     getFeaturedProductBySlug,
-    getProductBySlug
+    getProductBySlug,
+    getProductsByQueries,
+    getRelatedCategoriesBySlug
 } from '@services/client';
 
 // Components
 import { ClientLayout } from '@components/client';
 import { PersistLogin, RequireLogin } from '@components/shared';
+
+// Loader handlers
+const handleLoadHomePage = async () => {
+    const bestSellingProducts = await getBestSellingProducts();
+
+    return {
+        bestSellingProducts
+    };
+};
+const handleLoadCategoryPage = async ({ params }) => {
+    const category = await getCategoryBySlug(params.categorySlug);
+    const result = await getProductsByQueries(`CategorySlug=${params.categorySlug}&PageSize=20`);
+    const relatedCategories = await getRelatedCategoriesBySlug(params.categorySlug);
+
+    if (!category) throw new Response('Not Found', { status: category.statusCode });
+
+    return {
+        category,
+        defaultProducts: result.items,
+        defaultMetadata: result.metadata,
+        relatedCategories
+    };
+};
+const handleLoadProductPage = async ({ params }) => {
+    const product = await getProductBySlug(params.productSlug);
+    const featuredProducts = await getFeaturedProductBySlug(params.productSlug);
+
+    if (!product || !featuredProducts)
+        throw new Response('Not Found', {
+            status: product.statusCode === 200 ? featuredProducts.statusCode : product.statusCode
+        });
+
+    return {
+        product,
+        featuredProducts
+    };
+};
 
 // Config routes
 const router = createBrowserRouter([
@@ -31,31 +70,19 @@ const router = createBrowserRouter([
                     {
                         path: '/',
                         element: <Home />,
-                        loader: async () => {
-                            const bestSellingProducts = await getBestSellingProducts();
-
-                            return {
-                                bestSellingProducts
-                            };
-                        }
+                        loader: handleLoadHomePage
                     },
                     {
                         path: '/categories/:categorySlug',
                         element: <Category />,
-                        loader: async ({ params }) => await getCategoryBySlug(params.categorySlug)
+                        loader: handleLoadCategoryPage,
+                        errorElement: <NotFound />
                     },
                     {
                         path: '/products/:productSlug',
                         element: <Product />,
-                        loader: async ({ params }) => {
-                            const product = await getProductBySlug(params.productSlug);
-                            const featuredProducts = await getFeaturedProductBySlug(params.productSlug);
-
-                            return {
-                                product,
-                                featuredProducts
-                            };
-                        }
+                        loader: handleLoadProductPage,
+                        errorElement: <NotFound />
                     },
                     { path: '/search/:keyword', element: <SearchResult /> },
                     { path: '/blogs', element: <Blog /> },

@@ -1,23 +1,13 @@
 // Libraries
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { useLoaderData, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-
-// Redux
-import {
-    selectProducts,
-    setProductItems,
-    setProductSortColumn,
-    setProductSortOrder,
-    setProductsMetadata
-} from '@redux/features/client/products';
+import { useLoaderData, useParams, useSearchParams } from 'react-router-dom';
 
 // Assets
 import { icons } from '@assets/icons';
 
 // Services
-import { axios } from '@services/shared';
+import { getProductsByQueries } from '@services/client';
 
 // Components
 import { Breadcrumb, ProductItem } from '@components/client';
@@ -25,20 +15,75 @@ import { ProductFilterSection } from '@components/client/category';
 import { Container, Pager } from '@components/shared';
 import { Fade, PageTransition } from '@components/shared/animations';
 
+const sortOptions = [
+    {
+        id: 1,
+        name: 'Ngày (từ mới đến cũ)',
+        SortColumn: 'createDate',
+        SortOrder: 'desc'
+    },
+    {
+        id: 2,
+        name: 'Ngày (từ cũ đến mới)',
+        SortColumn: 'createDate',
+        SortOrder: 'asc'
+    },
+    {
+        id: 3,
+        name: 'Tên (từ A - Z)',
+        SortColumn: 'name',
+        SortOrder: 'asc'
+    },
+    {
+        id: 4,
+        name: 'Tên (từ Z - A)',
+        SortColumn: 'name',
+        SortOrder: 'desc'
+    },
+    {
+        id: 5,
+        name: 'Giá (từ thấp - cao)',
+        SortColumn: 'price',
+        SortOrder: 'asc'
+    },
+    {
+        id: 6,
+        name: 'Giá (từ cao - thấp)',
+        SortColumn: 'price',
+        SortOrder: 'desc'
+    }
+];
+
 export default function Category() {
     // Hooks
-    const dispatch = useDispatch();
     const params = useParams();
-    const category = useLoaderData();
+    const { category, defaultProducts, defaultMetadata } = useLoaderData();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // States
-    const products = useSelector(selectProducts);
     const [showFilter, setShowFilter] = useState(false);
     const [showSortOptions, setShowSortOptions] = useState(false);
-    const [sortType, setSortType] = useState('Ngày (từ mới đến cũ)');
+    const [sortType, setSortType] = useState('');
+    const [productItems, setProductItems] = useState(defaultProducts);
+    const [metadata, setMetadata] = useState({});
 
     // Refs
     const sortOptionsRef = useRef(null);
+
+    // Functions
+    const filterProducts = async () => {
+        const queryString = `CategorySlug=${params.categorySlug}&` + searchParams.toString();
+        const result = await getProductsByQueries(queryString);
+
+        if (result) {
+            setProductItems(result.items);
+            setMetadata(result.metadata);
+        }
+    };
+    const setDefaultData = () => {
+        setProductItems(defaultProducts);
+        setMetadata(defaultMetadata);
+    };
 
     // Event handlers
     const handleShowFilter = () => {
@@ -94,24 +139,29 @@ export default function Category() {
             document.removeEventListener('mousedown', handleHideSortOptionsWhenClickOutside);
         };
     }, []);
-    /* Get products by queries */
+    /* Fiter products */
     useEffect(() => {
-        const getProducts = async () => {
-            const urlQueries = new URLSearchParams({ ...products.queries, CategorySlug: params.categorySlug });
-            const { data } = await axios.get(`/api/products?${urlQueries}`);
+        setSortType('Ngày (từ mới đến cũ)');
+        if (searchParams.size !== 0) {
+            filterProducts();
 
-            if (data.isSuccess) {
-                dispatch(setProductItems(data.result.items));
-                dispatch(setProductsMetadata(data.result.metadata));
-            } else {
-                dispatch(setProductItems([]));
-                dispatch(setProductsMetadata({}));
-            }
-        };
-
-        getProducts();
+            if (searchParams.has('SortColumn', 'createDate') && searchParams.has('SortOrder', 'asc'))
+                setSortType('Ngày (từ cũ đến mới)');
+            else if (searchParams.has('SortColumn', 'name') && searchParams.has('SortOrder', 'asc'))
+                setSortType('Tên (từ A - Z)');
+            else if (searchParams.has('SortColumn', 'name') && searchParams.has('SortOrder', 'desc'))
+                setSortType('Tên (từ Z - A)');
+            else if (searchParams.has('SortColumn', 'price') && searchParams.has('SortOrder', 'asc'))
+                setSortType('Giá (từ thấp đến cao)');
+            else if (searchParams.has('SortColumn', 'price') && searchParams.has('SortOrder', 'desc'))
+                setSortType('Giá (từ cao đến thấp)');
+        } else setDefaultData();
         // eslint-disable-next-line
-    }, [products.queries, window.location.pathname]);
+    }, [searchParams]);
+    useEffect(() => {
+        setDefaultData();
+        // eslint-disable-next-line
+    }, [params.categorySlug]);
 
     return (
         <PageTransition>
@@ -133,9 +183,7 @@ export default function Category() {
                                 <button type='button' className='lg:hidden p-2' onClick={handleShowFilter}>
                                     <img src={icons.filter} alt='filter-icon' className='w-4' />
                                 </button>
-                                <span className='font-thin tracking-wider'>
-                                    {products.metadata.totalItemCount} sản phẩm
-                                </span>
+                                <span className='font-thin tracking-wider'>{metadata.totalItemCount} sản phẩm</span>
                             </div>
                             <div className='relative flex items-center gap-2'>
                                 <span className='font-thin tracking-wider'>Sắp xếp theo</span>
@@ -157,72 +205,20 @@ export default function Category() {
                                 <AnimatePresence>
                                     {showSortOptions && (
                                         <Fade className='absolute top-full right-0 z-10 flex flex-col items-start p-4 w-max font-thin bg-primary rounded shadow'>
-                                            <button
-                                                type='button'
-                                                className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
-                                                onClick={(e) => {
-                                                    setSortType(e.target.innerText);
-                                                    dispatch(setProductSortColumn('createDate'));
-                                                    dispatch(setProductSortOrder('desc'));
-                                                }}
-                                            >
-                                                Ngày (từ mới đến cũ)
-                                            </button>
-                                            <button
-                                                type='button'
-                                                className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
-                                                onClick={(e) => {
-                                                    setSortType(e.target.innerText);
-                                                    dispatch(setProductSortColumn('createDate'));
-                                                    dispatch(setProductSortOrder('asc'));
-                                                }}
-                                            >
-                                                Ngày (từ cũ đến mới)
-                                            </button>
-                                            <button
-                                                type='button'
-                                                className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
-                                                onClick={(e) => {
-                                                    setSortType(e.target.innerText);
-                                                    dispatch(setProductSortColumn('name'));
-                                                    dispatch(setProductSortOrder('asc'));
-                                                }}
-                                            >
-                                                Tên (từ A - Z)
-                                            </button>
-                                            <button
-                                                type='button'
-                                                className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
-                                                onClick={(e) => {
-                                                    setSortType(e.target.innerText);
-                                                    dispatch(setProductSortColumn('name'));
-                                                    dispatch(setProductSortOrder('desc'));
-                                                }}
-                                            >
-                                                Tên (từ Z - A)
-                                            </button>
-                                            <button
-                                                type='button'
-                                                className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
-                                                onClick={(e) => {
-                                                    setSortType(e.target.innerText);
-                                                    dispatch(setProductSortColumn('price'));
-                                                    dispatch(setProductSortOrder('asc'));
-                                                }}
-                                            >
-                                                Giá (từ thấp đến cao)
-                                            </button>
-                                            <button
-                                                type='button'
-                                                className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
-                                                onClick={(e) => {
-                                                    setSortType(e.target.innerText);
-                                                    dispatch(setProductSortColumn('price'));
-                                                    dispatch(setProductSortOrder('desc'));
-                                                }}
-                                            >
-                                                Giá (từ cao đến thấp)
-                                            </button>
+                                            {sortOptions.map((sortOption) => (
+                                                <button
+                                                    key={sortOption.id}
+                                                    type='button'
+                                                    className='px-4 py-1 w-full text-left rounded transition duration-200 hover:bg-gray/50'
+                                                    onClick={() => {
+                                                        searchParams.set('SortColumn', sortOption.SortColumn);
+                                                        searchParams.set('SortOrder', sortOption.SortOrder);
+                                                        setSearchParams(searchParams);
+                                                    }}
+                                                >
+                                                    {sortOption.name}
+                                                </button>
+                                            ))}
                                         </Fade>
                                     )}
                                 </AnimatePresence>
@@ -232,14 +228,14 @@ export default function Category() {
 
                         {/* Start: Product section */}
                         <section className='grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-x-2 md:gap-x-6 gap-y-8 xl:gap-y-12'>
-                            {products.items.map((product) => (
+                            {productItems.map((product) => (
                                 <ProductItem key={product.id} product={product} />
                             ))}
                         </section>
                         {/* End: Product section */}
 
                         {/* Start: Pager section */}
-                        <Pager metadata={products.metadata} />
+                        <Pager metadata={metadata} />
                         {/* End: Pager section */}
                     </section>
                     {/* End: Main section */}

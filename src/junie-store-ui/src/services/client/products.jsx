@@ -25,4 +25,12 @@ const getFeaturedProductBySlug = async (productSlug) => {
     return null;
 };
 
-export { getBestSellingProducts, getProductBySlug, getFeaturedProductBySlug };
+const getProductsByQueries = async (queries) => {
+    const { data } = await axios.get(`/api/products?${queries}`);
+
+    if (data.isSuccess) return data.result;
+
+    return null;
+};
+
+export { getBestSellingProducts, getProductBySlug, getFeaturedProductBySlug, getProductsByQueries };
