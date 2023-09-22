@@ -6,6 +6,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
 using Store.Core.Collections;
 using Store.Core.Entities;
+using Store.Core.Queries;
 using Store.Services.Shops;
 using Store.WebAPI.Models.CategoryModel;
 
@@ -32,8 +33,8 @@ public static class CategoryEndpoints
 			.WithName("GetCategoryBySlug")
 			.Produces<ApiResponse<CategoryDto>>();
 
-		builder.MapGet("/RelatedCategories/{slug:regex(^[a-z0-9_-]+$)}", GetRelatedCategoriesBySlug)
-			.WithName("GetRelatedCategoriesBySlug")
+		builder.MapGet("/RelatedCategories", GetRelatedCategories)
+			.WithName("GetRelatedCategories")
 			.Produces<ApiResponse<IList<CategoryDto>>>();
 
 
@@ -107,14 +108,16 @@ public static class CategoryEndpoints
 		}
 	}
 
-	private static async Task<IResult> GetRelatedCategoriesBySlug(
-		[FromRoute] string slug,
+	private static async Task<IResult> GetRelatedCategories(
+		[AsParameters] CategoryRelateModel model,
 		[FromServices] ICategoryRepository repository,
 		[FromServices] IMapper mapper)
 	{
 		try
 		{
-			var categoryItems = await repository.GetRelatedCategoryBySlugAsync(slug);
+			var condition = mapper.Map<CategoryQuery>(model);
+
+			var categoryItems = await repository.GetRelatedCategoryBySlugAsync(condition);
 
 			var categoriesDto = mapper.Map<IList<CategoryDto>>(categoryItems);
 
