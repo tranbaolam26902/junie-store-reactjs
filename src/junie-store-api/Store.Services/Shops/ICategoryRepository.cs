@@ -1,6 +1,7 @@
 ﻿using Store.Core.Contracts;
 using Store.Core.DTO;
 using Store.Core.Entities;
+using Store.Core.Queries;
 
 namespace Store.Services.Shops;
 
@@ -9,7 +10,7 @@ public interface ICategoryRepository
 	Task<IPagedList<Category>> GetPagedCategoriesAsync(string keyword, IPagingParams pagingParams,
 		CancellationToken cancellationToken = default);
 
-	Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default);
+	Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(ICategoryQuery condition, CancellationToken cancellationToken = default);
 
 	Task<IPagedList<T>> GetPagedCategoriesAsync<T>(
 		string keyword,
@@ -27,5 +28,6 @@ public interface ICategoryRepository
 	Task<bool> DeleteCategoryAsync(Guid id, CancellationToken cancellation = default);
 
 	Task<Category> GetCategoryByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
 	Task<Category> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default);
 }
