@@ -27,7 +27,7 @@ export default function Pager({ metadata }) {
             setPageNumber((state) => {
                 state = --state;
                 searchParams.set('PageNumber', state);
-                setSearchParams(searchParams);
+                setSearchParams(searchParams, { replace: true });
 
                 return state;
             });
@@ -38,7 +38,7 @@ export default function Pager({ metadata }) {
             setPageNumber((state) => {
                 state = ++state;
                 searchParams.set('PageNumber', state);
-                setSearchParams(searchParams);
+                setSearchParams(searchParams, { replace: true });
 
                 return state;
             });
@@ -49,7 +49,7 @@ export default function Pager({ metadata }) {
 
         if (e.target.value >= 1 && e.target.value <= metadata.pageCount) {
             searchParams.set('PageNumber', pageNumber);
-            setSearchParams(searchParams);
+            setSearchParams(searchParams, { replace: true });
             e.target.blur();
         }
     };
@@ -83,7 +83,7 @@ export default function Pager({ metadata }) {
 
         setPageNumber(1);
         searchParams.set('PageNumber', 1);
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
         // eslint-disable-next-line
     }, [metadata.totalItemCount, metadata.pageSize]);
 
@@ -168,7 +168,7 @@ export default function Pager({ metadata }) {
                                         className='px-2 py-1 w-full text-left'
                                         onClick={() => {
                                             searchParams.set('PageSize', number);
-                                            setSearchParams(searchParams);
+                                            setSearchParams(searchParams, { replace: true });
                                         }}
                                     >
                                         {number}
