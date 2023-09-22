@@ -176,16 +176,16 @@ export default function Category() {
                     {/* End: Sidebar section */}
 
                     {/* Start: Main section */}
-                    <section className='flex-1 flex flex-col gap-4 lg:gap-6'>
+                    <section className='flex-1 flex flex-col gap-4 md:gap-6'>
                         {/* Start: Main's header section */}
-                        <section className='flex items-center justify-between'>
+                        <section className='flex flex-col md:flex-row md:items-center justify-between gap-2'>
                             <div className='flex items-center gap-1'>
                                 <button type='button' className='lg:hidden p-2' onClick={handleShowFilter}>
                                     <img src={icons.filter} alt='filter-icon' className='w-4' />
                                 </button>
                                 <span className='font-thin tracking-wider'>{metadata.totalItemCount} sản phẩm</span>
                             </div>
-                            <div className='relative flex items-center gap-2'>
+                            <div className='relative flex items-center gap-2 pl-2 md:pl-0'>
                                 <span className='font-thin tracking-wider'>Sắp xếp theo</span>
                                 <button
                                     ref={sortOptionsRef}

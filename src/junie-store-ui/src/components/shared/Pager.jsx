@@ -75,7 +75,7 @@ export default function Pager({ metadata }) {
     }, []);
     /* Bind component's pageNumber with metadata's pageNumber */
     useEffect(() => {
-        setPageNumber(metadata.pageNumber);
+        if (metadata.pageNumber) setPageNumber(metadata.pageNumber);
     }, [metadata.pageNumber]);
     /* Reset to first page when total item is changed */
     useEffect(() => {

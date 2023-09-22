@@ -6,6 +6,7 @@ import { useLoaderData, useParams, useSearchParams } from 'react-router-dom';
 import { icons } from '@assets/icons';
 
 // Components
+import { Button } from '@components/shared';
 import { Fade } from '@components/shared/animations';
 import PriceFilter from './PriceFilter';
 
@@ -86,9 +87,8 @@ export default function ProductFilterSection({ show, onHide }) {
                         )}
                         {/* End: Category section */}
 
-                        {/* Start: Price section */}
                         <PriceFilter />
-                        {/* End: Price section */}
+                        <Button secondary full text='Lọc' className='lg:hidden mt-4' onClick={onHide} />
                     </motion.div>
                 </section>
             )}
