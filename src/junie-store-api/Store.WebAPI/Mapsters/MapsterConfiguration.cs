@@ -20,7 +20,10 @@ public class MapsterConfiguration : IRegister
 					src.Roles.Any(r => r.Name == "Manager") ? "Manager" :
 					"User");
 
-		config.NewConfig<Category, CategoryDto>();
+		config.NewConfig<Category, CategoryDto>()
+			.Map(dest => dest.ProductCount, 
+				src => src.Products == null ? 0 : src.Products.Count);
+
 		config.NewConfig<Picture, PictureDto>();
 
 		config.NewConfig<OrderDetail, OrderDetailItem>()
