@@ -6,6 +6,8 @@ public interface IProductQuery
 
     public string CategorySlug { get; set; }
 
+    public string SubCategorySlug { get; set; }
+
     public string ProductSlug { get; set; }
 
     public bool Active { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Store.Core.Entities;
+using Store.WebAPI.Models.DiscountModel;
 
 namespace Store.WebAPI.Models.OrderModel;
 
@@ -26,10 +27,14 @@ public class OrderItem
 
 	private double CalculateTotal()
 	{
-		var total = Details.Sum(s => s.Price);
-		if (Discount != null)
+		var total = Details.Sum(s => s.Price * s.Quantity);
+		if (!Discount.IsDiscountPercentage)
 		{
-			total *= Discount.DiscountPercentage / 100;
+			total -= Discount.DiscountAmount;
+		}
+		else if (Discount.DiscountAmount > 0)
+		{
+			total *= 1 - (Discount.DiscountAmount / 100);
 		}
 
 		return total;

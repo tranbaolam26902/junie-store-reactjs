@@ -34,8 +34,12 @@ public class OrderMap : IEntityTypeConfiguration<Order>
 		builder.Property(o => o.Note)
 			.HasMaxLength(1024);
 
-		builder.Property(s => s.DiscountPercentage)
+		builder.Property(s => s.DiscountAmount)
 			.HasDefaultValue(0);
+
+		builder.Property(s => s.IsDiscountPercentage)
+			.IsRequired()
+			.HasDefaultValue(false);
 
 		// Configure the details collection
 		builder.HasMany(o => o.Details)

@@ -95,10 +95,10 @@ public class DataSeeder : IDataSeeder
 	{
 		var discount = new List<Discount>()
 		{
-			new() {Id = Guid.NewGuid(), Code = "100000001", Active = true, DiscountPercentage = 50, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
-			new() {Id = Guid.NewGuid(), Code = "100000002", Active = true, DiscountPercentage = 50, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
-			new() {Id = Guid.NewGuid(), Code = "100000003", Active = true, DiscountPercentage = 50, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
-			new() {Id = Guid.NewGuid(), Code = "100000004", Active = true, DiscountPercentage = 50, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
+			new() {Id = Guid.NewGuid(), Code = "100000001", Active = true, DiscountAmount = 10, IsDiscountPercentage = true, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
+			new() {Id = Guid.NewGuid(), Code = "100000002", Active = true, DiscountAmount = 20, IsDiscountPercentage = true, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
+			new() {Id = Guid.NewGuid(), Code = "100000003", Active = true, DiscountAmount = 8, IsDiscountPercentage = true, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
+			new() {Id = Guid.NewGuid(), Code = "100000004", Active = true, DiscountAmount = 50000, CreateDate = DateTime.Now, ExpiryDate = DateTime.Now.AddMonths(2), MinPrice = 0, Quantity = 100},
 		};
 
 		_dbContext.Discounts.AddRange(discount);

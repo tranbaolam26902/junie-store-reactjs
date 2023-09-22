@@ -34,11 +34,14 @@ public class OrderRepository : IOrderRepository
 	{
 		var discount = await CheckValidDiscountAsync(discountCode, order.Total, cancellation);
 
+		order.DiscountAmount = discount.DiscountAmount;
+		order.IsDiscountPercentage = discount.IsDiscountPercentage;
+		
 		order.Discount = discount;
 
 		discount.Quantity--;
-		_dbContext.Entry(discount).State = EntityState.Modified;
 
+		_dbContext.Entry(discount).State = EntityState.Modified;
 		_dbContext.Entry(order).State = EntityState.Modified;
 		await _dbContext.SaveChangesAsync(cancellation);
 
@@ -98,7 +101,7 @@ public class OrderRepository : IOrderRepository
 			product.CountOrder += item.Quantity;
 			_dbContext.Entry(product).State = EntityState.Modified;
 				
-			order.Total += detail.Quantity * detail.Price;
+			//order.Total += detail.Quantity * detail.Price;
 			order.Details.Add(detail);
 		}
 

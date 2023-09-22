@@ -270,8 +270,10 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(condition.MinPrice > 0 && condition.MaxPrice > condition.MinPrice, s => 
 				s.Price > condition.MinPrice &&
 				s.Price < condition.MaxPrice)
-			.WhereIf(!string.IsNullOrEmpty(condition.CategorySlug), s =>
-				s.Categories.Any(c => condition.CategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs)))
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.CategorySlug), s => 
+				s.Categories.Any(c => c.UrlSlug == condition.CategorySlug))
+			.WhereIf(!string.IsNullOrEmpty(condition.SubCategorySlug), s =>
+				s.Categories.Any(c => condition.SubCategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs)))
 			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s =>
 				s.UrlSlug.Contains(condition.ProductSlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
