@@ -134,7 +134,7 @@ export default function Header() {
         e.preventDefault();
         if (keyword.trim() === '') return;
 
-        navigate(`/search/${keyword}`);
+        navigate(`/search?Keyword=${keyword}`);
         handleHideSearch();
     };
 
@@ -311,7 +311,7 @@ export default function Header() {
                     {searchResultItems.length > 0 && (
                         <section className='relative px-6 py-4'>
                             <Button
-                                to={`/search/${keyword}`}
+                                to={`/search?Keyword=${keyword}`}
                                 text='Xem tất cả kết quả'
                                 secondary
                                 full
