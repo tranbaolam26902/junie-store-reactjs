@@ -24,8 +24,8 @@ export default function HeroSection() {
                     Junie&apos;s Specials
                 </span>
                 <div className='inline-grid grid-cols-2 gap-6'>
-                    <Button accent text='Bán chạy' />
-                    <Button secondary text='Sale off' />
+                    <Button to='/categories/moi' accent text='Sản phẩm mới' />
+                    <Button to='/categories/sale' secondary text='Sale off' />
                 </div>
             </Container>
         </section>
