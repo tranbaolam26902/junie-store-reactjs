@@ -9,20 +9,14 @@ const getCategoryBySlug = async (categorySlug) => {
     return null;
 };
 
-const getRelatedCategoriesBySlug = async (categorySlug) => {
-    const { data } = await axios.get(`/api/categories/RelatedCategories/${categorySlug}`);
+const getRelatedCategoriesBySlug = async ({ categorySlug, keyword }) => {
+    const { data } = await axios.get(
+        `/api/categories/RelatedCategories?UrlSlug=${categorySlug || ''}&Keyword=${keyword || ''}`
+    );
 
     if (data.isSuccess) return data.result;
 
     return null;
 };
 
-const getCategories = async () => {
-    const { data } = await axios.get('/api/categories');
-
-    if (data.isSuccess) return data.result;
-
-    return null;
-};
-
-export { getCategoryBySlug, getRelatedCategoriesBySlug, getCategories };
+export { getCategoryBySlug, getRelatedCategoriesBySlug };
