@@ -4,6 +4,7 @@ using Store.Core.Entities;
 using Store.Core.Queries;
 using Store.Data.Contexts;
 using Store.Services.Extensions;
+using System.Diagnostics;
 
 namespace Store.Services.Shops;
 
@@ -267,8 +268,8 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)
 			.WhereIf(condition.MaxPrice > condition.MinPrice, s =>
-				s.Price > condition.MinPrice &&
-				s.Price < condition.MaxPrice)
+				PriceAfterDiscount(s.Price, s.Discount) > condition.MinPrice &&
+				PriceAfterDiscount(s.Price, s.Discount) < condition.MaxPrice)
 			.WhereIf(!string.IsNullOrWhiteSpace(condition.CategorySlug), s =>
 				s.Categories.Any(c => c.UrlSlug == condition.CategorySlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.SubCategorySlug), s =>
@@ -282,6 +283,8 @@ public class CollectionRepository : ICollectionRepository
 				s.Sku.Contains(condition.Keyword) ||
 				s.UrlSlug.Contains(condition.Keyword));
 	}
+
+	private double PriceAfterDiscount(double price, float discount) => price - (price * discount) / 100;
 
 	private IQueryable<ProductHistory> FilterProductHistories(IProductHistoryQuery condition)
 	{
