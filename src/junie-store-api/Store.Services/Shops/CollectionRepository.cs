@@ -260,17 +260,16 @@ public class CollectionRepository : ICollectionRepository
 	{
 		return _dbContext.Set<Product>()
 			.Include(s => s.Details)
-			.Include(s => s.Categories)
 			.Include(s => s.Pictures)
 			.WhereIf(condition.Active, s => s.Active)
 			.WhereIf(condition.IsDeleted, s => s.IsDeleted)
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)
-			.WhereIf(condition.MinPrice > 0 && condition.MaxPrice > condition.MinPrice, s => 
+			.WhereIf(condition.MaxPrice > condition.MinPrice, s =>
 				s.Price > condition.MinPrice &&
 				s.Price < condition.MaxPrice)
-			.WhereIf(!string.IsNullOrWhiteSpace(condition.CategorySlug), s => 
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.CategorySlug), s =>
 				s.Categories.Any(c => c.UrlSlug == condition.CategorySlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.SubCategorySlug), s =>
 				s.Categories.Any(c => condition.SubCategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs)))

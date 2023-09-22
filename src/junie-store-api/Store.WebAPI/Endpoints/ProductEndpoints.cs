@@ -168,16 +168,15 @@ public static class ProductEndpoints
 	{
 		try
 		{
-			
 			var condition = mapper.Map<ProductQuery>(model);
-
+			model.PageSize ??= 20;
 			var products =
 				await repository.GetPagedProductsAsync(
 					condition,
 					model,
-					p => p.ProjectToType<ProductDto>());
+					p => p.ProjectToType<ProductItem>());
 
-			var paginationResult = new PaginationResult<ProductDto>(products);
+			var paginationResult = new PaginationResult<ProductItem>(products);
 			
 			return Results.Ok(ApiResponse.Success(paginationResult));
 		}
