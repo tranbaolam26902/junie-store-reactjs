@@ -43,7 +43,14 @@ public class CategoryRepository : ICategoryRepository
 			.ToListAsync(cancellationToken);
 
 		var categoryItems = products
-			.SelectMany(p => p.Categories)
+			.SelectMany(p =>
+			{
+				if (!string.IsNullOrWhiteSpace(condition.UrlSlug))
+				{
+					return p.Categories.Where(s => s.UrlSlug != condition.UrlSlug);
+				}
+				return p.Categories;
+			})
 			.GroupBy(c => new { c.Id, c.Name, c.UrlSlug })
 			.Select(group => new CategoryItem()
 			{
