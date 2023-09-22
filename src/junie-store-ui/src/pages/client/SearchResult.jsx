@@ -57,7 +57,7 @@ const sortOptions = [
 export default function SearchResult() {
     // Hooks
     const [searchParams, setSearchParams] = useSearchParams();
-    const { categories } = useLoaderData();
+    const { relatedCategories } = useLoaderData();
 
     // States
     const [showFilter, setShowFilter] = useState(false);
@@ -183,7 +183,7 @@ export default function SearchResult() {
                 </div>
                 <div className='flex gap-10 mb-8'>
                     {/* Start: Sidebar section */}
-                    <ProductFilterSection show={showFilter} onHide={handleHideFilter} categories={categories} />
+                    <ProductFilterSection show={showFilter} onHide={handleHideFilter} categories={relatedCategories} />
                     {/* End: Sidebar section */}
 
                     {/* Start: Main section */}

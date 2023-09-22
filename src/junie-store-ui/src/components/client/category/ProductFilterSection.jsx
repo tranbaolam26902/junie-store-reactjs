@@ -1,6 +1,6 @@
 // Components
 import { AnimatePresence, easeInOut, motion } from 'framer-motion';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 // Assets
 import { icons } from '@assets/icons';
@@ -12,7 +12,6 @@ import PriceFilter from './PriceFilter';
 
 export default function ProductFilterSection({ show, onHide, categories }) {
     // Hooks
-    const params = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
 
     // Event handlers
@@ -61,7 +60,6 @@ export default function ProductFilterSection({ show, onHide, categories }) {
                             <span className='block py-5 text-sm font-semibold tracking-wider'>Loại sản phẩm</span>
                             <div className='flex flex-col gap-1 pl-4'>
                                 {categories.map((category) => {
-                                    if (params.categorySlug === category.urlSlug) return null;
                                     return (
                                         <div key={category.id} className='flex items-center gap-1'>
                                             <input
