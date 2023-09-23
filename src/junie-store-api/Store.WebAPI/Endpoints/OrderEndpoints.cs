@@ -26,6 +26,11 @@ public static class OrderEndpoints
 			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<IPagedList<OrderDto>>>();
 
+		routeGroupBuilder.MapGet("/", GetOrderByUser)
+			.WithName("GetOrderByUser")
+			.RequireAuthorization()
+			.Produces<ApiResponse<IPagedList<OrderDto>>>();
+
 		routeGroupBuilder.MapPost("/checkout", CheckOut)
 			.WithName("CheckOut")
 			.RequireAuthorization()
@@ -60,6 +65,33 @@ public static class OrderEndpoints
 
 			var orders =
 				await repository.GetPagedOrdersAsync(
+					condition,
+					model,
+					p => p.ProjectToType<OrderDto>());
+
+			var paginationResult = new PaginationResult<OrderDto>(orders);
+
+			return Results.Ok(ApiResponse.Success(paginationResult));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> GetOrderByUser(
+		HttpContext context,
+		[AsParameters] OrderFilterModel model,
+		[FromServices] IOrderRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var condition = mapper.Map<OrderQuery>(model);
+
+			var orders =
+				await repository.GetPagedOrdersByUserAsync(
+					context.GetCurrentUser().Id,
 					condition,
 					model,
 					p => p.ProjectToType<OrderDto>());

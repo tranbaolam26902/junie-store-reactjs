@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Slugify;
 using Store.Core.Constants;
 using Store.Core.Contracts;
 using Store.Core.Entities;
@@ -200,11 +199,20 @@ public class OrderRepository : IOrderRepository
 		return await projectedOrders.ToPagedListAsync(pagingParams);
 	}
 
-	private IQueryable<Order> FilterOrder(IOrderQuery condition)
+	public async Task<IPagedList<T>> GetPagedOrdersByUserAsync<T>(Guid userId, IOrderQuery condition, IPagingParams pagingParams, Func<IQueryable<Order>, IQueryable<T>> mapper)
+	{
+		var orders = FilterOrder(condition, userId);
+		var projectedOrders = mapper(orders);
+
+		return await projectedOrders.ToPagedListAsync(pagingParams);
+	}
+
+	private IQueryable<Order> FilterOrder(IOrderQuery condition, Guid userId = default)
 	{
 		var orders = _dbContext.Set<Order>()
 			.Include(s => s.Details)
 			.Include(s => s.Discount)
+			.WhereIf(userId != Guid.Empty, s => s.UserId == userId)
 			.WhereIf(condition.Year > 0, s => s.OrderDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.OrderDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.OrderDate.Day == condition.Day)
