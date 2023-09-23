@@ -25,6 +25,18 @@ public class DiscountRepository : IDiscountRepository
 		return await projectedDiscounts.ToPagedListAsync(pagingParams);
 	}
 
+	public async Task<Discount> GetDiscountByIdAsync(Guid id, CancellationToken cancellation = default)
+	{
+		return await _dbContext.Set<Discount>()
+			.FirstOrDefaultAsync(s => s.Id == id, cancellation);
+	}
+
+	public async Task<Discount> GetDiscountByCodeAsync(string code, CancellationToken cancellation = default)
+	{
+		return await _dbContext.Set<Discount>()
+			.FirstOrDefaultAsync(s => s.Code.Equals(code), cancellation);
+	}
+
 	public async Task<Discount> AddOrUpdateDiscountAsync(Discount discount, CancellationToken cancellation = default)
 	{
 		if (_dbContext.Set<Discount>().Any(s => s.Id == discount.Id))
@@ -56,6 +68,11 @@ public class DiscountRepository : IDiscountRepository
 			.ExecuteDeleteAsync(cancellation) > 0;
 	}
 
+	public async Task<bool> IsDiscountExistedAsync(Guid discountId, string code, CancellationToken cancellation = default)
+	{
+		return await _dbContext.Set<Discount>()
+			.AnyAsync(s => s.Id != discountId && s.Code.Equals(code), cancellation);
+	}
 
 	private IQueryable<Discount> FilterDiscount(IDiscountQuery condition)
 	{
