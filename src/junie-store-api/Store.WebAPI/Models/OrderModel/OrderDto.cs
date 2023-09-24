@@ -35,7 +35,7 @@ public class OrderDto
 		if (!IsDiscountPercentage)
 		{
 			total -= DiscountAmount;
-		} 
+		}
 		else if (DiscountAmount > 0)
 		{
 			total *= 1 - (DiscountAmount / 100);
@@ -58,4 +58,9 @@ public class OrderDetailDto
 
 	public double Price { get; set; }
 
+	public string Name { get; set; }
+
+	public string Sku { get; set; }
+
+	public string ImageUrl { get; set; }
 }
