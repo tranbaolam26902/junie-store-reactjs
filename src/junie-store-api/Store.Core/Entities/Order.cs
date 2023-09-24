@@ -5,6 +5,7 @@ namespace Store.Core.Entities;
 
 public enum OrderStatus
 {
+	None,
 	New, //Đơn hàng mới
 	Cancelled, // Đơn đã hủy
 	Approved, // Đã xác nhận 

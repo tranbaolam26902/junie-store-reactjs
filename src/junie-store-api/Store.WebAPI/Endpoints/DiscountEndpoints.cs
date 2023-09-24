@@ -8,7 +8,6 @@ using Store.Core.Entities;
 using Store.Core.Queries;
 using Store.Services.Shops;
 using Store.WebAPI.Models;
-using Store.WebAPI.Models.CategoryModel;
 using Store.WebAPI.Models.DiscountModel;
 
 namespace Store.WebAPI.Endpoints;

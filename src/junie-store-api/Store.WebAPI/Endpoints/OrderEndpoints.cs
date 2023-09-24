@@ -43,7 +43,7 @@ public static class OrderEndpoints
 
 		routeGroupBuilder.MapGet("/OrderCode/{orderCode}", GetOrderByCode)
 			.WithName("GetOrderByCode")
-			.Produces<ApiResponse<OrderItem>>();
+			.Produces<ApiResponse<OrderDto>>();
 
 		routeGroupBuilder.MapGet("/Toggle/{orderId:guid}", ToggleOrderById)
 			.WithName("ToggleOrderById")
@@ -130,12 +130,15 @@ public static class OrderEndpoints
 			{
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotAcceptable, "Đơn hàng chưa có sản phẩm"));
 			}
+			
 			foreach (var edit in model.Detail)
 			{
 				if (!await repository.CheckQuantityProduct(edit.Id, edit.Quantity))
 				{
 					var product = await productRepo.GetProductByIdAsync(edit.Id);
-					outOfStockProductNames.Add($"Sản phẩm: {product.Name} không khả dụng hoặc hết hàng");
+					outOfStockProductNames.Add(product == null
+						? $"Sản phẩm không tồn tại"
+						: $"Sản phẩm: {product.Name} không khả dụng hoặc hết hàng");
 				}
 			}
 
@@ -198,14 +201,14 @@ public static class OrderEndpoints
 	{
 		try
 		{
-			var order = await repository.GetOrderByCoreAsync(orderCode);
+			var order = await repository.GetOrderByCodeAsync(orderCode);
 
 			if (order == null)
 			{
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Order is not found"));
 			}
 
-			var orderDto = mapper.Map<OrderItem>(order);
+			var orderDto = mapper.Map<OrderDto>(order);
 			return Results.Ok(ApiResponse.Success(orderDto));
 		}
 		catch (Exception e)

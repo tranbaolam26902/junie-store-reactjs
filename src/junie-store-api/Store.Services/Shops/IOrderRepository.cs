@@ -21,7 +21,7 @@ public interface IOrderRepository
 
 	Task<Order> GetOrderByIdAsync(Guid orderId, CancellationToken cancellation = default);
 
-	Task<Order> GetOrderByCoreAsync(string code, CancellationToken cancellation = default);
+	Task<Order> GetOrderByCodeAsync(string code, CancellationToken cancellation = default);
 
 	Task<Order> ToggleOrderAsync(Order order, CancellationToken cancellation = default);
 
