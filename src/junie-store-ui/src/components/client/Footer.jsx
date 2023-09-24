@@ -11,22 +11,22 @@ const categories = [
     {
         id: 1,
         name: 'Bông tai',
-        slug: 'earrings'
+        slug: 'bong-tai'
     },
     {
         id: 2,
         name: 'Dây chuyền',
-        slug: 'necklace'
+        slug: 'day-chuyen'
     },
     {
         id: 3,
         name: 'Vòng tay',
-        slug: 'bracelet'
+        slug: 'vong-tay'
     },
     {
         id: 4,
         name: 'Nhẫn',
-        slug: 'ring'
+        slug: 'nhan'
     }
 ];
 const pages = [
