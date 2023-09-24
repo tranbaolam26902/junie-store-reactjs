@@ -31,7 +31,7 @@ public static class DashboardEndpoints
 			var dashboard = new DashboardDto()
 			{
 				OrderToday = await repository.OrderToday(),
-				RevenueToday = await repository.RevenueToday(),
+				RevenueToday = await repository.RevenueTodayAsync(),
 				TotalCategories = await repository.TotalCategories(),
 				TotalOrder = await repository.TotalOrder(),
 				TotalProduct = await repository.TotalProduct(),

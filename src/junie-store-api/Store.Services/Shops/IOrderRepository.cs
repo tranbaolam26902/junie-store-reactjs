@@ -29,4 +29,10 @@ public interface IOrderRepository
 		IOrderQuery condition,
 		IPagingParams pagingParams,
 		Func<IQueryable<Order>, IQueryable<T>> mapper);
+	
+	Task<IPagedList<T>> GetPagedOrdersByUserAsync<T>(
+		Guid userId,
+		IOrderQuery condition,
+		IPagingParams pagingParams,
+		Func<IQueryable<Order>, IQueryable<T>> mapper);
 }
