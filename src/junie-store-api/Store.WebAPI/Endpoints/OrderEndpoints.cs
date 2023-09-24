@@ -26,7 +26,7 @@ public static class OrderEndpoints
 			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<IPagedList<OrderDto>>>();
 
-		routeGroupBuilder.MapGet("/", GetOrderByUser)
+		routeGroupBuilder.MapGet("/byUser", GetOrderByUser)
 			.WithName("GetOrderByUser")
 			.RequireAuthorization()
 			.Produces<ApiResponse<IPagedList<OrderDto>>>();
@@ -126,6 +126,10 @@ public static class OrderEndpoints
 			}
 
 			var outOfStockProductNames = new List<string>();
+			if (!model.Detail.Any())
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotAcceptable, "Đơn hàng chưa có sản phẩm"));
+			}
 			foreach (var edit in model.Detail)
 			{
 				if (!await repository.CheckQuantityProduct(edit.Id, edit.Quantity))
