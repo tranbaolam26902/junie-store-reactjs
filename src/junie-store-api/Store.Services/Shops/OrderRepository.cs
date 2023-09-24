@@ -20,6 +20,7 @@ public class OrderRepository : IOrderRepository
 		order.Email = user.Email;
 		order.UserId = user.Id;
 		order.OrderDate = DateTime.Now;
+		order.Status = OrderStatus.New;
 
 		var codes = Guid.NewGuid().ToString().Split('-');
 		order.CodeOrder = $"HD{codes[0]}{codes[1]}".ToUpper();
@@ -173,11 +174,12 @@ public class OrderRepository : IOrderRepository
 		return order;
 	}
 
-	public async Task<Order> GetOrderByCoreAsync(string code, CancellationToken cancellation = default)
+	public async Task<Order> GetOrderByCodeAsync(string code, CancellationToken cancellation = default)
 	{
 		return await _dbContext.Set<Order>()
 			.Include(s => s.Details)
 			.ThenInclude(s => s.Product)
+			.ThenInclude(p => p.Pictures)
 			.Include(s => s.Discount)
 			.FirstOrDefaultAsync(s => s.CodeOrder == code, cancellation);
 	}
@@ -213,6 +215,7 @@ public class OrderRepository : IOrderRepository
 			.Include(s => s.Details)
 			.Include(s => s.Discount)
 			.WhereIf(userId != Guid.Empty, s => s.UserId == userId)
+			.WhereIf(condition.Status != OrderStatus.None, o => o.Status == condition.Status)
 			.WhereIf(condition.Year > 0, s => s.OrderDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.OrderDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.OrderDate.Day == condition.Day)
