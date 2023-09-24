@@ -239,9 +239,9 @@ export default function SearchResult() {
 
                         {/* Start: Product section */}
                         <section className='grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-x-2 md:gap-x-6 gap-y-8 xl:gap-y-12'>
-                            {productItems.map((product) => (
-                                <ProductItem key={product.id} product={product} />
-                            ))}
+                            {productItems.map(
+                                (product) => product.active && <ProductItem key={product.id} product={product} />
+                            )}
                         </section>
                         {/* End: Product section */}
 
