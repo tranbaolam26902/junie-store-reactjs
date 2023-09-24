@@ -12,6 +12,7 @@ import { images } from '@assets/images';
 import { useLogout } from '@hooks/shared';
 
 // Redux
+import { selectCart } from '@redux/features/client/cart';
 import { setShowCartSidebar, setShowMobileNavbar, setShowSearchSidebar } from '@redux/features/client/header';
 import { selectAuth } from '@redux/features/shared/auth';
 
@@ -64,6 +65,7 @@ export default function Header() {
     const dispatch = useDispatch();
 
     // States
+    const cart = useSelector(selectCart);
     const auth = useSelector(selectAuth);
     const [showAccountOptions, setShowAccountOptions] = useState(false);
 
@@ -104,7 +106,6 @@ export default function Header() {
             document.removeEventListener('mousedown', handleHideAccountOptionsWhenClickOutside);
         };
     }, []);
-    /* Debounce search keyword */
 
     return (
         <header className='sticky z-10 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
@@ -185,9 +186,11 @@ export default function Header() {
                     </div>
                     <button type='button' className='relative -m-2 p-2' onClick={handleShowCartSidebar}>
                         <img src={icons.cart} alt='cart-icon' className='w-[1.125rem]' />
-                        <span className='absolute top-0 -right-1 aspect-square w-5 rounded-full bg-black text-[0.5625rem] leading-[1.25rem] text-primary'>
-                            4
-                        </span>
+                        {cart.products.length !== 0 && (
+                            <span className='absolute top-0 -right-1 aspect-square w-5 rounded-full bg-black text-[0.5625rem] leading-[1.25rem] text-primary'>
+                                {cart.products.length}
+                            </span>
+                        )}
                     </button>
                 </section>
                 {/* End: Header's right section */}
