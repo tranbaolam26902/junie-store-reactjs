@@ -96,7 +96,7 @@ export default function CartItem({ product }) {
                             value={quantity}
                             className='pt-0.5 w-8 h-full text-sm text-center font-thin'
                             onInput={(e) => {
-                                if (/^[0-9]*$/.test(e.target.value)) setQuantity(e.target.value);
+                                if (/^[0-9]*$/.test(e.target.value)) setQuantity(Number.parseInt(e.target.value));
                             }}
                             onBlur={() => {
                                 if (quantity === '' || quantity <= 0) setQuantity(1);
