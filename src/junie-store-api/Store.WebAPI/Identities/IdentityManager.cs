@@ -1,5 +1,4 @@
-﻿using MapsterMapper;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using Store.Services.Shops;
 using Store.WebAPI.Models.UserModel;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,7 +6,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Store.Core.Collections;
-using Store.Core.Contracts;
 using Store.Core.DTO;
 using Store.Core.Entities;
 
