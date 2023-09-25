@@ -144,7 +144,7 @@ export default function Pager({ metadata }) {
                 <button
                     ref={selectNumberOfItemsRef}
                     type='button'
-                    className='flex items-center gap-2 px-4 h-8 rounded border border-gray'
+                    className='flex items-center gap-2 px-4 h-8 bg-primary rounded border border-gray'
                     onClick={handleToggleSelectNumberOfItems}
                 >
                     <span>{metadata.pageSize}</span>
@@ -160,7 +160,7 @@ export default function Pager({ metadata }) {
                     {showSelectNumberOfItems && (
                         <Fade className='absolute top-full right-0 z-10 flex flex-col items-start p-4 bg-primary rounded shadow'>
                             {[...Array(101).keys()]
-                                .filter((number) => number && number > 10 && number % 10 === 0)
+                                .filter((number) => number && number > 0 && number % 10 === 0)
                                 .map((number) => (
                                     <button
                                         key={number}
