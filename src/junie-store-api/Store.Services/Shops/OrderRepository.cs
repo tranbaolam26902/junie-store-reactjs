@@ -209,6 +209,31 @@ public class OrderRepository : IOrderRepository
 		return await projectedOrders.ToPagedListAsync(pagingParams);
 	}
 
+	public async Task<bool> CancelOrderAsync(Guid orderId, CancellationToken cancellation = default)
+	{
+		var order = await _dbContext.Set<Order>()
+			.Include(s => s.Details)
+			.ThenInclude(s => s.Product)
+			.Include(s => s.Discount)
+			.FirstOrDefaultAsync(s => s.Id == orderId, cancellation);
+
+		foreach (var item in order.Details)
+		{
+
+			var product = await _dbContext.Set<Product>()
+				.FirstOrDefaultAsync(s => s.Id == item.ProductId, cancellation);
+			
+			product.Quantity += item.Quantity;
+			product.CountOrder -= item.Quantity;
+			_dbContext.Entry(product).State = EntityState.Modified;
+		}
+
+		_dbContext.Orders.Remove(order);
+		await _dbContext.SaveChangesAsync(cancellation);
+
+		return true;
+	}
+
 	private IQueryable<Order> FilterOrder(IOrderQuery condition, Guid userId = default)
 	{
 		var orders = _dbContext.Set<Order>()
