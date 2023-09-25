@@ -7,12 +7,12 @@ const checkout = async (orderInfo) => {
     return data || null;
 };
 
-const getOrders = async () => {
-    const { data } = await axiosPrivate.get('/api/orders');
+const getOrdersByQueries = async (queries) => {
+    const { data } = await axiosPrivate.get(`/api/orders?${queries}`);
 
     if (data.isSuccess) return data.result;
 
     return null;
 };
 
-export { checkout, getOrders };
+export { checkout, getOrdersByQueries };

@@ -41,7 +41,7 @@ export default function AccountInfoSection() {
     };
 
     return (
-        <section className='flex flex-col gap-2'>
+        <section className='lg:col-span-3 flex flex-col gap-2'>
             {/* Start: Header section */}
             <div className='flex items-center gap-2'>
                 <img src={icons.user} alt='user-icon' className='w-4' />
