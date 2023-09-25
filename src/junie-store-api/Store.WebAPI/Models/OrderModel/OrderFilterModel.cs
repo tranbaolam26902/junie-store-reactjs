@@ -4,13 +4,13 @@ namespace Store.WebAPI.Models.OrderModel;
 
 public class OrderFilterModel : PagingModel
 {
-	public int? Year { get; set; }
+	public int? Year { get; set; } = 0;
 
-	public int? Month { get; set; }
+	public int? Month { get; set; } = 0;
 
-	public int? Day { get; set; }
+	public int? Day { get; set; } = 0;
 
-	public OrderStatus? Status { get; set; }
+	public OrderStatus? Status { get; set; } = OrderStatus.None;
 
-	public string Keyword { get; set; }
+	public string Keyword { get; set; } = "";
 }
