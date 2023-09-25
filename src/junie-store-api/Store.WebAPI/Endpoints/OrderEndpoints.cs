@@ -50,6 +50,10 @@ public static class OrderEndpoints
 			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<OrderDto>>();
 
+		routeGroupBuilder.MapDelete("/cancel/{orderId:guid}", CancelOrderByUser)
+			.WithName("CancelOrderByUser")
+			.RequireAuthorization()
+			.Produces<ApiResponse>();
 
 		return app;
 	}
@@ -237,6 +241,38 @@ public static class OrderEndpoints
 
 			var orderDto = mapper.Map<OrderDto>(order);
 			return Results.Ok(ApiResponse.Success(orderDto));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> CancelOrderByUser(
+		HttpContext context,
+		[FromRoute] Guid orderId,
+		[FromServices] IOrderRepository repository)
+	{
+		try
+		{
+			var order = await repository.GetOrderByIdAsync(orderId);
+			if (order == null)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Đơn hàng không tồn tại"));
+			} 
+			else if (order.UserId != context.GetCurrentUser().Id)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotAcceptable, "Bạn không được phép hủy đơn hàng này"));
+			}
+			else if (order.Status != OrderStatus.New)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotAcceptable,
+					"Không thể hủy đơn hàng đã được xác nhận"));
+			}
+
+			await repository.CancelOrderAsync(orderId);
+
+			return Results.Ok(ApiResponse.Success("Đã hủy thành công."));
 		}
 		catch (Exception e)
 		{
