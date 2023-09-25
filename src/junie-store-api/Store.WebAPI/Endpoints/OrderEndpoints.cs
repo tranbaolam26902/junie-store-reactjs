@@ -251,7 +251,8 @@ public static class OrderEndpoints
 	private static async Task<IResult> CancelOrderByUser(
 		HttpContext context,
 		[FromRoute] Guid orderId,
-		[FromServices] IOrderRepository repository)
+		[FromServices] IOrderRepository repository,
+		[FromServices] IMapper mapper)
 	{
 		try
 		{
@@ -270,9 +271,9 @@ public static class OrderEndpoints
 					"Không thể hủy đơn hàng đã được xác nhận"));
 			}
 
-			await repository.CancelOrderAsync(orderId);
+			order = await repository.CancelOrderAsync(orderId);
 
-			return Results.Ok(ApiResponse.Success("Đã hủy thành công."));
+			return Results.Ok(ApiResponse.Success(mapper.Map<OrderDto>(order)));
 		}
 		catch (Exception e)
 		{
