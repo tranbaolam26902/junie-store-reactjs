@@ -35,4 +35,6 @@ public interface IOrderRepository
 		IOrderQuery condition,
 		IPagingParams pagingParams,
 		Func<IQueryable<Order>, IQueryable<T>> mapper);
+
+	Task<bool> CancelOrderAsync(Guid orderId, CancellationToken cancellation = default);
 }
