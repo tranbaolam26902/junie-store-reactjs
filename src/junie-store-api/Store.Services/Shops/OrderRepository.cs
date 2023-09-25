@@ -197,7 +197,7 @@ public class OrderRepository : IOrderRepository
 	{
 		var orders = FilterOrder(condition);
 		var projectedOrders = mapper(orders);
-
+		
 		return await projectedOrders.ToPagedListAsync(pagingParams);
 	}
 

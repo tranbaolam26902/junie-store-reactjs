@@ -63,6 +63,8 @@ public static class OrderEndpoints
 		{
 			var condition = mapper.Map<OrderQuery>(model);
 
+			model.SortColumn ??= "OrderDate";
+
 			var orders =
 				await repository.GetPagedOrdersAsync(
 					condition,
@@ -88,7 +90,7 @@ public static class OrderEndpoints
 		try
 		{
 			var condition = mapper.Map<OrderQuery>(model);
-
+			model.SortColumn ??= "OrderDate";
 			var orders =
 				await repository.GetPagedOrdersByUserAsync(
 					context.GetCurrentUser().Id,
@@ -126,7 +128,7 @@ public static class OrderEndpoints
 			}
 
 			var outOfStockProductNames = new List<string>();
-			if (!model.Detail.Any())
+			if (!model.Detail.Any() || model.Detail.Any(s => s.Quantity == 0))
 			{
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotAcceptable, "Đơn hàng chưa có sản phẩm"));
 			}
