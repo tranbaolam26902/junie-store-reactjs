@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Security.Cryptography;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -85,7 +84,7 @@ public static class UserEndpoints
 			.WithName("ChangePassword")
 			.AddEndpointFilter<ValidatorFilter<PasswordEditModel>>()
 			.RequireAuthorization()
-			.Produces<ApiResponse<PaginationResult<UserDto>>>();
+			.Produces<ApiResponse<UserDto>>();
 
 		#endregion
 
@@ -217,7 +216,7 @@ public static class UserEndpoints
 		try
 		{
 			var identity = context.GetCurrentUser();
-			var user = await repository.GetUserByIdAsync(identity.Id, true);
+			var user = await repository.GetUserByIdAsync(identity.Id);
 
 
 			if (await repository.ChangePasswordAsync(user, model.OldPassword, model.NewPassword))

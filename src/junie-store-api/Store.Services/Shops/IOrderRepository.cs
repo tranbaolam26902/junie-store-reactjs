@@ -21,11 +21,17 @@ public interface IOrderRepository
 
 	Task<Order> GetOrderByIdAsync(Guid orderId, CancellationToken cancellation = default);
 
-	Task<Order> GetOrderByCoreAsync(string code, CancellationToken cancellation = default);
+	Task<Order> GetOrderByCodeAsync(string code, CancellationToken cancellation = default);
 
 	Task<Order> ToggleOrderAsync(Order order, CancellationToken cancellation = default);
 
 	Task<IPagedList<T>> GetPagedOrdersAsync<T>(
+		IOrderQuery condition,
+		IPagingParams pagingParams,
+		Func<IQueryable<Order>, IQueryable<T>> mapper);
+	
+	Task<IPagedList<T>> GetPagedOrdersByUserAsync<T>(
+		Guid userId,
 		IOrderQuery condition,
 		IPagingParams pagingParams,
 		Func<IQueryable<Order>, IQueryable<T>> mapper);

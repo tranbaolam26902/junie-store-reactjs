@@ -26,9 +26,11 @@ public class MapsterConfiguration : IRegister
 
 		config.NewConfig<Picture, PictureDto>();
 
-		config.NewConfig<OrderDetail, OrderDetailItem>()
+		config.NewConfig<OrderDetail, OrderDetailDto>()
 			.Map(dest => dest.Name, src => src.Product.Name)
-			.Map(dest => dest.Sku, src => src.Product.Sku);
+			.Map(dest => dest.Sku, src => src.Product.Sku)
+			.Map(dest => dest.ImageUrl, 
+				src => src.Product.Pictures != null ? src.Product.Pictures.FirstOrDefault().Path : "");
 
 		config.NewConfig<Product, ProductDto>();
 		config.NewConfig<ProductEditModel, Product>()
