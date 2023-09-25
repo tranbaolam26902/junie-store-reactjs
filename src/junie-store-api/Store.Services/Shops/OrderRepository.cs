@@ -197,7 +197,7 @@ public class OrderRepository : IOrderRepository
 	{
 		var orders = FilterOrder(condition);
 		var projectedOrders = mapper(orders);
-
+		
 		return await projectedOrders.ToPagedListAsync(pagingParams);
 	}
 
@@ -215,7 +215,7 @@ public class OrderRepository : IOrderRepository
 			.Include(s => s.Details)
 			.Include(s => s.Discount)
 			.WhereIf(userId != Guid.Empty, s => s.UserId == userId)
-			.WhereIf(condition.Status != OrderStatus.None, o => o.Status == condition.Status)
+			.WhereIf(condition.Status != null && condition.Status != OrderStatus.None, o => o.Status == condition.Status)
 			.WhereIf(condition.Year > 0, s => s.OrderDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.OrderDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.OrderDate.Day == condition.Day)
