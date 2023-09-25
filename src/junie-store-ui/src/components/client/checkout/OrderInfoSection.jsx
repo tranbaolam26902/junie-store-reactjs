@@ -10,8 +10,12 @@ import { checkout } from '@services/client';
 
 // Components
 import { Button, Input } from '@components/shared';
+import { useNavigate } from 'react-router-dom';
 
 export default function OrderInfoSection() {
+    // Hooks
+    const navigate = useNavigate();
+
     // States
     const cart = useSelector(selectCart);
     const [errorMessages, setErrorMessages] = useState([]);
@@ -78,6 +82,8 @@ export default function OrderInfoSection() {
         const result = await checkout(getOrderInfo());
         if (result.isSuccess) {
             setErrorMessages([]);
+            window.alert('Đặt hàng thành công!');
+            navigate('/account');
         } else setErrorMessages(result.errors);
     };
 
