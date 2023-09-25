@@ -36,7 +36,7 @@ public class OrderRepository : IOrderRepository
 
 		order.DiscountAmount = discount.DiscountAmount;
 		order.IsDiscountPercentage = discount.IsDiscountPercentage;
-		
+
 		order.Discount = discount;
 
 		discount.Quantity--;
@@ -52,7 +52,7 @@ public class OrderRepository : IOrderRepository
 		CancellationToken cancellation)
 	{
 		var discount = await _dbContext.Set<Discount>()
-			.FirstOrDefaultAsync(s => 
+			.FirstOrDefaultAsync(s =>
 				s.Code == discountCode &&
 				s.Active &&
 				s.ExpiryDate >= DateTime.Now, cancellation);
@@ -100,7 +100,7 @@ public class OrderRepository : IOrderRepository
 			product.Quantity -= item.Quantity;
 			product.CountOrder += item.Quantity;
 			_dbContext.Entry(product).State = EntityState.Modified;
-				
+
 			//order.Total += detail.Quantity * detail.Price;
 			order.Details.Add(detail);
 		}
@@ -131,7 +131,7 @@ public class OrderRepository : IOrderRepository
 
 			order.Total += detail.Quantity * detail.Price;
 		}
-		
+
 		return order;
 	}
 
@@ -165,7 +165,7 @@ public class OrderRepository : IOrderRepository
 		{
 			return null;
 		}
-		
+
 		foreach (var detail in order.Details)
 		{
 			order.Total += detail.TotalPrice;
@@ -187,7 +187,7 @@ public class OrderRepository : IOrderRepository
 	public async Task<Order> ToggleOrderAsync(Order order, CancellationToken cancellation = default)
 	{
 		order.Status = OrderStatus.Approved;
-		
+
 		_dbContext.Entry(order).State = EntityState.Modified;
 		await _dbContext.SaveChangesAsync(cancellation);
 		return order;
@@ -197,7 +197,7 @@ public class OrderRepository : IOrderRepository
 	{
 		var orders = FilterOrder(condition);
 		var projectedOrders = mapper(orders);
-		
+
 		return await projectedOrders.ToPagedListAsync(pagingParams);
 	}
 
@@ -209,7 +209,7 @@ public class OrderRepository : IOrderRepository
 		return await projectedOrders.ToPagedListAsync(pagingParams);
 	}
 
-	public async Task<bool> CancelOrderAsync(Guid orderId, CancellationToken cancellation = default)
+	public async Task<Order> CancelOrderAsync(Guid orderId, CancellationToken cancellation = default)
 	{
 		var order = await _dbContext.Set<Order>()
 			.Include(s => s.Details)
@@ -217,21 +217,22 @@ public class OrderRepository : IOrderRepository
 			.Include(s => s.Discount)
 			.FirstOrDefaultAsync(s => s.Id == orderId, cancellation);
 
+		order.Status = OrderStatus.Cancelled;
 		foreach (var item in order.Details)
 		{
 
 			var product = await _dbContext.Set<Product>()
 				.FirstOrDefaultAsync(s => s.Id == item.ProductId, cancellation);
-			
+
 			product.Quantity += item.Quantity;
 			product.CountOrder -= item.Quantity;
 			_dbContext.Entry(product).State = EntityState.Modified;
 		}
 
-		_dbContext.Orders.Remove(order);
+		_dbContext.Entry(order).State = EntityState.Modified;
 		await _dbContext.SaveChangesAsync(cancellation);
 
-		return true;
+		return order;
 	}
 
 	private IQueryable<Order> FilterOrder(IOrderQuery condition, Guid userId = default)
