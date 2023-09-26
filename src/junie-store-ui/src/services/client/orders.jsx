@@ -15,4 +15,10 @@ const getOrdersByQueries = async (queries) => {
     return null;
 };
 
-export { checkout, getOrdersByQueries };
+const cancelOrder = async (orderId) => {
+    const { data } = await axiosPrivate.delete(`/api/orders/cancel/${orderId}`);
+
+    return data || null;
+};
+
+export { checkout, getOrdersByQueries, cancelOrder };
