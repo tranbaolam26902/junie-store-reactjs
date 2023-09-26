@@ -2,7 +2,7 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 // Pages
-import { Dashboard } from '@pages/admin';
+import { AdminCategory, AdminOrder, AdminProduct, Dashboard, User } from '@pages/admin';
 import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
 import { Account, Login, NotFound, PasswordRecovery, SignUp } from '@pages/shared';
 
@@ -132,7 +132,10 @@ const router = createBrowserRouter([
                         element: <RequireManagerAuth />,
                         children: [
                             /* Manager routes */
-                            { path: '/admin/dashboard', element: <Dashboard /> }
+                            { path: '/admin/dashboard', element: <Dashboard /> },
+                            { path: '/admin/categories', element: <AdminCategory /> },
+                            { path: '/admin/products', element: <AdminProduct /> },
+                            { path: '/admin/orders', element: <AdminOrder /> }
                         ]
                     },
                     {
@@ -140,6 +143,7 @@ const router = createBrowserRouter([
                         element: <RequireAdminAuth />,
                         children: [
                             /* Admin routes */
+                            { path: '/admin/users', element: <User /> }
                         ]
                     }
                 ]
