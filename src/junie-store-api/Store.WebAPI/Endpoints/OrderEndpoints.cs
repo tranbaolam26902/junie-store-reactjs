@@ -53,7 +53,7 @@ public static class OrderEndpoints
 		routeGroupBuilder.MapDelete("/cancel/{orderId:guid}", CancelOrderByUser)
 			.WithName("CancelOrderByUser")
 			.RequireAuthorization()
-			.Produces<ApiResponse>();
+			.Produces<ApiResponse<OrderDto>>();
 
 		return app;
 	}

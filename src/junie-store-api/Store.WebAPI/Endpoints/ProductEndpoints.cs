@@ -67,10 +67,11 @@ public static class ProductEndpoints
 			.Produces(400)
 			.Produces(409);
 
-		routeGroupBuilder.MapPost("/{id:guid}/picture", SetProductPicture)
+		routeGroupBuilder.MapPost("/{id:guid}/pictures", SetProductPicture)
 			.WithName("SetProductPicture")
+			.RequireAuthorization("RequireManagerRole")
 			.Accepts<IList<IFormFile>>("multipart/form-data")
-			.Produces<ApiResponse<string>>()
+			.Produces<ApiResponse>()
 			.Produces(400);
 
 		#endregion
