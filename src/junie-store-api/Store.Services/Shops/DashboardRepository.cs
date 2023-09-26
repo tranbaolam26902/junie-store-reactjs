@@ -51,6 +51,7 @@ public class DashboardRepository : IDashboardRepository
 			.Include(s => s.Details)
 			.Include(s => s.Discount)
 			.Where(s => s.OrderDate >= DateTime.Now.AddDays(-1))
+			.Select(s => new OrderItem(s))
 			.ToListAsync(cancellationToken);
 
 		var hourlyRevenues = orders
@@ -58,13 +59,60 @@ public class DashboardRepository : IDashboardRepository
 			.OrderBy(group => group.Key)
 			.Select(group => new RevenueOrder()
 			{
-				TypeRevenue = TypeRevenue.Day,
+				TypeRevenue = TypeRevenue.Hour.ToString(),
 				Time = group.Key,
 				TotalRevenue = group.Sum(o => o.Total)
 			})
 			.ToList();
 
 		return hourlyRevenues;
+	}
+
+	public async Task<IList<RevenueOrder>> DailyRevenueDetailAsync(CancellationToken cancellationToken = default)
+	{
+		var orders = await _dbContext.Set<Order>()
+			.Include(s => s.Details)
+			.Include(s => s.Discount)
+			.Where(s => s.OrderDate >= DateTime.Now.AddMonths(-1))
+			.Select(s => new OrderItem(s))
+			.ToListAsync(cancellationToken);
+
+		var dailyRevenues = orders
+			.GroupBy(o => o.OrderDate.Day)
+			.OrderBy(group => group.Key)
+			.Select(group => new RevenueOrder()
+			{
+				TypeRevenue = TypeRevenue.Day.ToString(),
+				Time = group.Key,
+				TotalRevenue = group.Sum(o => o.Total)
+			})
+			.ToList();
+
+		return dailyRevenues;
+	}
+
+	public async Task<IList<RevenueOrder>> MonthlyRevenueDetailAsync(CancellationToken cancellationToken = default)
+	{
+		var orders = await _dbContext.Set<Order>()
+			.Include(s => s.Details)
+			.Include(s => s.Discount)
+			.Where(s => s.OrderDate >= DateTime.Now.AddYears(-1))
+			.Select(s => new OrderItem(s))
+			.ToListAsync(cancellationToken);
+
+		var dailyRevenues = orders
+			.GroupBy(o => o.OrderDate.Month)
+			.OrderBy(group => group.Key)
+			.Select(group => new RevenueOrder()
+			{
+				TypeRevenue = TypeRevenue.Month.ToString(),
+				Time = group.Key,
+				TotalRevenue = group.Sum(o => o.Total),
+				TotalOrder = orders.Count
+			})
+			.ToList();
+
+		return dailyRevenues;
 	}
 
 	public double GetTotalPriceOrder(Order order)

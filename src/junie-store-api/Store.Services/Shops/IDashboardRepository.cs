@@ -16,6 +16,10 @@ public interface IDashboardRepository
 
 	Task<IList<RevenueOrder>> HourlyRevenueDetailAsync(CancellationToken cancellationToken = default);
 
+	Task<IList<RevenueOrder>> DailyRevenueDetailAsync(CancellationToken cancellationToken = default);
+
+	Task<IList<RevenueOrder>> MonthlyRevenueDetailAsync(CancellationToken cancellationToken = default);
+	
 	Task<double> TotalRevenue(CancellationToken cancellationToken = default);
 
 } 
