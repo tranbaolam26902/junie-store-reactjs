@@ -1,7 +1,8 @@
 // Libraries
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 // Pages
+import { Dashboard } from '@pages/admin';
 import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
 import { Account, Login, NotFound, PasswordRecovery, SignUp } from '@pages/shared';
 
@@ -16,6 +17,7 @@ import {
 } from '@services/client';
 
 // Components
+import { AdminLayout, RequireManagerAuth, RequireAdminAuth } from '@components/admin';
 import { ClientLayout } from '@components/client';
 import { PersistLogin, RequireLogin } from '@components/shared';
 
@@ -116,6 +118,28 @@ const router = createBrowserRouter([
                                 path: '/account',
                                 element: <Account />
                             }
+                        ]
+                    }
+                ]
+            },
+            {
+                path: '/admin',
+                element: <AdminLayout />,
+                children: [
+                    { path: '/admin', element: <Navigate to='/admin/dashboard' /> },
+                    {
+                        path: '/admin',
+                        element: <RequireManagerAuth />,
+                        children: [
+                            /* Manager routes */
+                            { path: '/admin/dashboard', element: <Dashboard /> }
+                        ]
+                    },
+                    {
+                        path: '/admin',
+                        element: <RequireAdminAuth />,
+                        children: [
+                            /* Admin routes */
                         ]
                     }
                 ]
