@@ -1,9 +1,10 @@
 // Libraries
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 // Pages
-import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
-import { Account, Login, NotFound, SignUp } from '@pages/shared';
+import { AdminCategory, AdminOrder, AdminProduct, Dashboard, User } from '@pages/admin';
+import { Home, Category, ClientProduct, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
+import { Account, Login, NotFound, PasswordRecovery, SignUp } from '@pages/shared';
 
 // Services
 import {
@@ -16,6 +17,7 @@ import {
 } from '@services/client';
 
 // Components
+import { AdminLayout, RequireManagerAuth, RequireAdminAuth } from '@components/admin';
 import { ClientLayout } from '@components/client';
 import { PersistLogin, RequireLogin } from '@components/shared';
 
@@ -88,7 +90,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: '/products/:productSlug',
-                        element: <Product />,
+                        element: <ClientProduct />,
                         loader: handleLoadProductPage,
                         errorElement: <NotFound />
                     },
@@ -101,6 +103,7 @@ const router = createBrowserRouter([
                     { path: '/blogs/:blogSlug', element: <BlogDetail /> },
                     { path: '/account/login', element: <Login /> },
                     { path: '/account/sign-up', element: <SignUp /> },
+                    { path: '/account/password-recovery', element: <PasswordRecovery /> },
                     { path: '/pages/:pageSlug', element: <SinglePage /> },
                     /* Require login routes */
                     {
@@ -115,6 +118,32 @@ const router = createBrowserRouter([
                                 path: '/account',
                                 element: <Account />
                             }
+                        ]
+                    }
+                ]
+            },
+            {
+                path: '/admin',
+                element: <AdminLayout />,
+                children: [
+                    { path: '/admin', element: <Navigate to='/admin/dashboard' /> },
+                    {
+                        path: '/admin',
+                        element: <RequireManagerAuth />,
+                        children: [
+                            /* Manager routes */
+                            { path: '/admin/dashboard', element: <Dashboard /> },
+                            { path: '/admin/categories', element: <AdminCategory /> },
+                            { path: '/admin/products', element: <AdminProduct /> },
+                            { path: '/admin/orders', element: <AdminOrder /> }
+                        ]
+                    },
+                    {
+                        path: '/admin',
+                        element: <RequireAdminAuth />,
+                        children: [
+                            /* Admin routes */
+                            { path: '/admin/users', element: <User /> }
                         ]
                     }
                 ]

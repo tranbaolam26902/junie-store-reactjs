@@ -9,7 +9,7 @@ import { icons } from '@assets/icons';
 // Components
 import { Fade } from '@components/shared/animations';
 
-export default function Pager({ metadata }) {
+export default function Pager({ metadata, showTotal }) {
     // Hooks
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -134,49 +134,57 @@ export default function Pager({ metadata }) {
                 </div>
                 <div className='flex gap-1'>
                     <span className='font-thin tracking-wider'>Trang</span>
-                    <span className=''>{metadata.pageNumber}</span>
+                    <span className='pt-px'>{metadata.pageNumber}</span>
                     <span className='font-thin tracking-wider'>trên</span>
-                    <span className=''>{metadata.pageCount}</span>
+                    <span className='pt-px'>{metadata.pageCount}</span>
                 </div>
             </div>
-            <div className='relative flex items-center gap-2'>
-                <span className='pt-px font-thin tracking-wider'>Số lượng hiển thị:</span>
-                <button
-                    ref={selectNumberOfItemsRef}
-                    type='button'
-                    className='flex items-center gap-2 px-4 h-8 bg-primary rounded border border-gray'
-                    onClick={handleToggleSelectNumberOfItems}
-                >
-                    <span>{metadata.pageSize}</span>
-                    <img
-                        src={icons.caretDown}
-                        alt='caret-down-icon'
-                        className={`w-3 transition-transform duration-200${
-                            showSelectNumberOfItems ? ' rotate-180' : ''
-                        }`}
-                    />
-                </button>
-                <AnimatePresence>
-                    {showSelectNumberOfItems && (
-                        <Fade className='absolute top-full right-0 z-10 flex flex-col items-start p-4 bg-primary rounded shadow'>
-                            {[...Array(101).keys()]
-                                .filter((number) => number && number > 0 && number % 10 === 0)
-                                .map((number) => (
-                                    <button
-                                        key={number}
-                                        type='button'
-                                        className='px-2 py-1 w-full text-left'
-                                        onClick={() => {
-                                            searchParams.set('PageSize', number);
-                                            setSearchParams(searchParams, { replace: true });
-                                        }}
-                                    >
-                                        {number}
-                                    </button>
-                                ))}
-                        </Fade>
-                    )}
-                </AnimatePresence>
+            <div className='flex items-center gap-6'>
+                <div className='relative flex items-center gap-2'>
+                    <span className='pt-px font-thin tracking-wider'>Số lượng hiển thị:</span>
+                    <button
+                        ref={selectNumberOfItemsRef}
+                        type='button'
+                        className='flex items-center gap-2 px-4 h-8 bg-primary rounded border border-gray'
+                        onClick={handleToggleSelectNumberOfItems}
+                    >
+                        <span>{metadata.pageSize}</span>
+                        <img
+                            src={icons.caretDown}
+                            alt='caret-down-icon'
+                            className={`w-3 transition-transform duration-200${
+                                showSelectNumberOfItems ? ' rotate-180' : ''
+                            }`}
+                        />
+                    </button>
+                    <AnimatePresence>
+                        {showSelectNumberOfItems && (
+                            <Fade className='absolute top-full right-0 z-10 flex flex-col items-start p-4 bg-primary rounded shadow'>
+                                {[...Array(101).keys()]
+                                    .filter((number) => number && number > 0 && number % 10 === 0)
+                                    .map((number) => (
+                                        <button
+                                            key={number}
+                                            type='button'
+                                            className='px-2 py-1 w-full text-left'
+                                            onClick={() => {
+                                                searchParams.set('PageSize', number);
+                                                setSearchParams(searchParams, { replace: true });
+                                            }}
+                                        >
+                                            {number}
+                                        </button>
+                                    ))}
+                            </Fade>
+                        )}
+                    </AnimatePresence>
+                </div>
+                {showTotal && (
+                    <div className='flex items-center gap-1'>
+                        <span className='pt-px font-thin tracking-wider'>Tổng số:</span>
+                        <span className='pt-1'>{metadata.totalItemCount}</span>
+                    </div>
+                )}
             </div>
         </section>
     );
