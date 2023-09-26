@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // Pages
 import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
-import { Account, Login, NotFound, SignUp } from '@pages/shared';
+import { Account, Login, NotFound, PasswordRecovery, SignUp } from '@pages/shared';
 
 // Services
 import {
@@ -101,6 +101,7 @@ const router = createBrowserRouter([
                     { path: '/blogs/:blogSlug', element: <BlogDetail /> },
                     { path: '/account/login', element: <Login /> },
                     { path: '/account/sign-up', element: <SignUp /> },
+                    { path: '/account/password-recovery', element: <PasswordRecovery /> },
                     { path: '/pages/:pageSlug', element: <SinglePage /> },
                     /* Require login routes */
                     {
