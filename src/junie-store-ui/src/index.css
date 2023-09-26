@@ -159,6 +159,9 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
     -moz-appearance: textfield;
 }
+label {
+    user-select: none;
+}
 
 /* Hide Edge reveal button */
 ::-ms-reveal {

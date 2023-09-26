@@ -1,8 +1,13 @@
 // Libraries
+import { useDispatch } from 'react-redux';
 import { useLoaderData } from 'react-router-dom';
 
 // Assets
 import { icons } from '@assets/icons';
+
+// Redux
+import { addProductToCart } from '@redux/features/client/cart';
+import { setShowCartSidebar } from '@redux/features/client/header';
 
 // Components
 import { Button } from '@components/shared';
@@ -10,6 +15,18 @@ import { Button } from '@components/shared';
 export default function ProductInfoSection() {
     // Hooks
     const { product } = useLoaderData();
+    const dispatch = useDispatch();
+
+    // Event handlers
+    const handleAddToCart = () => {
+        dispatch(
+            addProductToCart({
+                ...product,
+                cartQuantity: 1
+            })
+        );
+        dispatch(setShowCartSidebar());
+    };
 
     return (
         <section className='flex flex-col'>
@@ -58,7 +75,7 @@ export default function ProductInfoSection() {
                         ></button>
                     </div>
                 </div> */}
-                <Button secondary full text='Thêm vào giỏ' />
+                <Button secondary full text='Thêm vào giỏ' onClick={handleAddToCart} />
                 <span className='text-sm text-green'>Còn hàng, dự kiến giao tới trong 1 - 3 ngày.</span>
                 <div className='p-4 flex flex-col gap-4 bg-primary rounded-lg border border-black'>
                     <span className='flex items-center gap-4'>

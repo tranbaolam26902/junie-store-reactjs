@@ -1,36 +1,22 @@
-// Assets
-import { images } from '@assets/images';
+// Libraries
+import { useSelector } from 'react-redux';
+
+// Redux
+import { selectCart } from '@redux/features/client/cart';
 
 // Components
-import { Button, Input } from '@components/shared';
 import { CartItem } from '@components/client';
-
-// Temp products items
-const products = [
-    {
-        id: 1,
-        name: 'Bông tai Gracie',
-        slug: 'gracie',
-        price: 220000,
-        quantity: 1,
-        image: images.product
-    },
-    {
-        id: 2,
-        name: 'Bông tai Gabi',
-        slug: 'gabi',
-        price: 275000,
-        quantity: 2,
-        image: images.productHover
-    }
-];
+import { Button, Input } from '@components/shared';
 
 export default function CartSection() {
+    // States
+    const cart = useSelector(selectCart);
+
     return (
         <section className='flex flex-col gap-2'>
             <span className='font-semibold'>Danh sách sản phẩm</span>
             <div className='flex flex-col gap-4'>
-                {products.map((product) => (
+                {cart.products.map((product) => (
                     <CartItem key={product.id} product={product} />
                 ))}
             </div>
@@ -42,21 +28,32 @@ export default function CartSection() {
                 <div className='flex items-center justify-between'>
                     <span className='font-thin'>Sản phẩm</span>
                     <span>
-                        {new Intl.NumberFormat('vi-VN').format(250000)}
-                        <sup className='pl-0.5 underline'>đ</sup>
-                    </span>
-                </div>
-                <div className='flex items-center justify-between'>
-                    <span className='font-thin'>Vận chuyển</span>
-                    <span>
-                        {new Intl.NumberFormat('vi-VN').format(30000)}
+                        {new Intl.NumberFormat('vi-VN').format(
+                            cart.products.reduce(
+                                (acc, curr) =>
+                                    acc +
+                                    (curr.discount
+                                        ? (curr.price - (curr.price * curr.discount) / 100) * curr.cartQuantity
+                                        : curr.price * curr.cartQuantity),
+                                0
+                            )
+                        )}
                         <sup className='pl-0.5 underline'>đ</sup>
                     </span>
                 </div>
                 <div className='flex items-center justify-between text-2xl'>
                     <span className='font-semibold'>Tổng</span>
                     <span className='font-semibold'>
-                        {new Intl.NumberFormat('vi-VN').format(30000)}
+                        {new Intl.NumberFormat('vi-VN').format(
+                            cart.products.reduce(
+                                (acc, curr) =>
+                                    acc +
+                                    (curr.discount
+                                        ? (curr.price - (curr.price * curr.discount) / 100) * curr.cartQuantity
+                                        : curr.price * curr.cartQuantity),
+                                0
+                            )
+                        )}
                         <sup className='pl-0.5 underline'>đ</sup>
                     </span>
                 </div>
