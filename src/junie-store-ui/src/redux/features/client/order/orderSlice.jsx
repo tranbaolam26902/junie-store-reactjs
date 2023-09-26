@@ -2,7 +2,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    statusFilter: 'None'
+    statusFilter: 'None',
+    updateOrders: false
 };
 const orderSlice = createSlice({
     name: 'order',
@@ -10,10 +11,13 @@ const orderSlice = createSlice({
     reducers: {
         setStatusFilter: (state, action) => {
             state.statusFilter = action.payload;
+        },
+        triggerUpdateOrders: (state) => {
+            state.updateOrders = !state.updateOrders;
         }
     }
 });
 
 export const orderReducer = orderSlice.reducer;
 export const selectOrder = (state) => state.order;
-export const { setStatusFilter } = orderSlice.actions;
+export const { setStatusFilter, triggerUpdateOrders } = orderSlice.actions;

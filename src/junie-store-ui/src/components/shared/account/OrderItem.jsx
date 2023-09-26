@@ -1,3 +1,12 @@
+// Libraries
+import { useDispatch } from 'react-redux';
+
+// Redux
+import { triggerUpdateOrders } from '@redux/features/client/order';
+
+// Services
+import { cancelOrder } from '@services/client';
+
 // Components
 import { Button } from '@components/shared';
 import OrderProductItem from './OrderProductItem';
@@ -11,6 +20,20 @@ const RETURNED = 5;
 const SUCCESS = 6;
 
 export default function OrderItem({ order }) {
+    //  Hooks
+    const dispatch = useDispatch();
+
+    //  Event handlers
+    const handleCancelOrder = async () => {
+        if (!window.confirm('Xác nhận hủy đơn hàng?')) return;
+
+        const data = await cancelOrder(order.id);
+        if (data.isSuccess) {
+            window.alert('Hủy đơn hàng thành công.');
+            dispatch(triggerUpdateOrders());
+        } else window.alert(data.errors[0]);
+    };
+
     return (
         <div className='flex flex-col gap-4 p-8 bg-primary rounded-lg shadow-md'>
             <div className='flex items-center justify-between flex-wrap gap-y-2'>
@@ -83,7 +106,9 @@ export default function OrderItem({ order }) {
                         <sup className='pl-0.5 underline'>đ</sup>
                     </span>
                 </div>
-                {order.status === 1 && <Button outline text='Hủy đơn hàng' className='ml-auto w-fit' />}
+                {order.status === 1 && (
+                    <Button outline text='Hủy đơn hàng' className='ml-auto w-fit' onClick={handleCancelOrder} />
+                )}
             </div>
         </div>
     );

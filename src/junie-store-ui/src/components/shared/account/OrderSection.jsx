@@ -83,7 +83,7 @@ export default function OrderSection() {
     useEffect(() => {
         getOrders();
         // eslint-disable-next-line
-    }, [searchParams]);
+    }, [searchParams, order.updateOrders]);
     /* Get current status filter from searchParams */
     useEffect(() => {
         const currentStatus = searchParams.get('Status');
