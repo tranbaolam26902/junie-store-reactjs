@@ -1,3 +1,5 @@
+import arrowDownIcon from './arrow-down.svg';
+import arrowUpIcon from './arrow-up.svg';
 import authenticIcon from './authentic.svg';
 import caretDownIcon from './caret-down.svg';
 import cartIcon from './cart.svg';
@@ -37,6 +39,8 @@ import userWhiteIcon from './user-white.svg';
 import userIcon from './user.svg';
 
 export const icons = {
+    arrowDown: arrowDownIcon,
+    arrowUp: arrowUpIcon,
     authentic: authenticIcon,
     caretDown: caretDownIcon,
     cart: cartIcon,
