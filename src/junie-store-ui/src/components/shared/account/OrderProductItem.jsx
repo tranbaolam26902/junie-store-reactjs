@@ -14,8 +14,8 @@ export default function OrderProductItem({ product }) {
             />
             <div className='flex-1 flex flex-col gap-1'>
                 <span>{product.name}</span>
-                <span>&times;{product.quantity}</span>
-                <span>
+                <span className='font-thin'>&times;{product.quantity}</span>
+                <span className='font-thin'>
                     {new Intl.NumberFormat('vi-vn').format(product.price)}
                     <sup className='pl-0.5 underline'>đ</sup>
                 </span>

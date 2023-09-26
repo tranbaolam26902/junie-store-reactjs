@@ -2,6 +2,14 @@
 import { Button } from '@components/shared';
 import OrderProductItem from './OrderProductItem';
 
+// Constants
+const NEW = 1;
+const CANCELLED = 2;
+const CONFIRMED = 3;
+const SHIPPING = 4;
+const RETURNED = 5;
+const SUCCESS = 6;
+
 export default function OrderItem({ order }) {
     return (
         <div className='flex flex-col gap-4 p-8 bg-primary rounded-lg shadow-md'>
@@ -22,7 +30,21 @@ export default function OrderItem({ order }) {
                     </div>
                     <div className='flex items-center gap-1'>
                         <span className='font-thin text-secondary/80'>Trạng thái:</span>
-                        <span className='pt-0.5'>{order.status === 0 ? 'Chờ xác nhận' : ''}</span>
+                        <span className='pt-0.5'>
+                            {order.status === NEW
+                                ? 'Chờ xác nhận'
+                                : order.status === CANCELLED
+                                ? 'Đã hủy'
+                                : order.status === CONFIRMED
+                                ? 'Đã xác nhận'
+                                : order.status === SHIPPING
+                                ? 'Đang giao'
+                                : order.status === RETURNED
+                                ? 'Trả hàng'
+                                : order.status === SUCCESS
+                                ? 'Đã giao'
+                                : 'Không xác định'}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -61,7 +83,7 @@ export default function OrderItem({ order }) {
                         <sup className='pl-0.5 underline'>đ</sup>
                     </span>
                 </div>
-                {order.status === 0 && <Button outline text='Hủy đơn hàng' className='ml-auto w-fit' />}
+                {order.status === 1 && <Button outline text='Hủy đơn hàng' className='ml-auto w-fit' />}
             </div>
         </div>
     );

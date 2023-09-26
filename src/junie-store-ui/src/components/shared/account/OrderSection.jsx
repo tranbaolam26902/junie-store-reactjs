@@ -10,8 +10,42 @@ import { selectOrder, setStatusFilter } from '@redux/features/client/order';
 import { getOrdersByQueries } from '@services/client';
 
 // Components
-import { Button, Pager } from '@components/shared';
+import { Pager } from '@components/shared';
 import OrderItem from './OrderItem';
+
+// Tabs
+const tabs = [
+    {
+        id: 1,
+        name: 'Tất cả đơn hàng',
+        value: 'None'
+    },
+    {
+        id: 2,
+        name: 'Chờ xác nhận',
+        value: 'New'
+    },
+    {
+        id: 3,
+        name: 'Đang giao',
+        value: 'Shipping'
+    },
+    {
+        id: 4,
+        name: 'Đã hoàn thành',
+        value: 'Success'
+    },
+    {
+        id: 6,
+        name: 'Đã hủy',
+        value: 'Cancelled'
+    },
+    {
+        id: 7,
+        name: 'Trả hàng',
+        value: 'Returned'
+    }
+];
 
 export default function OrderSection() {
     // Hooks
@@ -40,62 +74,43 @@ export default function OrderSection() {
     // Event handlers
     const handleToggleStatusFilter = (e) => {
         dispatch(setStatusFilter(e.target.value));
+        searchParams.set('Status', e.target.value);
+        setSearchParams(searchParams);
     };
 
     // Side effects
+    /* Get orders by queries */
     useEffect(() => {
         getOrders();
         // eslint-disable-next-line
     }, [searchParams]);
+    /* Get current status filter from searchParams */
+    useEffect(() => {
+        const currentStatus = searchParams.get('Status');
+        if (currentStatus) dispatch(setStatusFilter(currentStatus));
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <section className='lg:col-span-9 flex flex-col gap-4'>
             <div className='flex items-center gap-x-6 gap-y-2 flex-wrap -mt-2'>
-                <button
-                    type='button'
-                    value='all'
-                    className={`${order.statusFilter === 'all' && 'font-semibold underline underline-offset-4'}`}
-                    onClick={handleToggleStatusFilter}
-                >
-                    Tất cả đơn hàng
-                </button>
-                <button
-                    type='button'
-                    value='waiting'
-                    className={`${order.statusFilter === 'waiting' && 'font-semibold underline underline-offset-4'}`}
-                    onClick={handleToggleStatusFilter}
-                >
-                    Chờ xác nhận
-                </button>
-                <button
-                    type='button'
-                    value='delivering'
-                    className={`${order.statusFilter === 'delivering' && 'font-semibold underline underline-offset-4'}`}
-                    onClick={handleToggleStatusFilter}
-                >
-                    Đang giao
-                </button>
-                <button
-                    type='button'
-                    value='delivered'
-                    className={`${order.statusFilter === 'delivered' && 'font-semibold underline underline-offset-4'}`}
-                    onClick={handleToggleStatusFilter}
-                >
-                    Đã hoàn thành
-                </button>
-                <button
-                    type='button'
-                    value='canceled'
-                    className={`${order.statusFilter === 'canceled' && 'font-semibold underline underline-offset-4'}`}
-                    onClick={handleToggleStatusFilter}
-                >
-                    Đã hủy
-                </button>
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        type='button'
+                        value={tab.value}
+                        className={`transition duration-200 ${
+                            order.statusFilter === tab.value ? 'opacity-100 underline underline-offset-4' : 'opacity-50'
+                        }`}
+                        onClick={handleToggleStatusFilter}
+                    >
+                        {tab.name}
+                    </button>
+                ))}
             </div>
             {orders.length === 0 ? (
-                <div className='flex flex-col items-center gap-2 p-8 bg-primary rounded-lg shadow-md'>
-                    <span className='font-semibold'>Chưa có đơn hàng nào</span>
-                    <Button to='/' secondary text='Bắt đầu mua sắm' className='w-fit' />
+                <div className='p-8 text-center bg-primary rounded-lg shadow-md'>
+                    <span className='opacity-100'>Chưa có đơn hàng nào</span>
                 </div>
             ) : (
                 <div className='flex flex-col gap-4'>

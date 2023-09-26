@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    statusFilter: 'all'
+    statusFilter: 'None'
 };
 const orderSlice = createSlice({
     name: 'order',
