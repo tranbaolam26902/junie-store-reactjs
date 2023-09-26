@@ -1,20 +1,21 @@
 // Libraries
 import { useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 // Redux
-import { selectCart } from '@redux/features/client/cart';
+import { clearCart, selectCart } from '@redux/features/client/cart';
 
 // Services
 import { checkout } from '@services/client';
 
 // Components
 import { Button, Input } from '@components/shared';
-import { useNavigate } from 'react-router-dom';
 
 export default function OrderInfoSection() {
     // Hooks
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     // States
     const cart = useSelector(selectCart);
@@ -83,6 +84,7 @@ export default function OrderInfoSection() {
         if (result.isSuccess) {
             setErrorMessages([]);
             window.alert('Đặt hàng thành công!');
+            dispatch(clearCart());
             navigate('/account');
         } else setErrorMessages(result.errors);
     };
