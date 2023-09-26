@@ -14,5 +14,7 @@ public class RevenueOrder
 
 	public double TotalRevenue { get; set; }
 
-	public TypeRevenue TypeRevenue { get; set; }
+	public int TotalOrder { get; set; }
+
+	public string TypeRevenue { get; set; }
 }

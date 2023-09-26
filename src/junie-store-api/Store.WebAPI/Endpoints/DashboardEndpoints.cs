@@ -4,6 +4,7 @@ using Store.Services.Shops;
 using Store.WebAPI.Models.OrderModel;
 using Store.WebAPI.Models;
 using System.Net;
+using Store.Core.DTO;
 using Store.WebAPI.Models.DashboardModel;
 
 namespace Store.WebAPI.Endpoints;
@@ -19,6 +20,9 @@ public static class DashboardEndpoints
 			.WithName("GetDashboard")
 			.Produces<ApiResponse<IPagedList<OrderDto>>>();
 
+		routeGroupBuilder.MapGet("/RevenueDetail", GetRevenueDetail)
+			.WithName("GetRevenueDetail")
+			.Produces<ApiResponse<IList<RevenueOrder>>>();
 
 		return app;
 	}
@@ -39,6 +43,30 @@ public static class DashboardEndpoints
 			};
 
 			return Results.Ok(ApiResponse.Success(dashboard));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> GetRevenueDetail(
+		[AsParameters] DashboardFilterModel model,
+		[FromServices] IDashboardRepository repository)
+	{
+		try
+		{
+			switch (model.Type)
+			{
+				case TypeRevenue.Month:
+					return Results.Ok(ApiResponse.Success(await repository.MonthlyRevenueDetailAsync()));
+				case TypeRevenue.Day:
+					return Results.Ok(ApiResponse.Success(await repository.DailyRevenueDetailAsync()));
+				case TypeRevenue.Hour:
+					return Results.Ok(ApiResponse.Success(await repository.HourlyRevenueDetailAsync()));
+				default:
+					return Results.Ok(ApiResponse.Success("", HttpStatusCode.NoContent));
+			}
 		}
 		catch (Exception e)
 		{
