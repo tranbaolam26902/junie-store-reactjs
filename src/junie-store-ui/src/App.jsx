@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 // Pages
 import { AdminCategory, AdminOrder, AdminProduct, Dashboard, User } from '@pages/admin';
-import { Home, Category, Product, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
+import { Home, Category, ClientProduct, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
 import { Account, Login, NotFound, PasswordRecovery, SignUp } from '@pages/shared';
 
 // Services
@@ -90,7 +90,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: '/products/:productSlug',
-                        element: <Product />,
+                        element: <ClientProduct />,
                         loader: handleLoadProductPage,
                         errorElement: <NotFound />
                     },
