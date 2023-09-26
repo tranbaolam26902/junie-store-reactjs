@@ -1,14 +1,14 @@
 // Libraries
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Assets
+import { icons } from '@assets/icons';
 import { images } from '@assets/images';
 
 // Redux
 import { selectSidebar, setCurrentTab } from '@redux/features/admin/sidebar';
-import { useEffect, useState } from 'react';
-import { icons } from '~/assets/icons';
 
 // Tabs
 const tabs = [
@@ -78,7 +78,7 @@ export default function Sidebar() {
 
     return (
         <section className='sticky top-0 flex flex-col gap-4 p-4 w-56 h-screen bg-primary border-r border-gray shadow overflow-y-auto'>
-            <Link to='/'>
+            <Link to='/' className='my-4'>
                 <img src={images.logo} alt='logo' className='mx-auto w-20' />
             </Link>
             <div className='relative flex flex-col'>
