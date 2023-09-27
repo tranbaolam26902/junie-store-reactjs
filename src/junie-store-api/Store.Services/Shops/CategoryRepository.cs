@@ -63,13 +63,15 @@ public class CategoryRepository : ICategoryRepository
 		return categoryItems;
 	}
 
-	public async Task<IPagedList<T>> GetPagedCategoriesAsync<T>(string keyword, IPagingParams pagingParams, Func<IQueryable<Category>, IQueryable<T>> mapper)
+	public async Task<IPagedList<T>> GetPagedCategoriesAsync<T>(ICategoryQuery condition, IPagingParams pagingParams, Func<IQueryable<Category>, IQueryable<T>> mapper)
 	{
 		var categories = _dbContext.Set<Category>()
-			.WhereIf(!string.IsNullOrWhiteSpace(keyword), s =>
-				s.UrlSlug.Contains(keyword) ||
-				s.Description.Contains(keyword) ||
-				s.Name.Contains(keyword));
+			.WhereIf(condition.ShowOnMenu, s => s.ShowOnMenu)
+			.WhereIf(condition.IsDeleted, s => s.IsDeleted)
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s =>
+				s.UrlSlug.Contains(condition.Keyword) ||
+				s.Description.Contains(condition.Keyword) ||
+				s.Name.Contains(condition.Keyword));
 
 		var projectedCategories = mapper(categories);
 		return await projectedCategories.ToPagedListAsync(pagingParams);
