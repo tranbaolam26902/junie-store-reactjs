@@ -13,7 +13,7 @@ public interface ICategoryRepository
 	Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(ICategoryQuery condition, CancellationToken cancellationToken = default);
 
 	Task<IPagedList<T>> GetPagedCategoriesAsync<T>(
-		string keyword,
+		ICategoryQuery condition,
 		IPagingParams pagingParams,
 		Func<IQueryable<Category>, IQueryable<T>> mapper);
 

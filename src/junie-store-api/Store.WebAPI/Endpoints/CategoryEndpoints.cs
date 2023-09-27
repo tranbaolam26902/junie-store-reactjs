@@ -92,9 +92,11 @@ public static class CategoryEndpoints
 	{
 		try
 		{
+			var condition = mapper.Map<CategoryQuery>(model);
+
 			var products =
 				await repository.GetPagedCategoriesAsync(
-					model.Keyword,
+					condition,
 					model,
 					p => p.ProjectToType<CategoryDto>());
 
