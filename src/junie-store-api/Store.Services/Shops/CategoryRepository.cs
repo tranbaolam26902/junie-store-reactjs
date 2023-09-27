@@ -30,10 +30,11 @@ public class CategoryRepository : ICategoryRepository
 
 	public async Task<IList<CategoryItem>> GetRelatedCategoryBySlugAsync(ICategoryQuery condition, CancellationToken cancellationToken = default)
 	{
+		
 		var products = await _dbContext.Set<Product>()
 			.Include(p => p.Categories)
 			.WhereIf(!string.IsNullOrWhiteSpace(condition.UrlSlug),
-			s => s.Categories.Any(c => c.UrlSlug == condition.UrlSlug))
+			s => s.Categories.Any(c => c.UrlSlug == condition.UrlSlug && !c.IsDeleted))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
 				s.Name.Contains(condition.Keyword) ||
 				s.Description.Contains(condition.Keyword) ||
@@ -47,9 +48,9 @@ public class CategoryRepository : ICategoryRepository
 			{
 				if (!string.IsNullOrWhiteSpace(condition.UrlSlug))
 				{
-					return p.Categories.Where(s => s.UrlSlug != condition.UrlSlug);
+					return p.Categories.Where(s => s.UrlSlug != condition.UrlSlug && !s.IsDeleted);
 				}
-				return p.Categories;
+				return p.Categories.Where(s => !s.IsDeleted);
 			})
 			.GroupBy(c => new { c.Id, c.Name, c.UrlSlug })
 			.Select(group => new CategoryItem()
@@ -82,6 +83,7 @@ public class CategoryRepository : ICategoryRepository
 	{
 		var categories = _dbContext.Set<Category>()
 			.Where(s => !s.IsDeleted)
+			.WhereIf(condition.ShowOnMenu, s => s.ShowOnMenu)
 			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s =>
 				s.UrlSlug.Contains(condition.Keyword) ||
 				s.Description.Contains(condition.Keyword) ||
@@ -118,8 +120,14 @@ public class CategoryRepository : ICategoryRepository
 			.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 	}
 
-	public async Task<Category> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default)
+	public async Task<Category> GetCategoryBySlugAsync(string slug, bool isUser = false, CancellationToken cancellationToken = default)
 	{
+		if (isUser)
+		{
+			return await _dbContext.Set<Category>()
+				.FirstOrDefaultAsync(s => s.UrlSlug == slug && !s.IsDeleted, cancellationToken);
+		}
+
 		return await _dbContext.Set<Category>()
 			.FirstOrDefaultAsync(s => s.UrlSlug == slug, cancellationToken);
 	}
