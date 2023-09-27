@@ -16,46 +16,15 @@ import { selectCart } from '@redux/features/client/cart';
 import { setShowCartSidebar, setShowMobileNavbar, setShowSearchSidebar } from '@redux/features/client/header';
 import { selectAuth } from '@redux/features/shared/auth';
 
+// Services
+import { getCategoriesShowOnMenu } from '@services/shared';
+
 // Components
 import { Container } from '@components/shared';
 import { Fade, Underline } from '@components/shared/animations';
 import MobileNavbar from './MobileNavbar';
 import SearchSidebar from './SearchSidebar';
 import CartSidebar from './CartSidebar';
-
-// Temp categories
-const categories = [
-    {
-        id: 1,
-        name: 'Mới',
-        slug: '/categories/moi'
-    },
-    {
-        id: 2,
-        name: 'Bông tai',
-        slug: '/categories/bong-tai'
-    },
-    {
-        id: 3,
-        name: 'Dây chuyền',
-        slug: '/categories/day-chuyen'
-    },
-    {
-        id: 4,
-        name: 'Vòng tay',
-        slug: '/categories/vong-tay'
-    },
-    {
-        id: 5,
-        name: 'Nhẫn',
-        slug: '/categories/nhan'
-    },
-    {
-        id: 6,
-        name: 'Sale',
-        slug: '/categories/sale'
-    }
-];
 
 export default function Header() {
     // Hooks
@@ -68,9 +37,18 @@ export default function Header() {
     const cart = useSelector(selectCart);
     const auth = useSelector(selectAuth);
     const [showAccountOptions, setShowAccountOptions] = useState(false);
+    const [categories, setCategories] = useState([]);
 
     // Refs
     const accountButtonRef = useRef(null);
+
+    // Functions
+    const getHeaderCategories = async () => {
+        const result = await getCategoriesShowOnMenu();
+
+        if (result) setCategories(result.items);
+        else setCategories([]);
+    };
 
     // Event handlers
     const handleShowMobileNavbar = () => {
@@ -106,6 +84,9 @@ export default function Header() {
             document.removeEventListener('mousedown', handleHideAccountOptionsWhenClickOutside);
         };
     }, []);
+    useEffect(() => {
+        getHeaderCategories();
+    }, []);
 
     return (
         <header className='sticky z-10 left-0 right-0 top-0 max-h-14 bg-primary shadow-md'>
@@ -118,7 +99,7 @@ export default function Header() {
                 </div>
                 <nav className='flex-1 hidden xl:flex items-center gap-8'>
                     {categories.map((category) => (
-                        <Link to={`${category.slug}`} key={category.id} className='relative group'>
+                        <Link to={`/categories/${category.urlSlug}`} key={category.id} className='relative group'>
                             <span>{category.name}</span>
                             <Underline />
                         </Link>

@@ -1,12 +1,20 @@
 // Services
 import { axios } from '@services/shared';
 
-const getCategoriesByQueries = async (queries) => {
-    const { data } = await axios.get(`/api/categories?${queries}`);
+const getCategoryBySlug = async (categorySlug) => {
+    const { data } = await axios.get(`/api/categories/bySlug/${categorySlug}`);
 
     if (data.isSuccess) return data.result;
 
     return null;
 };
 
-export { getCategoriesByQueries };
+const getCategoriesShowOnMenu = async () => {
+    const { data } = await axios.get(`/api/categories?ShowOnMenu=true`);
+
+    if (data.isSuccess) return data.result;
+
+    return null;
+};
+
+export { getCategoryBySlug, getCategoriesShowOnMenu };
