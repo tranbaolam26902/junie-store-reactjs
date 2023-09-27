@@ -34,5 +34,5 @@ public interface ICategoryRepository
 
 	Task<Category> GetCategoryByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-	Task<Category> GetCategoryBySlugAsync(string slug, CancellationToken cancellationToken = default);
+	Task<Category> GetCategoryBySlugAsync(string slug, bool isUser = false, CancellationToken cancellationToken = default);
 }

@@ -169,11 +169,11 @@ public static class CategoryEndpoints
 	{
 		try
 		{
-			var category = await repository.GetCategoryBySlugAsync(slug);
+			var category = await repository.GetCategoryBySlugAsync(slug, true);
 			var categoryItem = mapper.Map<CategoryDto>(category);
 
 			return category == null
-				? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound))
+				? Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Danh mục đã ẩn hoặc không tồn tại."))
 				: Results.Ok(ApiResponse.Success(categoryItem));
 		}
 		catch (Exception e)
