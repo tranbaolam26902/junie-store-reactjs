@@ -17,6 +17,11 @@ public interface ICategoryRepository
 		IPagingParams pagingParams,
 		Func<IQueryable<Category>, IQueryable<T>> mapper);
 
+	Task<IPagedList<T>> GetPagedCategoriesForUserAsync<T>(
+		ICategoryQuery condition,
+		IPagingParams pagingParams,
+		Func<IQueryable<Category>, IQueryable<T>> mapper);
+
 	Task<Category> AddOrUpdateCategoryAsync(Category category, CancellationToken cancellationToken = default);
 
 	Task<bool> ToggleDeleteCategoryAsync(Guid categoryId, CancellationToken cancellationToken = default);

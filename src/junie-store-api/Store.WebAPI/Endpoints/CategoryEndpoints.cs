@@ -25,6 +25,11 @@ public static class CategoryEndpoints
 			.WithName("GetCategories")
 			.Produces<ApiResponse<IPagedList<CategoryDto>>>();
 
+		builder.MapGet("/byManager", GetCategoriesByManager)
+			.WithName("GetCategoriesByManager")
+			.RequireAuthorization("RequireManagerRole")
+			.Produces<ApiResponse<IPagedList<CategoryDto>>>();
+
 		builder.MapGet("/{id:guid}", GetCategoryById)
 			.WithName("GetCategoryById")
 			.Produces<ApiResponse<CategoryDto>>();
@@ -88,6 +93,31 @@ public static class CategoryEndpoints
 
 	private static async Task<IResult> GetCategories(
 		[AsParameters] CategoryFilterModel model,
+		[FromServices] ICategoryRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var condition = mapper.Map<CategoryQuery>(model);
+
+			var products =
+				await repository.GetPagedCategoriesForUserAsync(
+					condition,
+					model,
+					p => p.ProjectToType<CategoryDto>());
+
+			var paginationResult = new PaginationResult<CategoryDto>(products);
+
+			return Results.Ok(ApiResponse.Success(paginationResult));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
+	private static async Task<IResult> GetCategoriesByManager(
+		[AsParameters] CategoryManagerFilter model,
 		[FromServices] ICategoryRepository repository,
 		[FromServices] IMapper mapper)
 	{
