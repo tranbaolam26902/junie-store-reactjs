@@ -143,7 +143,7 @@ export default function Blog() {
                         </div>
                     ))}
                 </div>
-                <Pager />
+                {/* <Pager /> */}
             </Container>
         </PageTransition>
     );
