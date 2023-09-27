@@ -2,19 +2,19 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 // Pages
-import { AdminCategory, AdminOrder, AdminProduct, Dashboard, User } from '@pages/admin';
+import { AdminCategory, CategoryDetail, AdminOrder, AdminProduct, Dashboard, User } from '@pages/admin';
 import { Home, Category, ClientProduct, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
 import { Account, Login, NotFound, PasswordRecovery, SignUp } from '@pages/shared';
 
 // Services
 import {
-    getCategoryBySlug,
     getBestSellingProducts,
     getFeaturedProductBySlug,
     getProductBySlug,
     getProductsByQueries,
     getRelatedCategoriesBySlug
 } from '@services/client';
+import { getCategoryBySlug } from '@services/shared';
 
 // Components
 import { AdminLayout, RequireManagerAuth, RequireAdminAuth } from '@components/admin';
@@ -134,6 +134,7 @@ const router = createBrowserRouter([
                             /* Manager routes */
                             { path: '/admin/dashboard', element: <Dashboard /> },
                             { path: '/admin/categories', element: <AdminCategory /> },
+                            { path: '/admin/categories/:categorySlug', element: <CategoryDetail /> },
                             { path: '/admin/products', element: <AdminProduct /> },
                             { path: '/admin/orders', element: <AdminOrder /> }
                         ]

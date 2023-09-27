@@ -1,14 +1,6 @@
 // Services
 import { axios } from '@services/shared';
 
-const getCategoryBySlug = async (categorySlug) => {
-    const { data } = await axios.get(`/api/categories/bySlug/${categorySlug}`);
-
-    if (data.isSuccess) return data.result;
-
-    return null;
-};
-
 const getRelatedCategoriesBySlug = async ({ categorySlug, keyword }) => {
     const { data } = await axios.get(
         `/api/categories/RelatedCategories?UrlSlug=${categorySlug || ''}&Keyword=${keyword || ''}`
@@ -19,4 +11,12 @@ const getRelatedCategoriesBySlug = async ({ categorySlug, keyword }) => {
     return null;
 };
 
-export { getCategoryBySlug, getRelatedCategoriesBySlug };
+const getCategoriesShowOnMenu = async () => {
+    const { data } = await axios.get(`/api/categories?ShowOnMenu=true`);
+
+    if (data.isSuccess) return data.result;
+
+    return null;
+};
+
+export { getRelatedCategoriesBySlug, getCategoriesShowOnMenu };

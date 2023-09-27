@@ -17,7 +17,7 @@ import { setShowCartSidebar, setShowMobileNavbar, setShowSearchSidebar } from '@
 import { selectAuth } from '@redux/features/shared/auth';
 
 // Services
-import { getCategoriesShowOnMenu } from '@services/shared';
+import { getCategoriesShowOnMenu } from '@services/client';
 
 // Components
 import { Container } from '@components/shared';
