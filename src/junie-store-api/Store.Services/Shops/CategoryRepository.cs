@@ -78,6 +78,19 @@ public class CategoryRepository : ICategoryRepository
 
 	}
 
+	public async Task<IPagedList<T>> GetPagedCategoriesForUserAsync<T>(ICategoryQuery condition, IPagingParams pagingParams, Func<IQueryable<Category>, IQueryable<T>> mapper)
+	{
+		var categories = _dbContext.Set<Category>()
+			.Where(s => !s.IsDeleted)
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s =>
+				s.UrlSlug.Contains(condition.Keyword) ||
+				s.Description.Contains(condition.Keyword) ||
+				s.Name.Contains(condition.Keyword));
+
+		var projectedCategories = mapper(categories);
+		return await projectedCategories.ToPagedListAsync(pagingParams);
+	}
+
 	public async Task<bool> IsCategoryExistedAsync(Guid id, string name, CancellationToken cancellationToken = default)
 	{
 		var slug = name.GenerateSlug();
