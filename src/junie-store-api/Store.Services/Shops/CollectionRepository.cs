@@ -272,7 +272,7 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(!string.IsNullOrWhiteSpace(condition.CategorySlug), s =>
 				s.Categories.Any(c => c.UrlSlug == condition.CategorySlug && !c.IsDeleted))
 			.WhereIf(!string.IsNullOrEmpty(condition.SubCategorySlug), s =>
-				s.Categories.Any(c => condition.SubCategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs)))
+				s.Categories.Any(c => condition.SubCategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs) && !c.IsDeleted))
 			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s =>
 				s.UrlSlug.Contains(condition.ProductSlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
