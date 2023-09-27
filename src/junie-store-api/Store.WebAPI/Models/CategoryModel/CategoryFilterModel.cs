@@ -4,6 +4,10 @@ public class CategoryFilterModel : PagingModel
 {
 	public string Keyword { get; set; } = "";
 
+}
+
+public class CategoryManagerFilter : CategoryFilterModel
+{
 	public bool? ShowOnMenu { get; set; } = false;
 
 	public bool? IsDeleted { get; set; } = false;
