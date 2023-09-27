@@ -61,7 +61,8 @@ public class DashboardRepository : IDashboardRepository
 			{
 				TypeRevenue = TypeRevenue.Hour.ToString(),
 				Time = group.Key,
-				TotalRevenue = group.Sum(o => o.Total)
+				TotalRevenue = group.Sum(o => o.Total),
+				TotalOrder = orders.Count
 			})
 			.ToList();
 
@@ -84,7 +85,8 @@ public class DashboardRepository : IDashboardRepository
 			{
 				TypeRevenue = TypeRevenue.Day.ToString(),
 				Time = group.Key,
-				TotalRevenue = group.Sum(o => o.Total)
+				TotalRevenue = group.Sum(o => o.Total),
+				TotalOrder = orders.Count
 			})
 			.ToList();
 
@@ -114,7 +116,7 @@ public class DashboardRepository : IDashboardRepository
 
 		return dailyRevenues;
 	}
-
+	
 	public double GetTotalPriceOrder(Order order)
 	{
 		var total = 0d;
