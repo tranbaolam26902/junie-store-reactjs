@@ -182,7 +182,7 @@ export default function Category() {
                         {categories.map((category) => (
                             <div
                                 key={category.id + category.isDeleted + category.showOnMenu}
-                                className='grid grid-cols-7 gap-x-4 px-4 py-2 odd:bg-gray/20'
+                                className='grid grid-cols-7 items-center gap-x-4 px-4 py-2 odd:bg-gray/20'
                             >
                                 <span>{category.name}</span>
                                 <span>{category.urlSlug}</span>
