@@ -40,6 +40,7 @@ public static class CategoryEndpoints
 
 		builder.MapGet("/toggleShowOnMenu/{id:guid}", ToggleShowOnMenu)
 			.WithName("ToggleCategoryShowOnMenu")
+			.RequireAuthorization("RequireManagerRole")
 			.Produces(204)
 			.Produces(404);
 
@@ -77,7 +78,7 @@ public static class CategoryEndpoints
 
 		builder.MapDelete("/{id:guid}", DeleteCategory)
 			.WithName("DeleteCategory")
-			.RequireAuthorization("RequireAdminRole")
+			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse>(204)
 			.Produces<ApiResponse>(404);
 		#endregion
