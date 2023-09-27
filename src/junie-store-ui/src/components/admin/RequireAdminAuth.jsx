@@ -15,6 +15,6 @@ export default function RequireAdminAuth() {
         auth.userDto.roleName === 'Admin' ? (
         <Outlet />
     ) : (
-        <p>You do not have access to the requested page.</p>
+        <div className='fixed inset-0 bg-primary'>You do not have access to the requested page.</div>
     );
 }

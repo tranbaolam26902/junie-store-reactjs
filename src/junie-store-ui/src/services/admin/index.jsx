@@ -1,1 +1,1 @@
-export * from './categories';
+export { default as useCategoryServices } from './useCategoryServices';
