@@ -14,7 +14,9 @@ public interface IProductQuery
 
     public bool IsDeleted { get; set; }
 
-    public int? Year { get; set; }
+    public bool IsPublished { get; set; }
+
+	public int? Year { get; set; }
 
     public int? Month { get; set; }
 

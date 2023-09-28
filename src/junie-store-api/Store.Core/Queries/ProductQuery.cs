@@ -20,6 +20,8 @@ public class ProductQuery : IProductQuery
 
     public bool IsDeleted { get; set; } = false;
 
+    public bool IsPublished { get; set; } = false;
+
     public int? Day { get; set; } = 0;
     
     public int? Month { get; set; } = 0;
