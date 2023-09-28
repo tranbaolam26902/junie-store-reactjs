@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 // Services
 import { getCategoryBySlug } from '@services/shared';
-import { useCategoryServices } from '~/services/admin';
+import { useCategoryServices } from '@services/admin';
 
 // Components
 import { AdminContainer } from '@components/admin';
