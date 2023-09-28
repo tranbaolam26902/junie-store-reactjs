@@ -8,8 +8,6 @@ public class ProductValidator : AbstractValidator<ProductEditModel>
 	public ProductValidator()
 	{
 		RuleFor(s => s.EditReason)
-			.NotEmpty()
-			.WithMessage("Lý do không được để trống.")
 			.MaximumLength(2048)
 			.WithMessage("Lý do không được vượt quá 2048 ký tự.");
 
