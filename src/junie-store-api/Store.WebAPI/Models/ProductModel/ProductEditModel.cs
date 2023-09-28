@@ -28,3 +28,8 @@ public class ProductEditModel
 
 	public IList<Guid> Categories { get; set; }
 }
+
+public class ProductEditReason
+{
+	public string Reason { get; set; }
+}
