@@ -263,6 +263,7 @@ public class CollectionRepository : ICollectionRepository
 			.Include(s => s.Pictures)
 			.WhereIf(condition.Active, s => s.Active)
 			.WhereIf(condition.IsDeleted, s => s.IsDeleted)
+			.WhereIf(condition.IsPublished, s => s.Categories.All(c => !c.IsDeleted))
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)
@@ -270,9 +271,9 @@ public class CollectionRepository : ICollectionRepository
 				(s.Price - (s.Price * s.Discount / 100)) > condition.MinPrice &&
 				(s.Price - (s.Price * s.Discount / 100)) < condition.MaxPrice)
 			.WhereIf(!string.IsNullOrWhiteSpace(condition.CategorySlug), s =>
-				s.Categories.Any(c => c.UrlSlug == condition.CategorySlug && !c.IsDeleted))
+				s.Categories.Any(c => c.UrlSlug == condition.CategorySlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.SubCategorySlug), s =>
-				s.Categories.Any(c => condition.SubCategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs) && !c.IsDeleted))
+				s.Categories.Any(c => condition.SubCategorySlug.Split(",", StringSplitOptions.TrimEntries).Any(cs => c.UrlSlug == cs)))
 			.WhereIf(!string.IsNullOrEmpty(condition.ProductSlug), s =>
 				s.UrlSlug.Contains(condition.ProductSlug))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
