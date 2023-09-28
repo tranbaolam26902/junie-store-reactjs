@@ -41,14 +41,11 @@ const Input = React.forwardRef((props, ref) => {
                     ref={ref}
                     id={id}
                     type={type === 'password' && showPassword ? 'text' : type ? type : 'text'}
-                    className={`${type === 'password' ? 'pr-10 ' : ''}
-                        ${
-                            message ? 'border-red ' : ''
-                        }px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black ${
-                            className ? className : ''
-                        }`
-                        .replace(/\s+/g, ' ')
-                        .trim()}
+                    className={`${
+                        type === 'password' ? 'pr-10 ' : ''
+                    }px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black${
+                        className ? ' ' + className : ''
+                    }`}
                     onFocus={type === 'password' ? handleFocusInput : () => {}}
                     onBlur={type === 'password' ? handleBlurInput : () => {}}
                     {...passProps}
