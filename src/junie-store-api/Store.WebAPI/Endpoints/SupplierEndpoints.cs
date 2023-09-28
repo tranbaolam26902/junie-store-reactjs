@@ -6,6 +6,7 @@ using Store.Core.Collections;
 using Store.Core.Entities;
 using Store.Core.Queries;
 using Store.Services.Shops;
+using Store.WebAPI.Filters;
 using Store.WebAPI.Models;
 using Store.WebAPI.Models.SupplierModel;
 
@@ -32,15 +33,7 @@ public static class SupplierEndpoints
 		builder.MapPost("/", AddSupplierAsync)
 			.WithName("AddSupplierAsync")
 			.RequireAuthorization("RequireManagerRole")
-			.Produces<ApiResponse<SupplierDto>>();
-
-		#endregion
-
-		#region PUT Method
-
-		builder.MapDelete("/toggleDelete/{supplierId:guid}", ToggleDeleteSupplierAsync)
-			.WithName("ToggleDeleteSupplierAsync")
-			.RequireAuthorization("RequireManagerRole")
+			.AddEndpointFilter<ValidatorFilter<SupplierEditModel>>()
 			.Produces<ApiResponse<SupplierDto>>();
 
 		#endregion
@@ -50,7 +43,17 @@ public static class SupplierEndpoints
 		builder.MapPut("/{supplierId:guid}", UpdateSupplierAsync)
 			.WithName("UpdateSupplierAsync")
 			.RequireAuthorization("RequireManagerRole")
+			.AddEndpointFilter<ValidatorFilter<SupplierEditModel>>()
 			.Produces<ApiResponse>();
+
+		#endregion
+
+		#region DELETE Method
+
+		builder.MapDelete("/toggleDelete/{supplierId:guid}", ToggleDeleteSupplierAsync)
+			.WithName("ToggleDeleteSupplierAsync")
+			.RequireAuthorization("RequireManagerRole")
+			.Produces<ApiResponse<SupplierDto>>();
 
 		#endregion
 		return app;
@@ -91,7 +94,6 @@ public static class SupplierEndpoints
 		try
 		{
 			var supplier = mapper.Map<Supplier>(model);
-			supplier.IsDeleted = false;
 
 			await repository.AddOrUpdateSupplierAsync(supplier);
 
