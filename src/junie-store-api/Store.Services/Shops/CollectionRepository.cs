@@ -21,6 +21,7 @@ public class CollectionRepository : ICollectionRepository
 		if (getAll)
 		{
 			return await _dbContext.Set<Product>()
+				.Include(s => s.Supplier)
 				.Include(s => s.Categories)
 				.Include(s => s.Feedback)
 				.Include(s => s.Pictures)
