@@ -23,12 +23,7 @@ public class OrderValidator : AbstractValidator<OrderEditModel>
 		RuleFor(post => post.ShipAddress)
 			.NotEmpty().WithMessage("Địa chỉ không được để trống.")
 			.MaximumLength(1024).WithMessage("Địa chỉ không được nhiều hơn 1024 ký tự.");
-
-		//RuleFor(s => s.Email)
-		//	.EmailAddress()
-		//	.WithMessage("Không đúng định dạng email.")
-		//	.NotEmpty()
-		//	.WithMessage("Email không được để trống.");
+		
 	}
 
 	private bool BeAValidPhoneNumber(string phone)
