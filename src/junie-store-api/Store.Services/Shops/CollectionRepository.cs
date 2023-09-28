@@ -293,6 +293,9 @@ public class CollectionRepository : ICollectionRepository
 			.WhereIf(condition.Day > 0, s => s.ActionTime.Day == condition.Day)
 			.WhereIf(condition.Month > 0, s => s.ActionTime.Month == condition.Month)
 			.WhereIf(condition.Year > 0, s => s.ActionTime.Year == condition.Year)
-			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s => s.EditReason.Contains(condition.Keyword));
+			.WhereIf(!string.IsNullOrWhiteSpace(condition.Keyword), s => 
+					s.EditReason.Contains(condition.Keyword) ||
+					s.Product.Name.Contains(condition.Keyword) ||
+					s.User.Name.Contains(condition.Keyword));
 	}
 }
