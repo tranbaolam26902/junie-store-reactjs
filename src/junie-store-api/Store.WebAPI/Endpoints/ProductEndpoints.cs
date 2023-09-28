@@ -26,7 +26,7 @@ public static class ProductEndpoints
 		#region GET method
 		routeGroupBuilder.MapGet("/", GetProducts)
 			.WithName("GetProducts")
-			.Produces<ApiResponse<IPagedList<ProductDto>>>();
+			.Produces<ApiResponse<IPagedList<ProductItem>>>();
 
 		routeGroupBuilder.MapGet("/histories", GetProductHistories)
 			.WithName("GetProductHistories")
@@ -175,9 +175,9 @@ public static class ProductEndpoints
 				await repository.GetPagedProductsAsync(
 					condition,
 					model,
-					p => p.ProjectToType<ProductDto>());
+					p => p.ProjectToType<ProductItem>());
 
-			var paginationResult = new PaginationResult<ProductDto>(products);
+			var paginationResult = new PaginationResult<ProductItem>(products);
 			
 			return Results.Ok(ApiResponse.Success(paginationResult));
 		}

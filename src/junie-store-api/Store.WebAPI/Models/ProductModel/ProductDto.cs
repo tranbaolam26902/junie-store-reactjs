@@ -1,5 +1,7 @@
 ﻿using Store.WebAPI.Models.CategoryModel;
 using Store.WebAPI.Models.PictureModel;
+using Store.WebAPI.Models.SupplierModel;
+
 namespace Store.WebAPI.Models.ProductModel;
 
 public class ProductDto
@@ -29,6 +31,8 @@ public class ProductDto
 	public bool IsDeleted { get; set; }
 
 	public int CountOrder { get; set; }
+
+	public Guid SupplierId { get; set; }
 
 	public IList<CategoryDto> Categories { get; set; }
 
