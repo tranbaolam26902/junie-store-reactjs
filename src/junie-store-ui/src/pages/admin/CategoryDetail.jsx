@@ -154,7 +154,7 @@ export default function CategoryDetail() {
                             Hiển thị trên menu
                         </label>
                     </div>
-                    <div className='inline-grid grid-cols-2 gap-4 w-fit'>
+                    <div className='inline-grid grid-cols-2 gap-4 ml-auto w-fit'>
                         <Button to='/admin/categories' outline text='Hủy' className='min-w-[6rem]' />
                         <Button submit accent text='Lưu' className='min-w-[6rem]' />
                     </div>
