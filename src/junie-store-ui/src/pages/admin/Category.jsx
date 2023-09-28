@@ -231,7 +231,6 @@ export default function Category() {
                             </div>
                         ))}
                     </div>
-
                     {/* End: Table */}
                     <Pager metadata={metadata} showTotal />
                 </div>
