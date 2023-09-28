@@ -10,6 +10,10 @@ public class ProductHistoryDto
 
 	public Guid UserId { get; set; }
 
+	public string ProductName { get; set; }
+
+	public string UserName { get; set; }
+
 	public DateTime ActionTime { get; set; }
 
 	public ProductHistoryAction HistoryAction { get; set; }
