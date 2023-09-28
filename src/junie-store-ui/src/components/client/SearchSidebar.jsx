@@ -42,7 +42,7 @@ export default function SearchSidebar() {
         }
 
         setIsFetching(true);
-        const { data } = await axios.get(`/api/products?Keyword=${keyword.trim()}&PageSize=10`);
+        const { data } = await axios.get(`/api/products?Keyword=${keyword.trim()}&IsPublished=true&PageSize=10`);
 
         if (data.isSuccess && data.result.items.length > 0) {
             setSearchResultItems(data.result.items);

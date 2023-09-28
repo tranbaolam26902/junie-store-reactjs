@@ -72,7 +72,7 @@ export default function SearchResult() {
 
     // Functions
     const filterProducts = async () => {
-        const queryString = searchParams.toString();
+        const queryString = 'IsPublished=true&' + searchParams.toString();
         const result = await getProductsByQueries(queryString);
 
         if (result) {
