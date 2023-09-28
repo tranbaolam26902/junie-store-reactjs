@@ -285,7 +285,7 @@ public static class ProductEndpoints
 			product.Categories = null;
 			product.Supplier = null;
 
-			await repository.AddOrUpdateProductAsync(product, user.Id, model.EditReason);
+			await repository.AddOrUpdateProductAsync(product, user.Id, "Tạo mới sản phẩm");
 
 			await repository.SetProductCategoriesAsync(product, model.Categories);
 
@@ -309,7 +309,13 @@ public static class ProductEndpoints
 	{
 		try
 		{
-			var user = IdentityManager.GetCurrentUser(context);
+			var user = context.GetCurrentUser();
+			if (string.IsNullOrWhiteSpace(model.EditReason))
+			{
+				return Results.Ok(ApiResponse.Fail(
+					HttpStatusCode.BadRequest,
+					$"Lý do chỉnh sửa không được để trống"));
+			}
 			if (await repository.IsProductExistedAsync(id, model.Name))
 			{
 				return Results.Ok(ApiResponse.Fail(
