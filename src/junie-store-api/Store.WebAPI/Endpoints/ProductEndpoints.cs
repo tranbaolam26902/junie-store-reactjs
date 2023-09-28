@@ -175,9 +175,9 @@ public static class ProductEndpoints
 				await repository.GetPagedProductsAsync(
 					condition,
 					model,
-					p => p.ProjectToType<ProductItem>());
+					p => p.ProjectToType<ProductDto>());
 
-			var paginationResult = new PaginationResult<ProductItem>(products);
+			var paginationResult = new PaginationResult<ProductDto>(products);
 			
 			return Results.Ok(ApiResponse.Success(paginationResult));
 		}
@@ -422,14 +422,14 @@ public static class ProductEndpoints
 	private static async Task<IResult> ToggleDeleteProduct(
 		[FromRoute] Guid id,
 		HttpContext context,
-		[FromBody] string reason,
+		[FromBody] ProductEditReason model,
 		[FromServices] ICollectionRepository repository)
 	{
 		try
 		{
 			var user = context.GetCurrentUser();
 
-			return await repository.ToggleDeleteProductAsync(id, user.Id, reason)
+			return await repository.ToggleDeleteProductAsync(id, user.Id, model.Reason)
 				? Results.Ok(ApiResponse.Success("Sản phẩm đã được chuyển trạng thái.", HttpStatusCode.NoContent))
 				: Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, $"Sản phẩm không tồn tại với id: `{id}`"));
 		}

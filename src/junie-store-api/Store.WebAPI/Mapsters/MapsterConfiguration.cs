@@ -3,6 +3,7 @@ using Store.Core.Entities;
 using Store.WebAPI.Models.CategoryModel;
 using Store.WebAPI.Models.OrderModel;
 using Store.WebAPI.Models.PictureModel;
+using Store.WebAPI.Models.ProductHistoryModel;
 using Store.WebAPI.Models.ProductModel;
 using Store.WebAPI.Models.SupplierModel;
 using Store.WebAPI.Models.UserModel;
@@ -35,6 +36,12 @@ public class MapsterConfiguration : IRegister
 		config.NewConfig<Product, ProductDto>();
 		config.NewConfig<ProductEditModel, Product>()
 			.Ignore(s => s.Categories);
+
+		config.NewConfig<ProductHistory, ProductHistoryDto>()
+			.Map(dest => dest.ProductName,
+				src => src.Product.Name ?? "")
+			.Map(dest => dest.UserName,
+				src => src.User.Name);
 
 		config.NewConfig<Supplier, SupplierDto>()
 			.Map(dest => dest.ProductCount,

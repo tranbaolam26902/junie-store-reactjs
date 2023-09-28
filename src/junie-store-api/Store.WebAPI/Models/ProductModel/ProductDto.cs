@@ -1,7 +1,5 @@
 ﻿using Store.WebAPI.Models.CategoryModel;
 using Store.WebAPI.Models.PictureModel;
-using Store.WebAPI.Models.SupplierModel;
-
 namespace Store.WebAPI.Models.ProductModel;
 
 public class ProductDto
