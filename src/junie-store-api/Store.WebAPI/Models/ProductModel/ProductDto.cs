@@ -24,6 +24,8 @@ public class ProductDto
 
 	public int Quantity { get; set; }
 
+	public int MinQuantity { get; set; }
+
 	public float Discount { get; set; }
 
 	public bool Active { get; set; }
