@@ -57,13 +57,12 @@ export default function OrderInfoSection() {
         return true;
     };
     const validateOrderInfo = () => {
-        let isValid = true;
+        validateName();
+        validateAddress();
+        validatePhoneNumber();
+        if (!validateName() || !validateAddress || !validatePhoneNumber()) return false;
 
-        isValid = validateName();
-        isValid = validateAddress();
-        isValid = validatePhoneNumber();
-
-        return isValid;
+        return true;
     };
     const getOrderInfo = () => {
         return {
