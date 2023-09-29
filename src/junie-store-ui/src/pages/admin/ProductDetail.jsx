@@ -1,6 +1,9 @@
 // Libraries
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+// Assets
+import { icons } from '@assets/icons';
 
 // Services
 import { useProductServices, useSupplierServices } from '@services/admin';
@@ -47,6 +50,11 @@ export default function ProductDetail() {
     const [isActive, setIsActive] = useState(false);
     const [editReason, setEditReason] = useState('');
     const [editReasonMessage, setEditReasonMessage] = useState('');
+    const [images, setImages] = useState([]);
+    const [files, setFiles] = useState([]);
+
+    // Refs
+    const inputFileRef = useRef(null);
 
     // Functions
     const getProduct = async () => {
@@ -65,6 +73,8 @@ export default function ProductDetail() {
             setDescription(product.description);
             setInstruction(product.instruction);
             setIsActive(product.active);
+            setImages(product.pictures);
+            getProductImages(product);
         } else {
             setProductId('');
             setSelectedCategories([]);
@@ -203,6 +213,34 @@ export default function ProductDetail() {
 
         return true;
     };
+    const uploadImages = async (productId, files) => {
+        const result = await productServices.uploadProductImages(productId, files);
+
+        if (!result.isSuccess) {
+            setErrorMessages(result.errors);
+            return false;
+        } else return true;
+    };
+    const getProductImages = (product) => {
+        const currentFiles = [];
+        const currentImages = [];
+        product.pictures.forEach((image) => {
+            const fileName = image.path.substring(image.path.lastIndexOf('/') + 1, image.path.lastIndexOf('.'));
+            const fileExt = image.path.substring(image.path.lastIndexOf('.'));
+            fetch(`${import.meta.env.VITE_API_ENDPOINT}/${image.path}`)
+                .then((response) => response.blob())
+                .then((blob) => {
+                    const file = new File([blob], fileName + fileExt, { type: blob.type });
+                    currentFiles.push(file);
+                    currentImages.push({
+                        id: fileName + fileExt,
+                        path: image.path
+                    });
+                });
+        });
+        setFiles(currentFiles);
+        setImages(currentImages);
+    };
 
     // Event handlers
     const handleSubmit = async (e) => {
@@ -228,15 +266,19 @@ export default function ProductDetail() {
             const result = await productServices.createProduct(product);
 
             if (result.isSuccess) {
-                window.alert('Tạo sản phẩm thành công.');
-                navigate('/admin/products');
+                if (uploadImages(result.result.id, files)) {
+                    window.alert('Tạo sản phẩm thành công.');
+                    navigate('/admin/products');
+                }
             } else setErrorMessages(result.errors);
         } else {
             const result = await productServices.editProduct(product);
 
             if (result.isSuccess) {
-                window.alert('Cập nhật sản phẩm thành công.');
-                navigate('/admin/products');
+                if (files.length !== 0 && uploadImages(result.result.id, files)) {
+                    window.alert('Cập nhật sản phẩm thành công.');
+                    navigate('/admin/products');
+                }
             } else setErrorMessages(result.errors);
         }
     };
@@ -249,6 +291,27 @@ export default function ProductDetail() {
     };
     const handleRemoveSelectedCategory = (e) => {
         setSelectedCategories(selectedCategories.filter((selectedCategory) => selectedCategory.id !== e.target.value));
+    };
+    const handleShowFileSelect = () => {
+        inputFileRef.current.click();
+    };
+    const handleSelectFiles = (e) => {
+        if (e.target.files.length === 0) return;
+
+        const currentImages = [
+            ...images,
+            ...Array.from(e.target.files).map((file) => ({
+                path: URL.createObjectURL(file),
+                id: file.lastModified + file.name
+            }))
+        ];
+        const currentFiles = [...files, ...Array.from(e.target.files)];
+        setImages(currentImages);
+        setFiles(currentFiles);
+    };
+    const handleRemoveImage = (e) => {
+        setFiles(files.filter((file) => file.name !== e.target.value));
+        setImages(images.filter((image) => image.id !== e.target.value));
     };
 
     // Side effects
@@ -274,205 +337,261 @@ export default function ProductDetail() {
                         {errorMessage}
                     </span>
                 ))}
-                <form className='flex flex-col gap-3 lg:w-1/2' onSubmit={handleSubmit}>
-                    <div className='flex flex-col'>
-                        <div className='flex gap-4'>
-                            <span className='text-sm'>Danh mục</span>
+                <div className='grid lg:grid-cols-2 gap-8'>
+                    <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+                        <div className='flex flex-col'>
+                            <div className='flex gap-4'>
+                                <span className='text-sm'>Danh mục</span>
+                                <button
+                                    type='button'
+                                    className='flex items-center gap-1 font-semibold text-sm'
+                                    onClick={handleShowSelectCategoriesModal}
+                                >
+                                    <img src={icons.plus} alt='plus-icon' className='pb-1 w-2' />
+                                    <span>Thêm</span>
+                                </button>
+                            </div>
+                            <div className='flex items-center gap-2 flex-wrap'>
+                                {selectedCategories.map((selectedCategory, index) => (
+                                    <div
+                                        key={index}
+                                        className='relative flex items-center justify-between gap-2 px-4 py-2 bg-gray rounded-full'
+                                    >
+                                        <span>{selectedCategory.name}</span>
+                                        <button
+                                            type='button'
+                                            value={selectedCategory.id}
+                                            title='Xóa danh mục'
+                                            onClick={handleRemoveSelectedCategory}
+                                        >
+                                            &times;
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                            {selectedCategoriesMessage && (
+                                <span className='text-sm text-red'>{selectedCategoriesMessage}</span>
+                            )}
+                        </div>
+                        <div>
+                            <Input
+                                label='Tên sản phẩm'
+                                value={name}
+                                message={nameMessage}
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                    setNameMessage('');
+                                }}
+                                onBlur={validateName}
+                            />
+                        </div>
+                        <div className='grid grid-cols-2 gap-4'>
+                            <div className='flex flex-col'>
+                                <div>
+                                    <label
+                                        htmlFor='suppliers'
+                                        className='text-sm mr-1 w-fit cursor-pointer select-none'
+                                    >
+                                        Nhà cung cấp
+                                    </label>
+                                </div>
+                                <select
+                                    id='suppliers'
+                                    className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black resize-none'
+                                    value={selectedSupplier}
+                                    onChange={(e) => {
+                                        setSelectedSupplier(e.target.value);
+                                        setSupplierMessage('');
+                                    }}
+                                >
+                                    <option value=''>-- Chọn nhà cung cấp --</option>
+                                    {suppliers.map((supplier) => (
+                                        <option key={supplier.id} value={supplier.id}>
+                                            {supplier.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {supplierMessage && <span className='text-sm text-red'>{supplierMessage}</span>}
+                            </div>
+                            <Input
+                                label='SKU'
+                                value={sku}
+                                message={skuMessage}
+                                onChange={(e) => {
+                                    setSku(e.target.value);
+                                    setSkuMessage('');
+                                }}
+                                onBlur={validateSku}
+                            />
+                        </div>
+                        <div className='grid grid-cols-2 gap-4'>
+                            <Input
+                                type='number'
+                                label='Giá'
+                                value={price}
+                                message={priceMessage}
+                                onChange={(e) => {
+                                    setPrice(e.target.value);
+                                    setPriceMessage('');
+                                }}
+                                onBlur={validatePrice}
+                            />
+                            <Input
+                                type='number'
+                                label='Giảm giá'
+                                value={discount}
+                                message={discountMessage}
+                                onChange={(e) => {
+                                    setDiscount(e.target.value);
+                                    setDiscountMessage('');
+                                }}
+                                onBlur={validateDiscount}
+                            />
+                        </div>
+                        <div className='grid grid-cols-2 gap-4'>
+                            <Input
+                                type='number'
+                                label='Số lượng'
+                                value={quantity}
+                                message={quantityMessage}
+                                onChange={(e) => {
+                                    setQuantity(e.target.value);
+                                    setQuantityMessage('');
+                                }}
+                                onBlur={validateQuantity}
+                            />
+                            <Input
+                                type='number'
+                                label='Số lượng tối thiểu'
+                                value={minQuantity}
+                                message={minQuantityMessage}
+                                onChange={(e) => {
+                                    setMinQuantity(e.target.value);
+                                    setMinQuantityMessage('');
+                                }}
+                                onBlur={validateMinQuantity}
+                            />
+                        </div>
+                        <div className='flex flex-col'>
+                            <label htmlFor='description' className='text-sm mr-1 w-fit cursor-pointer select-none'>
+                                Mô tả sản phẩm
+                            </label>
+                            <textarea
+                                id='description'
+                                rows={4}
+                                value={description}
+                                className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
+                                onChange={(e) => {
+                                    setDescription(e.target.value);
+                                    setDescriptionMessage('');
+                                }}
+                                onBlur={validateDescription}
+                            />
+                            {descriptionMessage && <span className='text-sm text-red'>{descriptionMessage}</span>}
+                        </div>
+                        <div className='flex flex-col'>
+                            <label htmlFor='instruction' className='text-sm mr-1 w-fit cursor-pointer select-none'>
+                                Hướng dẫn sử dụng & bảo quản
+                            </label>
+                            <textarea
+                                id='instruction'
+                                rows={4}
+                                value={instruction}
+                                className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
+                                onChange={(e) => {
+                                    setInstruction(e.target.value);
+                                    setInstructionMessage('');
+                                }}
+                                onBlur={validateInstruction}
+                            />
+                            {instructionMessage && <span className='text-sm text-red'>{instructionMessage}</span>}
+                        </div>
+                        {params.productSlug !== 'create' && (
+                            <div className='flex flex-col'>
+                                <label htmlFor='reason' className='text-sm mr-1 w-fit cursor-pointer select-none'>
+                                    Lý do chỉnh sửa
+                                </label>
+                                <textarea
+                                    id='reason'
+                                    rows={2}
+                                    value={editReason}
+                                    className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black resize-none'
+                                    onChange={(e) => {
+                                        setEditReason(e.target.value);
+                                        setEditReasonMessage('');
+                                    }}
+                                />
+                                {editReasonMessage && <span className='text-sm text-red'>{editReasonMessage}</span>}
+                            </div>
+                        )}
+                        <div className='flex gap-1'>
+                            <input
+                                type='checkbox'
+                                id='active'
+                                checked={isActive}
+                                onChange={(e) => {
+                                    setIsActive(e.target.checked);
+                                }}
+                            />
+
+                            <label htmlFor='active' className='pt-0.5 text-sm'>
+                                Kích hoạt
+                            </label>
+                        </div>
+                        <div className='inline-grid grid-cols-2 gap-4 ml-auto w-fit'>
+                            <Button to='/admin/products' outline text='Hủy' className='min-w-[6rem]' />
+                            <Button submit accent text='Lưu' className='min-w-[6rem]' />
+                        </div>
+                    </form>
+                    <section>
+                        <div className='flex items-center gap-4 mb-2'>
+                            <span className='text-sm'>Hình ảnh</span>
                             <button
                                 type='button'
-                                className='font-semibold text-sm'
-                                onClick={handleShowSelectCategoriesModal}
+                                className='flex items-center gap-1 font-semibold text-sm'
+                                onClick={handleShowFileSelect}
                             >
-                                Thêm
+                                <img src={icons.plus} alt='plus-icon' className='pb-1 w-2' />
+                                <span>Thêm</span>
                             </button>
+                            <input
+                                ref={inputFileRef}
+                                type='file'
+                                accept='image/*'
+                                hidden
+                                multiple
+                                onChange={handleSelectFiles}
+                            />
                         </div>
-                        <div className='flex items-center gap-2 flex-wrap'>
-                            {selectedCategories.map((selectedCategory, index) => (
+                        <div className='grid grid-cols-6 gap-4'>
+                            {images.map((image) => (
                                 <div
-                                    key={index}
-                                    className='relative flex items-center justify-between gap-2 px-4 py-2 bg-gray rounded-full'
+                                    key={image.id}
+                                    className='relative flex items-center gap-4 p-2 bg-primary rounded shadow'
                                 >
-                                    <span>{selectedCategory.name}</span>
+                                    <img
+                                        src={`${
+                                            image.path.includes('blob:')
+                                                ? image.path
+                                                : `${import.meta.env.VITE_API_ENDPOINT}/${image.path}`
+                                        }`}
+                                        alt='product-image'
+                                        className='w-full aspect-[3/4] object-cover'
+                                    />
                                     <button
                                         type='button'
-                                        value={selectedCategory.id}
-                                        title='Xóa danh mục'
-                                        onClick={handleRemoveSelectedCategory}
+                                        title='Xóa hình ảnh'
+                                        value={image.id}
+                                        className='absolute -top-2 -right-2 flex items-center justify-center p-3 w-4 h-4 aspect-square bg-gray rounded-full transition duration-200 hover:opacity-80'
+                                        onClick={handleRemoveImage}
                                     >
                                         &times;
                                     </button>
                                 </div>
                             ))}
                         </div>
-                        {selectedCategoriesMessage && (
-                            <span className='text-sm text-red'>{selectedCategoriesMessage}</span>
-                        )}
-                    </div>
-                    <Input
-                        label='Tên sản phẩm'
-                        value={name}
-                        message={nameMessage}
-                        onChange={(e) => {
-                            setName(e.target.value);
-                            setNameMessage('');
-                        }}
-                        onBlur={validateName}
-                    />
-                    <div className='grid grid-cols-2 gap-4'>
-                        <div className='flex flex-col'>
-                            <div>
-                                <label htmlFor='suppliers' className='text-sm mr-1 w-fit cursor-pointer select-none'>
-                                    Nhà cung cấp
-                                </label>
-                            </div>
-                            <select
-                                id='suppliers'
-                                className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black resize-none'
-                                value={selectedSupplier}
-                                onChange={(e) => {
-                                    setSelectedSupplier(e.target.value);
-                                    setSupplierMessage('');
-                                }}
-                            >
-                                <option value=''>-- Chọn nhà cung cấp --</option>
-                                {suppliers.map((supplier) => (
-                                    <option key={supplier.id} value={supplier.id}>
-                                        {supplier.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {supplierMessage && <span className='text-sm text-red'>{supplierMessage}</span>}
-                        </div>
-                        <Input
-                            label='SKU'
-                            value={sku}
-                            message={skuMessage}
-                            onChange={(e) => {
-                                setSku(e.target.value);
-                                setSkuMessage('');
-                            }}
-                            onBlur={validateSku}
-                        />
-                    </div>
-                    <div className='grid grid-cols-2 gap-4'>
-                        <Input
-                            type='number'
-                            label='Giá'
-                            value={price}
-                            message={priceMessage}
-                            onChange={(e) => {
-                                setPrice(e.target.value);
-                                setPriceMessage('');
-                            }}
-                            onBlur={validatePrice}
-                        />
-                        <Input
-                            type='number'
-                            label='Giảm giá'
-                            value={discount}
-                            message={discountMessage}
-                            onChange={(e) => {
-                                setDiscount(e.target.value);
-                                setDiscountMessage('');
-                            }}
-                            onBlur={validateDiscount}
-                        />
-                    </div>
-                    <div className='grid grid-cols-2 gap-4'>
-                        <Input
-                            type='number'
-                            label='Số lượng'
-                            value={quantity}
-                            message={quantityMessage}
-                            onChange={(e) => {
-                                setQuantity(e.target.value);
-                                setQuantityMessage('');
-                            }}
-                            onBlur={validateQuantity}
-                        />
-                        <Input
-                            type='number'
-                            label='Số lượng tối thiểu'
-                            value={minQuantity}
-                            message={minQuantityMessage}
-                            onChange={(e) => {
-                                setMinQuantity(e.target.value);
-                                setMinQuantityMessage('');
-                            }}
-                            onBlur={validateMinQuantity}
-                        />
-                    </div>
-                    <div className='flex flex-col'>
-                        <label htmlFor='description' className='text-sm mr-1 w-fit cursor-pointer select-none'>
-                            Mô tả sản phẩm
-                        </label>
-                        <textarea
-                            id='description'
-                            rows={4}
-                            value={description}
-                            className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                            onChange={(e) => {
-                                setDescription(e.target.value);
-                                setDescriptionMessage('');
-                            }}
-                            onBlur={validateDescription}
-                        />
-                        {descriptionMessage && <span className='text-sm text-red'>{descriptionMessage}</span>}
-                    </div>
-                    <div className='flex flex-col'>
-                        <label htmlFor='instruction' className='text-sm mr-1 w-fit cursor-pointer select-none'>
-                            Hướng dẫn sử dụng & bảo quản
-                        </label>
-                        <textarea
-                            id='instruction'
-                            rows={4}
-                            value={instruction}
-                            className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
-                            onChange={(e) => {
-                                setInstruction(e.target.value);
-                                setInstructionMessage('');
-                            }}
-                            onBlur={validateInstruction}
-                        />
-                        {instructionMessage && <span className='text-sm text-red'>{instructionMessage}</span>}
-                    </div>
-                    {params.productSlug !== 'create' && (
-                        <div className='flex flex-col'>
-                            <label htmlFor='reason' className='text-sm mr-1 w-fit cursor-pointer select-none'>
-                                Lý do chỉnh sửa
-                            </label>
-                            <textarea
-                                id='reason'
-                                rows={2}
-                                value={editReason}
-                                className='px-4 py-3 w-full rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black resize-none'
-                                onChange={(e) => {
-                                    setEditReason(e.target.value);
-                                    setEditReasonMessage('');
-                                }}
-                            />
-                            {editReasonMessage && <span className='text-sm text-red'>{editReasonMessage}</span>}
-                        </div>
-                    )}
-                    <div className='flex gap-1'>
-                        <input
-                            type='checkbox'
-                            id='active'
-                            checked={isActive}
-                            onChange={(e) => {
-                                setIsActive(e.target.checked);
-                            }}
-                        />
-
-                        <label htmlFor='active' className='pt-0.5 text-sm'>
-                            Kích hoạt
-                        </label>
-                    </div>
-                    <div className='inline-grid grid-cols-2 gap-4 ml-auto w-fit'>
-                        <Button to='/admin/products' outline text='Hủy' className='min-w-[6rem]' />
-                        <Button submit accent text='Lưu' className='min-w-[6rem]' />
-                    </div>
-                </form>
+                    </section>
+                </div>
                 <SelectCategoryModal
                     show={showSelectCategoriesModal}
                     onHide={handleHideSelectCategoriesModal}

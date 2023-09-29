@@ -31,7 +31,7 @@ const handleLoadHomePage = async () => {
 };
 const handleLoadCategoryPage = async ({ params }) => {
     const category = await getCategoryBySlug(params.categorySlug);
-    const result = await getProductsByQueries(`CategorySlug=${params.categorySlug}&PageSize=20`);
+    const result = await getProductsByQueries(`CategorySlug=${params.categorySlug}&IsPublished=true&PageSize=20`);
     const relatedCategories = await getRelatedCategoriesBySlug({ categorySlug: params.categorySlug });
 
     if (!category) throw new Response('Not Found', { status: category.statusCode });

@@ -10,7 +10,7 @@ import { images } from '@assets/images';
 import { useDebounce } from '@hooks/shared';
 
 // Services
-import { useProductServices } from '@services/admin';
+import { useCategoryServices, useProductServices } from '@services/admin';
 import { getProductsByQueries } from '@services/client';
 
 // Components
@@ -35,8 +35,8 @@ const headers = [
     },
     {
         id: 3,
-        value: 'urlSlug',
-        name: 'Slug',
+        value: '',
+        name: 'Danh mục',
         colSpan: 2
     },
     {
@@ -94,11 +94,14 @@ export default function Product() {
     const [keyword, setKeyword] = useState('');
     const [products, setProducts] = useState([]);
     const [metadata, setMetadata] = useState({});
+    const [categories, setCategories] = useState([]);
+    const [categorySlug, setCategorySlug] = useState('');
 
     // Hooks
     const [searchParams, setSearchParams] = useSearchParams();
     const debounceKeyword = useDebounce(keyword, 500);
     const productServices = useProductServices();
+    const categoryServices = useCategoryServices();
 
     // Functions
     const getProducts = async () => {
@@ -112,15 +115,28 @@ export default function Product() {
             setMetadata({});
         }
     };
+    const getCategories = async () => {
+        const result = await categoryServices.getCategoriesByQueries('');
+
+        if (result) setCategories(result.items);
+        else setCategories([]);
+    };
     const searchProduct = (keyword) => {
         searchParams.set('Keyword', keyword.trim());
         setSearchParams(searchParams);
     };
 
     // Event handlers
+    const handleFilterByCategory = (e) => {
+        setCategorySlug(e.target.value);
+        if (e.target.value === '') searchParams.delete('CategorySlug');
+        else searchParams.set('CategorySlug', e.target.value);
+        setSearchParams(searchParams);
+    };
     const handleClearFilter = () => {
         setKeyword('');
         setSearchParams('');
+        setCategorySlug('');
     };
     const handleSort = (e) => {
         if (!e.target.closest('button').value) return;
@@ -176,6 +192,7 @@ export default function Product() {
     /* Get products by queries */
     useEffect(() => {
         getProducts();
+        getCategories();
         // eslint-disable-next-line
     }, [searchParams]);
     /* Debounce search keyword */
@@ -200,6 +217,18 @@ export default function Product() {
                                     setKeyword(e.target.value);
                                 }}
                             />
+                            <select
+                                className='px-4 py-3 w-max rounded-sm outline outline-2 -outline-offset-2 outline-gray transition-all duration-200 focus:outline-black'
+                                value={categorySlug}
+                                onChange={handleFilterByCategory}
+                            >
+                                <option value=''>-- Tất cả danh mục --</option>
+                                {categories.map((category) => (
+                                    <option key={category.id} value={category.urlSlug}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
                             <button type='button' className='font-semibold' onClick={handleClearFilter}>
                                 Xóa bộ lọc
                             </button>
@@ -236,11 +265,27 @@ export default function Product() {
                         {products.map((product) => (
                             <div
                                 key={product.id + product.isDeleted + product.showOnMenu}
-                                className='grid grid-cols-12 items-center gap-x-4 px-4 py-2 odd:bg-gray/20'
+                                className='grid grid-cols-12 items-center gap-x-4 px-4 py-2 odd:bg-gray/20 rounded'
                             >
-                                <img src={images.placeholder} alt='product-image' className='w-24 aspect-[3/4]' />
-                                <span className='col-span-2'>{product.name}</span>
-                                <span className='col-span-2'>{product.urlSlug}</span>
+                                <Link to={`/admin/products/${product.urlSlug}`}>
+                                    <img
+                                        src={
+                                            product.pictures.length !== 0
+                                                ? `${import.meta.env.VITE_API_ENDPOINT}/${product.pictures[0].path}`
+                                                : images.placeholder
+                                        }
+                                        alt='product-image'
+                                        className='w-24 aspect-[3/4] rounded-sm'
+                                    />
+                                </Link>
+                                <Link to={`/admin/products/${product.urlSlug}`} className='col-span-2'>
+                                    {product.name}
+                                </Link>
+                                <div className='col-span-2 flex flex-col'>
+                                    {product.categories.map((category) => (
+                                        <span key={category.id}>{category.name}</span>
+                                    ))}
+                                </div>
                                 <span>{product.sku}</span>
                                 <span className='text-center'>
                                     {new Intl.NumberFormat('vi-vn').format(product.price)}
@@ -260,9 +305,7 @@ export default function Product() {
                                     onChange={handleToggleIsDeleted}
                                 />
                                 <div className='flex flex-col items-center gap-y-2'>
-                                    <Link to={`/admin/products/${product.urlSlug}`} type='button'>
-                                        Chỉnh sửa
-                                    </Link>
+                                    <Link to={`/admin/products/${product.urlSlug}`}>Chỉnh sửa</Link>
                                     <button
                                         type='button'
                                         value={product.id}
