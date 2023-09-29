@@ -23,7 +23,7 @@ public interface IOrderRepository
 
 	Task<Order> GetOrderByCodeAsync(string code, CancellationToken cancellation = default);
 
-	Task<Order> ToggleOrderAsync(Order order, CancellationToken cancellation = default);
+	Task<Order> ToggleOrderAsync(Order order, OrderStatus status, CancellationToken cancellation = default);
 
 	Task<IPagedList<T>> GetPagedOrdersAsync<T>(
 		IOrderQuery condition,

@@ -184,9 +184,9 @@ public class OrderRepository : IOrderRepository
 			.FirstOrDefaultAsync(s => s.CodeOrder == code, cancellation);
 	}
 
-	public async Task<Order> ToggleOrderAsync(Order order, CancellationToken cancellation = default)
+	public async Task<Order> ToggleOrderAsync(Order order, OrderStatus status, CancellationToken cancellation = default)
 	{
-		order.Status = OrderStatus.Approved;
+		order.Status = status;
 
 		_dbContext.Entry(order).State = EntityState.Modified;
 		await _dbContext.SaveChangesAsync(cancellation);

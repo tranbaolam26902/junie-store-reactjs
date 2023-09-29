@@ -7,11 +7,11 @@ public enum OrderStatus
 {
 	None,
 	New, //Đơn hàng mới
-	Cancelled, // Đơn đã hủy
 	Approved, // Đã xác nhận 
 	Shipping, // Đang giao hàng
-	Returned, // Trả hàng
 	Success, // Giao thành công
+	Returned, // Trả hàng
+	Cancelled, // Đơn đã hủy
 }
 
 public class Order : IEntity
