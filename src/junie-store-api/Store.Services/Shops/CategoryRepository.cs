@@ -33,6 +33,7 @@ public class CategoryRepository : ICategoryRepository
 		
 		var products = await _dbContext.Set<Product>()
 			.Include(p => p.Categories)
+			.Where(c => !c.IsDeleted && c.Active)
 			.WhereIf(!string.IsNullOrWhiteSpace(condition.UrlSlug),
 			s => s.Categories.Any(c => c.UrlSlug == condition.UrlSlug && !c.IsDeleted))
 			.WhereIf(!string.IsNullOrEmpty(condition.Keyword), s =>
