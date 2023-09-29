@@ -44,6 +44,18 @@ const headers = [
         value: 'isDeleted',
         name: 'Xóa',
         center: true
+    },
+    {
+        id: 6,
+        value: '',
+        name: 'Số lượng sản phẩm',
+        center: true
+    },
+    {
+        id: 7,
+        value: '',
+        name: 'Thao tác',
+        center: true
     }
 ];
 
@@ -81,6 +93,8 @@ export default function Category() {
         setSearchParams('');
     };
     const handleSort = (e) => {
+        if (!e.target.closest('button').value) return;
+
         const currentSortOrder = searchParams.get('SortOrder');
         const currentSortColumn = searchParams.get('SortColumn');
 
@@ -162,7 +176,7 @@ export default function Category() {
                                     value={header.value}
                                     className={`flex items-center gap-1 font-semibold${
                                         header.center === true ? ' justify-center' : ''
-                                    }`}
+                                    }${header.value === '' ? ' cursor-default' : ''}`}
                                     onClick={handleSort}
                                 >
                                     <span>{header.name}</span>
@@ -176,8 +190,6 @@ export default function Category() {
                                         )}
                                 </button>
                             ))}
-                            <span className='text-center font-semibold'>Số lượng sản phẩm</span>
-                            <span className='text-center font-semibold'>Thao tác</span>
                         </div>
                         {categories.map((category) => (
                             <div
@@ -216,7 +228,6 @@ export default function Category() {
                             </div>
                         ))}
                     </div>
-
                     {/* End: Table */}
                     <Pager metadata={metadata} showTotal />
                 </div>

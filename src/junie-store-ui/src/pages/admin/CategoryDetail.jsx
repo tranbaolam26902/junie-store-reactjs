@@ -4,11 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 
 // Services
 import { getCategoryBySlug } from '@services/shared';
-import { useCategoryServices } from '~/services/admin';
+import { useCategoryServices } from '@services/admin';
 
 // Components
 import { AdminContainer } from '@components/admin';
 import { Button, Input } from '@components/shared';
+import { PageTransition } from '@components/shared/animations';
 
 export default function CategoryDetail() {
     // Hooks
@@ -108,55 +109,57 @@ export default function CategoryDetail() {
 
     return (
         <AdminContainer>
-            <h1 className='my-3 text-xl font-semibold uppercase'>
-                {params.categorySlug === 'create' ? 'Tạo danh mục' : 'Chính sửa danh mục'}
-            </h1>
-            {errorMessages.map((errorMessage, index) => (
-                <span key={index} className='text-sm text-red'>
-                    {errorMessage}
-                </span>
-            ))}
-            <form className='flex flex-col gap-3 lg:w-1/2' onSubmit={handleSubmit}>
-                <Input
-                    ref={nameRef}
-                    value={name}
-                    message={nameMessage}
-                    label='Tên danh mục'
-                    onChange={(e) => {
-                        setName(e.target.value);
-                        setNameMessage('');
-                    }}
-                    onBlur={validateName}
-                />
-                <Input
-                    ref={descriptionRef}
-                    value={description}
-                    message={descriptionMessage}
-                    label='Mô tả'
-                    onChange={(e) => {
-                        setDescription(e.target.value);
-                        setDescriptionMessage('');
-                    }}
-                />
-
-                <div className='flex gap-1'>
-                    <input
-                        id='show-on-menu'
-                        checked={showOnMenu}
-                        type='checkbox'
+            <PageTransition>
+                <h1 className='my-3 text-xl font-semibold uppercase'>
+                    {params.categorySlug === 'create' ? 'Tạo danh mục' : 'Chính sửa danh mục'}
+                </h1>
+                {errorMessages.map((errorMessage, index) => (
+                    <span key={index} className='text-sm text-red'>
+                        {errorMessage}
+                    </span>
+                ))}
+                <form className='flex flex-col gap-3 lg:w-1/2' onSubmit={handleSubmit}>
+                    <Input
+                        ref={nameRef}
+                        value={name}
+                        message={nameMessage}
+                        label='Tên danh mục'
                         onChange={(e) => {
-                            setShowOnMenu(e.target.checked);
+                            setName(e.target.value);
+                            setNameMessage('');
+                        }}
+                        onBlur={validateName}
+                    />
+                    <Input
+                        ref={descriptionRef}
+                        value={description}
+                        message={descriptionMessage}
+                        label='Mô tả'
+                        onChange={(e) => {
+                            setDescription(e.target.value);
+                            setDescriptionMessage('');
                         }}
                     />
-                    <label htmlFor='show-on-menu' className='pt-0.5'>
-                        Hiển thị trên menu
-                    </label>
-                </div>
-                <div className='inline-grid grid-cols-2 gap-4 w-fit'>
-                    <Button to='/admin/categories' outline text='Hủy' className='min-w-[6rem]' />
-                    <Button submit secondary text='Lưu' className='min-w-[6rem]' />
-                </div>
-            </form>
+
+                    <div className='flex gap-1'>
+                        <input
+                            id='show-on-menu'
+                            checked={showOnMenu}
+                            type='checkbox'
+                            onChange={(e) => {
+                                setShowOnMenu(e.target.checked);
+                            }}
+                        />
+                        <label htmlFor='show-on-menu' className='pt-0.5'>
+                            Hiển thị trên menu
+                        </label>
+                    </div>
+                    <div className='inline-grid grid-cols-2 gap-4 ml-auto w-fit'>
+                        <Button to='/admin/categories' outline text='Hủy' className='min-w-[6rem]' />
+                        <Button submit accent text='Lưu' className='min-w-[6rem]' />
+                    </div>
+                </form>
+            </PageTransition>
         </AdminContainer>
     );
 }

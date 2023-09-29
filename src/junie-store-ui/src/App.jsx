@@ -2,7 +2,7 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 // Pages
-import { AdminCategory, CategoryDetail, AdminOrder, AdminProduct, Dashboard, User } from '@pages/admin';
+import { AdminCategory, CategoryDetail, AdminOrder, AdminProduct, Dashboard, User, ProductDetail } from '@pages/admin';
 import { Home, Category, ClientProduct, Checkout, SearchResult, Blog, BlogDetail, SinglePage } from '@pages/client';
 import { Account, Login, NotFound, PasswordRecovery, SignUp } from '@pages/shared';
 
@@ -136,6 +136,7 @@ const router = createBrowserRouter([
                             { path: '/admin/categories', element: <AdminCategory /> },
                             { path: '/admin/categories/:categorySlug', element: <CategoryDetail /> },
                             { path: '/admin/products', element: <AdminProduct /> },
+                            { path: '/admin/products/:productSlug', element: <ProductDetail /> },
                             { path: '/admin/orders', element: <AdminOrder /> }
                         ]
                     },

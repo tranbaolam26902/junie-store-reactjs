@@ -72,7 +72,7 @@ export default function Category() {
 
     // Functions
     const filterProducts = async () => {
-        const queryString = `CategorySlug=${params.categorySlug}&` + searchParams.toString();
+        const queryString = `CategorySlug=${params.categorySlug}&IsPublished=true&` + searchParams.toString();
         const result = await getProductsByQueries(queryString);
 
         if (result) {
