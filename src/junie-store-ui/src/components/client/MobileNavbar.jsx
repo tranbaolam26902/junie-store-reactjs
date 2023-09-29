@@ -1,5 +1,6 @@
 // Libraries
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 // Assets
 import { icons } from '@assets/icons';
@@ -8,42 +9,11 @@ import { icons } from '@assets/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectHeader, setHideMobileNavbar } from '@redux/features/client/header';
 
-// Components
-import { SidebarModal } from '../shared';
+// Services
+import { getCategoriesShowOnMenu } from '@services/client';
 
-// Temp categories
-const categories = [
-    {
-        id: 1,
-        name: 'Mới',
-        slug: '/categories/moi'
-    },
-    {
-        id: 2,
-        name: 'Bông tai',
-        slug: '/categories/bong-tai'
-    },
-    {
-        id: 3,
-        name: 'Dây chuyền',
-        slug: '/categories/day-chuyen'
-    },
-    {
-        id: 4,
-        name: 'Vòng tay',
-        slug: '/categories/vong-tay'
-    },
-    {
-        id: 5,
-        name: 'Nhẫn',
-        slug: '/categories/nhan'
-    },
-    {
-        id: 6,
-        name: 'Sale',
-        slug: '/categories/sale'
-    }
-];
+// Components
+import { SidebarModal } from '@components/shared';
 
 export default function MobileNavbar() {
     // Hooks
@@ -51,11 +21,26 @@ export default function MobileNavbar() {
 
     // States
     const header = useSelector(selectHeader);
+    const [categories, setCategories] = useState([]);
+
+    // Functions
+    const getHeaderCategories = async () => {
+        const result = await getCategoriesShowOnMenu();
+
+        if (result) setCategories(result.items);
+        else setCategories([]);
+    };
 
     // Event handlers
     const handleHideMobileNavbar = () => {
         dispatch(setHideMobileNavbar());
     };
+
+    // Side effects
+    /* Get categories for sidebar */
+    useEffect(() => {
+        getHeaderCategories();
+    }, []);
 
     return (
         <SidebarModal show={header.showMobileNavbar} onHide={handleHideMobileNavbar} className='xl:hidden'>
@@ -66,7 +51,7 @@ export default function MobileNavbar() {
                 <nav className='overflow-y-auto flex-1 flex flex-col divide-y divide-gray'>
                     {categories.map((category) => (
                         <Link
-                            to={`${category.slug}`}
+                            to={`/categories/${category.urlSlug}`}
                             key={category.id}
                             className='py-4 text-xl'
                             onClick={handleHideMobileNavbar}
