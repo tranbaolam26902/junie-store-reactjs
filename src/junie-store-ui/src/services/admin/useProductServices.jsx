@@ -33,6 +33,22 @@ export default function useProductServices() {
 
         return data || null;
     };
+    const uploadProductImages = async (productId, files) => {
+        const formData = new FormData();
+        Array.from(files).forEach((file, index) => {
+            formData.append(`file${index}`, file);
+        });
+        const { data } = await axiosPrivate.post(`/api/products/${productId}/pictures`, formData);
 
-    return { toggleProductActiveById, toggleProductIsDeleteById, deleteProductById, createProduct, editProduct };
+        return data || null;
+    };
+
+    return {
+        toggleProductActiveById,
+        toggleProductIsDeleteById,
+        deleteProductById,
+        createProduct,
+        editProduct,
+        uploadProductImages
+    };
 }
