@@ -289,6 +289,7 @@ export default function Product() {
                                 <span>{product.sku}</span>
                                 <span className='text-center'>
                                     {new Intl.NumberFormat('vi-vn').format(product.price)}
+                                    <sup className='pl-0.5 underline'>đ</sup>
                                 </span>
                                 <span className='text-center'>{product.quantity}</span>
                                 <span className='text-center'>{product.discount}</span>
