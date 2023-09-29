@@ -283,16 +283,18 @@ export default function Order() {
                                 </div>
                                 <div className='col-span-2 flex flex-col gap-2'>
                                     {order.details.map((product) => (
-                                        <Link key={order.orderId + product.productId} className='flex gap-2'>
-                                            <img
-                                                src={
-                                                    product.imageUrl
-                                                        ? `${import.meta.env.VITE_API_ENDPOINT}/${product.imageUrl}`
-                                                        : images.placeholder
-                                                }
-                                                alt='product-image'
-                                                className='w-24 aspect-[3/4] object-cover rounded-sm'
-                                            />
+                                        <div key={order.orderId + product.productId} className='flex gap-2'>
+                                            <Link to={`/products/${product.urlSlug}`}>
+                                                <img
+                                                    src={
+                                                        product.imageUrl
+                                                            ? `${import.meta.env.VITE_API_ENDPOINT}/${product.imageUrl}`
+                                                            : images.placeholder
+                                                    }
+                                                    alt='product-image'
+                                                    className='w-24 aspect-[3/4] object-cover rounded-sm'
+                                                />
+                                            </Link>
                                             <div className='flex flex-col gap-1'>
                                                 <span className='flex flex-wrap items-center gap-x-1'>
                                                     <span className='font-thin text-sm'>Sản phẩm:</span>
@@ -310,7 +312,7 @@ export default function Order() {
                                                     <span className='pt-px'>{product.quantity}</span>
                                                 </span>
                                             </div>
-                                        </Link>
+                                        </div>
                                     ))}
                                 </div>
                                 <span className='font-semibold text-red text-center'>
