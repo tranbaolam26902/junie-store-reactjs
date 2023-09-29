@@ -264,7 +264,9 @@ public class CollectionRepository : ICollectionRepository
 			.Include(s => s.Pictures)
 			.WhereIf(condition.Active, s => s.Active)
 			.WhereIf(condition.IsDeleted, s => s.IsDeleted)
-			.WhereIf(condition.IsPublished, s => s.Categories.All(c => !c.IsDeleted))
+			.WhereIf(condition.IsPublished, s =>
+				s.Categories.All(c => !c.IsDeleted) &&
+				!s.IsDeleted && s.Active)
 			.WhereIf(condition.Year > 0, s => s.CreateDate.Year == condition.Year)
 			.WhereIf(condition.Month > 0, s => s.CreateDate.Month == condition.Month)
 			.WhereIf(condition.Day > 0, s => s.CreateDate.Day == condition.Day)
