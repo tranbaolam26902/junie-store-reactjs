@@ -265,10 +265,22 @@ export default function Product() {
                         {products.map((product) => (
                             <div
                                 key={product.id + product.isDeleted + product.showOnMenu}
-                                className='grid grid-cols-12 items-center gap-x-4 px-4 py-2 odd:bg-gray/20'
+                                className='grid grid-cols-12 items-center gap-x-4 px-4 py-2 odd:bg-gray/20 rounded'
                             >
-                                <img src={images.placeholder} alt='product-image' className='w-24 aspect-[3/4]' />
-                                <span className='col-span-2'>{product.name}</span>
+                                <Link to={`/admin/products/${product.urlSlug}`}>
+                                    <img
+                                        src={
+                                            product.pictures.length !== 0
+                                                ? `${import.meta.env.VITE_API_ENDPOINT}/${product.pictures[0].path}`
+                                                : images.placeholder
+                                        }
+                                        alt='product-image'
+                                        className='w-24 aspect-[3/4] rounded-sm'
+                                    />
+                                </Link>
+                                <Link to={`/admin/products/${product.urlSlug}`} className='col-span-2'>
+                                    {product.name}
+                                </Link>
                                 <div className='col-span-2 flex flex-col'>
                                     {product.categories.map((category) => (
                                         <span key={category.id}>{category.name}</span>
@@ -293,9 +305,7 @@ export default function Product() {
                                     onChange={handleToggleIsDeleted}
                                 />
                                 <div className='flex flex-col items-center gap-y-2'>
-                                    <Link to={`/admin/products/${product.urlSlug}`} type='button'>
-                                        Chỉnh sửa
-                                    </Link>
+                                    <Link to={`/admin/products/${product.urlSlug}`}>Chỉnh sửa</Link>
                                     <button
                                         type='button'
                                         value={product.id}
