@@ -8,7 +8,7 @@ const checkout = async (orderInfo) => {
 };
 
 const getOrdersByQueries = async (queries) => {
-    const { data } = await axiosPrivate.get(`/api/orders?${queries}`);
+    const { data } = await axiosPrivate.get(`/api/orders/byUser?${queries}`);
 
     if (data.isSuccess) return data.result;
 
