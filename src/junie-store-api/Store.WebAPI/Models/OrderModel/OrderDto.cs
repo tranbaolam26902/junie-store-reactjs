@@ -62,5 +62,7 @@ public class OrderDetailDto
 
 	public string Sku { get; set; }
 
+	public string UrlSlug { get; set; }
+
 	public string ImageUrl { get; set; }
 }

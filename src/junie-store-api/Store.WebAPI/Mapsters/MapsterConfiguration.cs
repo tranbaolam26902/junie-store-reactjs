@@ -31,7 +31,9 @@ public class MapsterConfiguration : IRegister
 			.Map(dest => dest.Name, src => src.Product.Name)
 			.Map(dest => dest.Sku, src => src.Product.Sku)
 			.Map(dest => dest.ImageUrl, 
-				src => src.Product.Pictures != null ? src.Product.Pictures.FirstOrDefault().Path : "");
+				src => src.Product.Pictures != null ? src.Product.Pictures.FirstOrDefault().Path : "")
+			.Map(dest => dest.UrlSlug, src => 
+				src.Product != null ? src.Product.UrlSlug : "");
 
 		config.NewConfig<Product, ProductDto>();
 		config.NewConfig<ProductEditModel, Product>()
