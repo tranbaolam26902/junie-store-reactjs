@@ -62,7 +62,7 @@ const headers = [
     {
         id: 7,
         value: 'discount',
-        name: 'Giảm giá',
+        name: 'Giảm giá (%)',
         colSpan: 1,
         center: true
     },
