@@ -50,6 +50,11 @@ public static class OrderEndpoints
 			.RequireAuthorization("RequireManagerRole")
 			.Produces<ApiResponse<OrderDto>>();
 
+		routeGroupBuilder.MapGet("/ToggleDemo/{orderId:guid}", ToggleOrderByIdDemo)
+			.WithName("ToggleOrderByIdDemo")
+			.RequireAuthorization("RequireManagerRole")
+			.Produces<ApiResponse<OrderDto>>();
+
 		routeGroupBuilder.MapDelete("/cancel/{orderId:guid}", CancelOrderByUser)
 			.WithName("CancelOrderByUser")
 			.RequireAuthorization()
@@ -237,7 +242,7 @@ public static class OrderEndpoints
 				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Order is not found"));
 			}
 
-			var toggleOrder = await repository.ToggleOrderAsync(order);
+			await repository.ToggleOrderAsync(order, OrderStatus.Approved);
 
 			var orderDto = mapper.Map<OrderDto>(order);
 			return Results.Ok(ApiResponse.Success(orderDto));
@@ -247,6 +252,49 @@ public static class OrderEndpoints
 			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
 		}
 	}
+
+	private static async Task<IResult> ToggleOrderByIdDemo(
+		[FromRoute] Guid orderId,
+		OrderStatus status,
+		[FromServices] IOrderRepository repository,
+		[FromServices] IMapper mapper)
+	{
+		try
+		{
+			var order = await repository.GetOrderByIdAsync(orderId);
+
+			if (order == null)
+			{
+				return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotFound, "Order is not found"));
+			}
+
+			Dictionary<OrderStatus, List<OrderStatus>> validTransitions = new Dictionary<OrderStatus, List<OrderStatus>>
+			{
+				{ OrderStatus.New, new List<OrderStatus> { OrderStatus.Approved, OrderStatus.Cancelled } },
+				{ OrderStatus.Shipping, new List<OrderStatus> { OrderStatus.Returned, OrderStatus.Success } },
+			};
+
+			if (validTransitions.ContainsKey(order.Status) && validTransitions[order.Status].Contains(status))
+			{
+				// Kiểm tra xem trạng thái chuyển đổi có hợp lệ không
+				if (order.Status != OrderStatus.New && status == OrderStatus.Cancelled)
+				{
+					return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotModified, "Không thể hủy đơn hàng đã được xác nhận"));
+				}
+
+				order.Status = status;
+				await repository.ToggleOrderAsync(order, status);
+				var orderDto = mapper.Map<OrderDto>(order);
+				return Results.Ok(ApiResponse.Success(orderDto));
+			}
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.NotModified, "Chuyển trạng thái đơn hàng không hợp lệ."));
+		}
+		catch (Exception e)
+		{
+			return Results.Ok(ApiResponse.Fail(HttpStatusCode.BadRequest, e.Message));
+		}
+	}
+
 
 	private static async Task<IResult> CancelOrderByUser(
 		HttpContext context,
