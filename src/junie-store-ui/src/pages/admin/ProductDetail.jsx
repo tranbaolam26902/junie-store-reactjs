@@ -438,7 +438,7 @@ export default function ProductDetail() {
                             />
                             <Input
                                 type='number'
-                                label='Giảm giá'
+                                label='Giảm giá (%)'
                                 value={discount}
                                 message={discountMessage}
                                 onChange={(e) => {
